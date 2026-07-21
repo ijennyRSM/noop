@@ -471,7 +471,7 @@ public enum SleepStage: String, CaseIterable, Sendable {
     public var label: String {
         switch self {
         case .awake: return String(localized: "Awake", bundle: .module)
-        case .light: return String(localized: "Light", bundle: .module)
+        case .light: return String(localized: "sleep.stage.light", bundle: .module)
         case .deep:  return String(localized: "Deep", bundle: .module)
         case .rem:   return "REM"
         }

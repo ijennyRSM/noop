@@ -343,7 +343,7 @@ struct CoupledView: View {
     private var strainBandWord: String? {
         guard let s = dayStrain21 else { return nil }
         switch s {
-        case ..<6:   return String(localized: "Light")
+        case ..<6:   return String(localized: "effort.intensity.light")
         case ..<10:  return String(localized: "Moderate")
         case ..<14:  return String(localized: "Strenuous")
         default:     return String(localized: "High")

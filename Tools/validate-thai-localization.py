@@ -58,6 +58,24 @@ ALLOWED_IDENTICAL_WORDS = {
     "m", "n", "s", "v",
 }
 
+# Guard against recurring literal machine-translation senses in health UI.
+# These are deliberately source-contextual so an otherwise valid Thai word is
+# rejected only when the English source proves a different product meaning.
+CONTEXTUAL_TERM_RULES = [
+    (re.compile(r"\b(?:sleep stages?|sleep staging|stage breakdown|light sleep)\b", re.I),
+     re.compile(r"เวที|พังทลาย|แสดงละคร|จัดฉาก|จัดเตรียม|แสงสว่าง"), "sleep-stage terminology"),
+    (re.compile(r"\bbuzz(?:es|ed|ing)?\b", re.I),
+     re.compile(r"หึ่ง|พึมพำ|กระหึ่ม|ฉวัดเฉวียน"), "strap vibration terminology"),
+    (re.compile(r"\bHRV?\b"), re.compile(r"ทรัพยากรบุคคล"), "heart-rate abbreviation"),
+    (re.compile(r"\bbackfill(?:s|ed|ing)?\b", re.I), re.compile(r"ทดแทน"), "historical-data import"),
+    (re.compile(r"\bCharge\b"),
+     re.compile(r"ค่าใช้จ่าย|ประจุไฟฟ้า|การเรียกเก็บเงิน|พลังงานการนำกลับมาใช้ใหม่"),
+     "Charge score terminology"),
+    (re.compile(r"\bStrain\b", re.I),
+     re.compile(r"บาดเจ็บ|น้ำหนักร่างกาย|น้ำหนักบรรทุก|โหลดร่างกาย"),
+     "Strain score terminology"),
+]
+
 
 def string_units(localization: object) -> list[dict]:
     units: list[dict] = []
@@ -81,6 +99,31 @@ def signature(value: str) -> Counter[str]:
     # Treat `%2$@` as compatible with `%@` while still checking the complete
     # count and conversion/precision/length modifier of every placeholder.
     return Counter(re.sub(r"^%(?:\d+)\$", "%", item) for item in PLACEHOLDER_RE.findall(value))
+
+
+def placeholder_order_compatible(source: str, translation: str) -> bool:
+    """Require the original argument order unless the translation uses positions."""
+    source_tokens = [item for item in PLACEHOLDER_RE.findall(source) if item != "%%"]
+    translated_tokens = [item for item in PLACEHOLDER_RE.findall(translation) if item != "%%"]
+    source_arguments: dict[int, str] = {}
+    for fallback_position, token in enumerate(source_tokens, 1):
+        match = re.match(r"^%(?:(\d+)\$)?", token)
+        position = int(match.group(1)) if match and match.group(1) else fallback_position
+        source_arguments[position] = re.sub(r"^%(?:\d+)\$", "%", token)
+
+    translated: list[tuple[int | None, str]] = []
+    for token in translated_tokens:
+        match = re.match(r"^%(?:(\d+)\$)?", token)
+        position = int(match.group(1)) if match and match.group(1) else None
+        translated.append((position, re.sub(r"^%(?:\d+)\$", "%", token)))
+
+    if any(position is not None for position, _ in translated):
+        return all(
+            position is not None and source_arguments.get(position) == kind
+            for position, kind in translated
+        )
+    source_call_order = [source_arguments[position] for position in sorted(source_arguments)]
+    return source_call_order == [kind for _, kind in translated]
 
 
 def suspicious_identical(source: str, thai: str) -> bool:
@@ -158,16 +201,31 @@ def main() -> int:
             for unit in units:
                 value = unit["value"]
                 thai_signature = signature(value)
-                if not any(thai_signature == signature(source_value) for source_value in source_values):
+                compatible_sources = [
+                    source_value for source_value in source_values
+                    if thai_signature == signature(source_value)
+                ]
+                if not compatible_sources:
                     failures.append(
                         f"{relative}: placeholder mismatch for {source!r}: "
                         f"source={[dict(signature(item)) for item in source_values]} "
                         f"th={dict(thai_signature)}"
                     )
                     mismatches += 1
+                elif not any(placeholder_order_compatible(source_value, value) for source_value in compatible_sources):
+                    failures.append(
+                        f"{relative}: placeholder order/type mismatch for {source!r}: {value!r}"
+                    )
+                    mismatches += 1
                 for brand in ("NOOP", "WHOOP"):
                     if any(brand in source_value for source_value in source_values) and brand not in value:
                         failures.append(f"{relative}: brand name {brand} was not preserved for {source!r}")
+                source_text = "\n".join(source_values)
+                for source_pattern, thai_pattern, context in CONTEXTUAL_TERM_RULES:
+                    if source_pattern.search(source_text) and thai_pattern.search(value):
+                        failures.append(
+                            f"{relative}: suspicious literal translation ({context}) for {source!r}: {value!r}"
+                        )
                 if suspicious_identical(source_values[0], value):
                     warnings.append(f"{relative}: review identical English/Thai value: {source!r}")
 
