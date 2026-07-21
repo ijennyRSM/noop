@@ -38,6 +38,12 @@
             "state": "translated",
             "value": "%1$@ %2$lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
         }
       }
     },
@@ -78,6 +84,12 @@
             "state": "translated",
             "value": "Étalonnage %1$@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังปรับเทียบ %@"
+          }
         }
       }
     },
@@ -117,6 +129,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ non disponible"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ไม่พร้อมใช้งาน"
           }
         }
       }
@@ -176,6 +194,12 @@
             "state": "translated",
             "value": "能量"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว"
+          }
         }
       }
     },
@@ -215,6 +239,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chargez %1$lld sur 100"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld จาก 100"
           }
         }
       }
@@ -256,6 +286,12 @@
             "state": "translated",
             "value": "Charger %1$lld · %2$lld bpm%3$@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld · %lld bpm%@"
+          }
         }
       }
     },
@@ -295,6 +331,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Charger %1$lld%2$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld%@"
           }
         }
       }
@@ -336,6 +378,12 @@
             "state": "translated",
             "value": "Étalonnage des charges"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การปรับเทียบพลังฟื้นตัว"
+          }
         }
       }
     },
@@ -375,6 +423,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Étalonnage de charge, besoin de plus de données"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การปรับเทียบพลังฟื้นตัว ต้องการข้อมูลเพิ่มเติม"
           }
         }
       }
@@ -416,6 +470,12 @@
             "state": "translated",
             "value": "Charge hors date, dernière synchronisation %1$@. Ouvrez NOOP sur iPhone."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลพลังฟื้นตัวเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone"
+          }
         }
       }
     },
@@ -455,6 +515,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Intervalle de charge · %1$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัวข้อมูลเก่า · %@"
           }
         }
       }
@@ -496,6 +562,12 @@
             "state": "translated",
             "value": "Frais non disponibles"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลพลังฟื้นตัว"
+          }
         }
       }
     },
@@ -535,6 +607,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Charge · %1$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว · %@"
           }
         }
       }
@@ -576,6 +654,12 @@
             "state": "translated",
             "value": "Charge"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว · ปรับเทียบ"
+          }
         }
       }
     },
@@ -615,6 +699,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Frais –"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว –"
           }
         }
       }
@@ -674,6 +764,12 @@
             "state": "translated",
             "value": "消耗"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
+          }
         }
       }
     },
@@ -732,6 +828,12 @@
             "state": "translated",
             "value": "Charge NOOP"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว NOOP"
+          }
         }
       }
     },
@@ -771,6 +873,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP · ouvert sur iPhone"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · เปิดบน iPhone"
           }
         }
       }
@@ -812,6 +920,12 @@
             "state": "translated",
             "value": "- Oui. %1$@, %2$@, %3$@."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: %@, %@, %@."
+          }
         }
       }
     },
@@ -851,6 +965,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "- Oui. Pas encore de données, ouvrez NOOP sur votre iPhone pour synchroniser."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: ยังไม่มีข้อมูล โปรดเปิด NOOP บน iPhone เพื่อซิงค์"
           }
         }
       }
@@ -892,6 +1012,12 @@
             "state": "translated",
             "value": "- Oui. Les scores sont dépassés, le dernier %1$@ synchronisé. Ouvrez NOOP sur iPhone pour vous rafraîchir."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: คะแนนเป็นข้อมูลเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone เพื่อรีเฟรช"
+          }
         }
       }
     },
@@ -932,6 +1058,12 @@
             "state": "translated",
             "value": "Pas de données, ouvrir NOOP sur iPhone"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูล เปิด NOOP บน iPhone"
+          }
         }
       }
     },
@@ -971,6 +1103,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir NOOP"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิด NOOP"
           }
         }
       }
@@ -1030,6 +1168,12 @@
             "state": "translated",
             "value": "休息"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การพักผ่อน"
+          }
         }
       }
     },
@@ -1088,6 +1232,12 @@
             "state": "translated",
             "value": "Votre charge (récupération) sur le cadran, avec l'effort et le repos dans la carte rectangulaire."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัวของคุณ (การฟื้นตัว) บนหน้าปัดนาฬิกา พร้อมภาระร่างกายและการพักผ่อนในการ์ดสี่เหลี่ยม"
+          }
         }
       }
     },
@@ -1127,6 +1277,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Il y a longtemps"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สักพักแล้ว"
           }
         }
       }
@@ -1168,6 +1324,12 @@
             "state": "translated",
             "value": "cal"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปรับเทียบ"
+          }
         }
       }
     },
@@ -1207,6 +1369,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "vieux"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เก่า"
           }
         }
       }
@@ -1248,6 +1416,12 @@
             "state": "translated",
             "value": "Ouvrir un iPhone"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิดบน iPhone"
+          }
         }
       }
     },
@@ -1287,6 +1461,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stable"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลเก่า"
           }
         }
       }

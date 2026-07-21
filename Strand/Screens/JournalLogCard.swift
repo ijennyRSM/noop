@@ -113,10 +113,10 @@ struct JournalLogCard: View {
             NoopCard(tint: StrandPalette.restColor) {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(editing
-                         ? "Rename, regroup, or remove an item to tidy your list. Renaming keeps the original question behind the scenes, so a WHOOP import still lines up. Custom items are deleted; built-in ones are hidden and can be restored below."
+                         ? String(localized: "Rename, regroup, or remove an item to tidy your list. Renaming keeps the original question behind the scenes, so a WHOOP import still lines up. Custom items are deleted; built-in ones are hidden and can be restored below.")
                          : dayOffset == -1
-                         ? "Logging ahead for tomorrow: today's activities inform tomorrow's recovery, just as yesterday's are reflected in today's. Tomorrow's answers line up with tomorrow's morning."
-                         : "Answers are about the night and day leading into this morning, the same attribution a WHOOP export uses, so logged and imported days line up.")
+                         ? String(localized: "Logging ahead for tomorrow: today's activities inform tomorrow's recovery, just as yesterday's are reflected in today's. Tomorrow's answers line up with tomorrow's morning.")
+                         : String(localized: "Answers are about the night and day leading into this morning, the same attribution a WHOOP export uses, so logged and imported days line up."))
                         .font(StrandFont.footnote)
                         .foregroundStyle(StrandPalette.textTertiary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -157,7 +157,7 @@ struct JournalLogCard: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("\(group.title), \(groupItems.count) items, \(collapsed ? "collapsed" : "expanded")")
+                .accessibilityLabel(String(localized: "\(group.title), \(groupItems.count) items, \(collapsed ? String(localized: "Collapsed") : String(localized: "Expanded"))"))
 
                 if !collapsed {
                     ForEach(groupItems) { item in itemRow(item) }
@@ -227,7 +227,7 @@ struct JournalLogCard: View {
                 .foregroundStyle(StrandPalette.textSecondary)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(symbol == "plus" ? "Increase" : "Decrease")
+        .accessibilityLabel(symbol == "plus" ? String(localized: "Increase") : String(localized: "Decrease"))
     }
 
     private func commitNumeric(_ q: String, value: Double) {
@@ -278,8 +278,8 @@ struct JournalLogCard: View {
                 .foregroundStyle(StrandPalette.statusCritical)
         }
         .buttonStyle(.plain)
-        .help(item.custom ? "Delete this custom item" : "Hide this item")
-        .accessibilityLabel(item.custom ? "Delete \(item.display)" : "Hide \(item.display)")
+        .help(item.custom ? String(localized: "Delete this custom item") : String(localized: "Hide this item"))
+        .accessibilityLabel(item.custom ? String(localized: "Delete \(item.display)") : String(localized: "Hide \(item.display)"))
     }
 
     // MARK: - Rename sheet

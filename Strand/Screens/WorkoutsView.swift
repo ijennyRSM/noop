@@ -728,7 +728,7 @@ struct WorkoutsView: View {
                             color: StrandPalette.textPrimary
                         )
                         .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
-                        Text(effortScale == .whoop ? "of 21" : "of 100")
+                        Text(effortScale == .whoop ? String(localized: "of 21") : String(localized: "of 100"))
                             .font(StrandFont.caption)
                             .foregroundStyle(StrandPalette.textSecondary)
                     }
