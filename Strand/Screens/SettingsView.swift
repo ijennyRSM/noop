@@ -2506,7 +2506,9 @@ struct StepsCalibrationSheet: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                 Text("Calibrate your steps").font(StrandFont.rounded(26, weight: .bold))
                     .foregroundStyle(StrandPalette.textPrimary)
-                Text(is5MG ? "WHOOP 5.0 / MG · motion → steps" : "WHOOP 4.0 · motion → steps").font(StrandFont.caption)
+                Text(is5MG
+                     ? String(localized: "WHOOP 5.0 / MG · motion → steps")
+                     : String(localized: "WHOOP 4.0 · motion → steps")).font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textSecondary)
             }
             Spacer()

@@ -533,8 +533,8 @@ struct StressView: View {
             VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                 Text("How this is computed").strandOverline()
                 Text(model.usingStored
-                     ? "Today's value is your recorded daily stress score (0-3)."
-                     : "Stress is derived from two autonomic signals.")
+                     ? String(localized: "Today's value is your recorded daily stress score (0-3).")
+                     : String(localized: "Stress is derived from two autonomic signals."))
                     .font(StrandFont.body)
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text("We compare today's resting heart rate and HRV to your own 30-day baseline. A higher-than-usual resting HR and a lower-than-usual HRV both push the score up, classic signs the body is activated. The combined shift is mapped onto a 0-3 scale: 0 is calm, 1.5 sits at your baseline, 3 is highly activated.")

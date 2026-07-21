@@ -67,8 +67,8 @@ struct NOOPWidgetView: View {
 
     private var inlineText: String {
         var parts: [String] = []
-        if let r = snap.recovery { parts.append("Charge \(r)%") }
-        if let b = snap.bpm { parts.append("\(b) bpm") }
+        if let r = snap.recovery { parts.append(String(localized: "Charge \(r)%")) }
+        if let b = snap.bpm { parts.append(String(localized: "\(b) bpm")) }
         return parts.isEmpty ? "NOOP" : parts.joined(separator: " · ")
     }
 
@@ -151,14 +151,14 @@ struct NOOPWidgetView: View {
             // Two-by-three stat grid of the richer scores. Each cell is a value + label pairing, tinted to
             // match its Today tile where a token exists (Effort, Rest); raw vitals stay neutral.
             HStack(alignment: .top, spacing: 0) {
-                statCell("Effort", value: snap.effort.map(String.init), tint: effortColor)
-                statCell("Rest", value: snap.rest.map { "\($0)%" }, tint: restColor)
-                statCell("HRV", value: snap.hrv.map { "\($0)" }, unit: "ms")
+                statCell(String(localized: "Effort"), value: snap.effort.map(String.init), tint: effortColor)
+                statCell(String(localized: "Rest"), value: snap.rest.map { "\($0)%" }, tint: restColor)
+                statCell(String(localized: "HRV"), value: snap.hrv.map { "\($0)" }, unit: "ms")
             }
             HStack(alignment: .top, spacing: 0) {
-                statCell("Rest HR", value: snap.restingHr.map { "\($0)" }, unit: "bpm")
-                statCell("HR", value: snap.bpm.map { "\($0)" }, unit: "bpm")
-                statCell("Battery", value: snap.batteryPct.map { "\($0)%" })
+                statCell(String(localized: "Rest HR"), value: snap.restingHr.map { "\($0)" }, unit: "bpm")
+                statCell(String(localized: "HR"), value: snap.bpm.map { "\($0)" }, unit: "bpm")
+                statCell(String(localized: "Battery"), value: snap.batteryPct.map { "\($0)%" })
             }
             Spacer(minLength: 0)
         }
@@ -197,8 +197,8 @@ struct NOOPWidget: Widget {
                     .background(StrandPalette.surfaceBase)
             }
         }
-        .configurationDisplayName("NOOP Charge")
-        .description("Charge, Effort, Rest, HRV, resting and live heart rate, and strap battery at a glance.")
+        .configurationDisplayName(String(localized: "NOOP Charge"))
+        .description(String(localized: "Charge, Effort, Rest, HRV, resting and live heart rate, and strap battery at a glance."))
         .supportedFamilies([
             .systemSmall, .systemMedium, .systemLarge,
             .accessoryCircular, .accessoryInline, .accessoryRectangular

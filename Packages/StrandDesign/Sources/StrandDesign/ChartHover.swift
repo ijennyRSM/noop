@@ -69,7 +69,9 @@ public struct ChartTooltip: View {
                 radius: scheme == .light ? 8 : 10, x: 0, y: scheme == .light ? 4 : 6)
         .fixedSize()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(label != nil ? "\(value), \(label!)" : value)
+        .accessibilityLabel(label != nil
+            ? String(format: String(localized: "chart.tooltip.value_label", bundle: .module), value, label!)
+            : value)
     }
 }
 
