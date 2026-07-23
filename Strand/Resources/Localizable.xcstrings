@@ -189328,6 +189328,24 @@
     "2W": {
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Wo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 sem."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 sem."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
@@ -189339,43 +189357,28 @@
     "3W": {
       "extractionState": "manual",
       "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Wo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 sem."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 sem."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "3ส."
-          }
-        }
-      }
-    },
-    "Alarm": {
-      "extractionState": "manual",
-      "localizations": {
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การตั้งปลุก"
-          }
-        }
-      }
-    },
-    "WHOOP": {
-      "extractionState": "manual",
-      "localizations": {
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHOOP"
-          }
-        }
-      }
-    },
-    "Whoop 4.0": {
-      "extractionState": "manual",
-      "localizations": {
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WHOOP 4.0"
           }
         }
       }

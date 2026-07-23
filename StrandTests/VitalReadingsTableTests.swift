@@ -38,7 +38,9 @@ final class VitalReadingsTableTests: XCTestCase {
         let rows = vitalReadingRows(readings: spo2Readings(), strapDeviceId: strap,
                                     now: now, format: spo2Format)
         // Ascending input (01 → 03) must render descending (03 → 01).
-        XCTAssertEqual(rows.map(\.time), ["3 Jan", "2 Jan", "1 Jan"])
+        // Date order is localized ("3 Jan" in many locales, "Jan 3" in US English), so pin the
+        // descending day numbers without hard-coding one locale's word order.
+        XCTAssertEqual(rows.map { $0.time.filter(\.isNumber) }, ["3", "2", "1"])
         XCTAssertEqual(rows.first?.value, "97 %")   // the newest reading leads
     }
 

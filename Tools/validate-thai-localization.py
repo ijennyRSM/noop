@@ -96,7 +96,6 @@ EXPECTED_CONTEXTUAL_TRANSLATIONS = {
         "6M": "6ด.",
         "1Y": "1ป.",
         "Light": "หลับตื้น",
-        "Alarm": "การตั้งปลุก",
         "Whoop": "WHOOP",
         "Whoop import": "การนำเข้า WHOOP",
         "br/min": "ครั้ง/นาที",
