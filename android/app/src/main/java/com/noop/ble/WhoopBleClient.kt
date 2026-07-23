@@ -44,6 +44,8 @@ import com.noop.protocol.RebootProbeVariant
 import com.noop.protocol.Streams
 import com.noop.protocol.Whoop5Config
 import com.noop.protocol.extractStreams
+import com.noop.protocol.WhoopGattServiceFamily
+import com.noop.protocol.whoopGattScanDecision
 import com.noop.analytics.Baselines
 import com.noop.analytics.BatterySocLine
 import com.noop.analytics.IntelligenceEngine
@@ -1682,6 +1684,8 @@ class WhoopBleClient(
     /// The strap family the user chose to pair, remembered so an auto-reconnect after a
     /// dropout re-scans for the same model instead of falling back to WHOOP 4.0.
     private var selectedModel = WhoopModel.WHOOP4
+    /** #716: true once the seeded "WHOOP" model has been stamped to the correct family. */
+    private var modelStamped = false
     /// The last device we connected to, kept so an auto-reconnect after a dropout can connect
     /// DIRECTLY to it (autoConnect=true) instead of scanning. A bonded strap the OS still holds (or
     /// that simply isn't advertising) won't appear in a scan — so the old scan-only reconnect looped
@@ -2236,11 +2240,14 @@ class WhoopBleClient(
             _state.update { it.copy(scanning = false, statusNote = "Bluetooth isn't ready yet. Try again in a moment.") }
             return
         }
-        // Filter to the strap we're targeting — a single service, so a WHOOP 4.0
-        // scan never lingers on a WHOOP 5/MG wrist (or the reverse).
-        val filters = listOf(
-            ScanFilter.Builder().setServiceUuid(ParcelUuid(model.service)).build(),
-        )
+        // Filter to the strap we're targeting plus diagnostic-only WHOOP service families. The callback
+        // explicitly refuses unsupported families before any persist/connect path, so this broadens
+        // visibility without routing unknown framing into GATT.
+        val filters = (listOf(model.service.toString()) + WhoopGattServiceFamily.unsupportedServiceUuidStrings)
+            .distinct()
+            .map { uuid ->
+                ScanFilter.Builder().setServiceUuid(ParcelUuid(UUID.fromString(uuid))).build()
+            }
         // LOW_LATENCY for a snappy first connect, mirroring the desktop app's eager scan — but PR #588:
         // a SUSTAINED involuntary-reconnect streak ([failedReconnectAttempts] past the threshold) drops to
         // the lower-power BALANCED mode so an out-of-range strap stops pinning the radio at full power. A
@@ -3198,11 +3205,22 @@ class WhoopBleClient(
      *  strap was connected when we sent it), so a "didn't buzz" report shows sent-vs-strap-reports. */
     private fun recordAlarmArm(sentEpoch: Long) {
         runCatching {
-            NoopPrefs.of(context).edit()
+            val editor = NoopPrefs.of(context).edit()
                 .putLong("alarm.lastArmSentEpoch", sentEpoch)
                 .putLong("alarm.lastArmAt", System.currentTimeMillis())
                 .putBoolean("alarm.lastArmConnected", _state.value.connected)
-                .apply()
+            // #34: live HR at the moment of the arm, purely to test a hypothesis raised on a reporter's
+            // log — morning wake-up and morning short-horizon arms have fired reliably since v9.0.0, but
+            // an identical evening short-horizon arm (same code path, same commands, no day/night branch
+            // anywhere in armStrapAlarm) did not. One firmware-side explanation that would fit every
+            // reported case: the physical alarm haptic might only fire while the strap's OWN sleep/rest
+            // detection considers the wearer sleep-adjacent, independent of anything NOOP sends. This
+            // doesn't prove or fix that — it's a free read of state already tracked live, logged so the
+            // next reported failure (ideally an evening one) can be compared against the resting HR of
+            // the successful arms already on file. Absent key means no HR had streamed yet at arm time.
+            val hr = _state.value.heartRate
+            if (hr != null) editor.putInt("alarm.lastArmHeartRate", hr) else editor.remove("alarm.lastArmHeartRate")
+            editor.apply()
         }
     }
 
@@ -3254,6 +3272,35 @@ class WhoopBleClient(
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val device: BluetoothDevice = result.device
             val name = result.scanRecord?.deviceName ?: device.name ?: "unknown"
+            // #716: the seeded "my-whoop" device has model "WHOOP" (no generation). Once a live
+            // scan confirms which service family the strap advertises, stamp the correct model so
+            // forRegistryModel returns the right DeviceFamily (fixes skin-temp ADC scale + display).
+            if (!modelStamped) {
+                modelStamped = true
+                ioScope.launch {
+                    val stale = repository.pairedDevices().firstOrNull {
+                        it.status == "active" && it.model == "WHOOP"
+                    }
+                    if (stale != null) {
+                        val correct = if (selectedModel == WhoopModel.WHOOP4) "WHOOP 4.0" else "WHOOP 5.0 / MG"
+                        repository.setDeviceModel(stale.id, correct)
+                        log("Updated device model from \"WHOOP\" to \"$correct\" (#716)")
+                    }
+                }
+            }
+            val advertisedServiceUuids = result.scanRecord?.serviceUuids
+                ?.map { it.uuid.toString().lowercase() }
+                .orEmpty()
+            val scanDecision = whoopGattScanDecision(selectedModel.service.toString(), advertisedServiceUuids)
+            if (!scanDecision.shouldConnect) {
+                scanDecision.unsupportedFamily?.let { family ->
+                    log("Discovered $name (rssi ${result.rssi}) — ${family.diagnosticUnsupportedMessage}")
+                    _state.update { it.copy(statusNote = family.diagnosticUnsupportedMessage) }
+                    return
+                }
+                log("Discovered $name (rssi ${result.rssi}) without ${selectedModel.displayName} service — ignoring")
+                return
+            }
             // Multi-WHOOP present-scan (Add-a-device wizard, MW-4): accumulate the strap, do NOT
             // auto-connect, and return before touching the connect flow. Only reachable when the wizard
             // turned on [scanningForList] via scanForWhoops(); on the default path this branch is skipped
@@ -5391,6 +5438,16 @@ class WhoopBleClient(
             return
         }
         if (backfilling) return
+        // #700: if GET_CLOCK never responded (Android has no explicit clockRef on the client — the
+        // Backfiller defaults to identity), seed a rough correlation from the Data Range's newest-banked
+        // timestamp. The offset is approximate but vastly better than identity (offset 0), which can
+        // mis-date nights when the strap's RTC has drifted. No-op when strapNewestTs is null (no Data
+        // Range received yet) — the Backfiller keeps its identity default, same as today.
+        strapNewestTs?.let { newest ->
+            val wall = (System.currentTimeMillis() / 1000L).toInt()
+            backfiller.clockRef = ClockRef(device = newest.toInt(), wall = wall)
+            log("Clock: seeded backfiller correlation from Data Range (device=$newest wall=$wall, offset ${wall - newest}s)")
+        }
         // #42/#364: consecutiveAutoContinues > 0 means this offload is re-kicked after an EARLIER session
         // in the same burst banked rows — tell the backfiller so its no-cursor END reads as "caught up",
         // not "no banked history / charge to 100%". A fresh offload (count 0) keeps the honest guidance.
