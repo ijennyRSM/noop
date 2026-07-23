@@ -109,12 +109,12 @@ final class UnitFormatterTests: XCTestCase {
             return XCTFail("skin_temp descriptor missing")
         }
         // DEVIATION (< 20 °C): ×9/5, no +32 — NOT the bogus absolute 24.4 °F.
-        XCTAssertEqual(skin.format(-4.2, system: .imperial, temperature: .fahrenheit), "-7.6 °F")
-        XCTAssertEqual(skin.format(0.6, system: .imperial, temperature: .fahrenheit), "1.1 °F")
+        XCTAssertEqual(skin.format(-4.2, system: .imperial, temperature: .fahrenheit), "-7.6°F")
+        XCTAssertEqual(skin.format(0.6, system: .imperial, temperature: .fahrenheit), "+1.1°F")
         // ABSOLUTE (>= 20 °C, e.g. an imported WHOOP export reading): full C→F with +32 — 34 °C = 93.2 °F.
         XCTAssertEqual(skin.format(34.0, system: .imperial, temperature: .fahrenheit), "93.2 °F")
         // Celsius is unchanged for both — this always looked right; only °F was broken.
-        XCTAssertEqual(skin.format(0.6, system: .metric, temperature: .celsius), "0.6 °C")
+        XCTAssertEqual(skin.format(0.6, system: .metric, temperature: .celsius), "+0.6°C")
         XCTAssertEqual(skin.format(34.0, system: .metric, temperature: .celsius), "34.0 °C")
     }
 

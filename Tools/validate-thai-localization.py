@@ -74,7 +74,40 @@ CONTEXTUAL_TERM_RULES = [
     (re.compile(r"\bStrain\b", re.I),
      re.compile(r"บาดเจ็บ|น้ำหนักร่างกาย|น้ำหนักบรรทุก|โหลดร่างกาย"),
      "Strain score terminology"),
+    (re.compile(r"\blocal store\b", re.I),
+     re.compile(r"ร้านค้า"), "on-device database terminology"),
 ]
+
+# These high-visibility strings have previously regressed because the same short
+# English word has several meanings (Min = minimum/minute, Light = theme/sleep
+# stage, W = week). Pin the intended translation in the catalog that owns it.
+EXPECTED_CONTEXTUAL_TRANSLATIONS = {
+    "Strand/Resources/Localizable.xcstrings": {
+        "Skin Temperature": "การเปลี่ยนแปลงอุณหภูมิผิวหนัง",
+        "Min": "ต่ำสุด",
+        "%lld min": "%lld นาที",
+        "Reading": "ค่าที่วัดได้",
+        "Readings": "ค่าที่วัดได้",
+        "W": "1ส.",
+        "2W": "2ส.",
+        "3W": "3ส.",
+        "M": "1ด.",
+        "3M": "3ด.",
+        "6M": "6ด.",
+        "1Y": "1ป.",
+        "Light": "หลับตื้น",
+        "Alarm": "การตั้งปลุก",
+        "Whoop": "WHOOP",
+        "Whoop import": "การนำเข้า WHOOP",
+        "br/min": "ครั้ง/นาที",
+    },
+    "Packages/StrandDesign/Sources/StrandDesign/Resources/Localizable.xcstrings": {
+        "Light": "สว่าง",
+        "LIGHT": "หลับตื้น",
+        "sleep.stage.light": "หลับตื้น",
+        "Whoop 4.0": "WHOOP 4.0",
+    },
+}
 
 
 def string_units(localization: object) -> list[dict]:
@@ -176,6 +209,20 @@ def main() -> int:
             failures.append(f"{relative}: strings must be a JSON object")
             continue
 
+        expected = EXPECTED_CONTEXTUAL_TRANSLATIONS.get(relative.as_posix(), {})
+        for source, expected_value in expected.items():
+            entry = strings.get(source)
+            actual_units = string_units(
+                ((entry or {}).get("localizations") or {}).get("th")
+                if isinstance(entry, dict) else None
+            )
+            actual_values = [unit.get("value") for unit in actual_units]
+            if actual_values != [expected_value]:
+                failures.append(
+                    f"{relative}: contextual translation for {source!r} must be "
+                    f"{expected_value!r}, got {actual_values!r}"
+                )
+
         checked = 0
         translated = 0
         mismatches = 0
@@ -217,8 +264,13 @@ def main() -> int:
                         f"{relative}: placeholder order/type mismatch for {source!r}: {value!r}"
                     )
                     mismatches += 1
-                for brand in ("NOOP", "WHOOP"):
-                    if any(brand in source_value for source_value in source_values) and brand not in value:
+                brand_sources = {
+                    "NOOP": any("NOOP" in source_value for source_value in source_values),
+                    # Upstream occasionally spells the brand "Whoop"; Thai must still preserve WHOOP.
+                    "WHOOP": any(re.search(r"\bWHOOP\b", source_value, re.I) for source_value in source_values),
+                }
+                for brand, present in brand_sources.items():
+                    if present and brand not in value:
                         failures.append(f"{relative}: brand name {brand} was not preserved for {source!r}")
                 source_text = "\n".join(source_values)
                 for source_pattern, thai_pattern, context in CONTEXTUAL_TERM_RULES:

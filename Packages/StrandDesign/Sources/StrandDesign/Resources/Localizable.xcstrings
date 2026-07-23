@@ -354,7 +354,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การอ่านค่า %lld"
+            "value": "ค่าที่วัดได้ %lld ค่า"
           }
         }
       }
@@ -1944,7 +1944,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "เบา"
+            "value": "หลับตื้น"
           }
         }
       }
@@ -3610,7 +3610,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "โห่ 4.0"
+            "value": "WHOOP 4.0"
           }
         }
       }
@@ -3720,7 +3720,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "สลีป %@"
+            "value": "หลับ %@"
           }
         }
       }
