@@ -15,7 +15,7 @@ public extension View {
     /// wash + border bias; nil uses the flat raised surface with no wash.
     func frostedCardSurface(
         tint: Color? = nil,
-        cornerRadius: CGFloat = 22,
+        cornerRadius: CGFloat = NoopMetrics.cardRadius,
         washStrength: Double = 1.0
     ) -> some View {
         background(FrostedCardSurface(tint: tint, cornerRadius: cornerRadius, washStrength: washStrength))
@@ -34,7 +34,7 @@ public struct FrostedCardSurface: View {
     // solid (default). Reading it here makes every card update live when the Settings slider moves.
     @AppStorage(CardAppearancePrefs.opacityKey) private var cardOpacityPercent = CardAppearancePrefs.defaultPercent
 
-    public init(tint: Color? = nil, cornerRadius: CGFloat = 22, washStrength: Double = 1.0) {
+    public init(tint: Color? = nil, cornerRadius: CGFloat = NoopMetrics.cardRadius, washStrength: Double = 1.0) {
         self.tint = tint
         self.cornerRadius = cornerRadius
         self.washStrength = washStrength
@@ -57,8 +57,8 @@ public struct FrostedCardSurface: View {
                 shape.fill(
                     LinearGradient(
                         colors: [
-                            (tint ?? .clear).opacity(0.05 * washStrength),
-                            (tint ?? .clear).opacity(0.015 * washStrength),
+                            (tint ?? .clear).opacity(0.035 * washStrength),
+                            (tint ?? .clear).opacity(0.010 * washStrength),
                             .clear
                         ],
                         startPoint: .topLeading, endPoint: .bottomTrailing
@@ -67,13 +67,13 @@ public struct FrostedCardSurface: View {
             )
             // Liquid redesign (2026-07-02): a 1px resting hairline in BOTH themes so every card
             // matches the liquid home card's edge (LiquidTodayView.card), not just fill contrast.
-            .overlay(shape.strokeBorder(StrandPalette.hairline, lineWidth: 1))
+            .overlay(shape.strokeBorder(StrandPalette.hairline.opacity(0.72), lineWidth: 0.75))
             // LIGHT raises white cards off the warm-paper canvas with a soft resting drop shadow; DARK
             // stays flat (the hairline + fill carry the edge, matching the home card which has no shadow).
             .shadow(
                 color: scheme == .light ? Color(hex: "#1A2230").opacity(0.11) : .clear,
-                radius: scheme == .light ? 10 : 0,
-                x: 0, y: scheme == .light ? 3 : 0
+                radius: scheme == .light ? 6 : 0,
+                x: 0, y: scheme == .light ? 2 : 0
             )
             // "Card transparency": fade the whole glass surface. The card's content sits above this
             // background, so it stays fully readable regardless.
@@ -97,7 +97,7 @@ public struct StrandCard<Content: View>: View {
 
     public init(
         padding: CGFloat = 16,
-        cornerRadius: CGFloat = 22,
+        cornerRadius: CGFloat = NoopMetrics.cardRadius,
         tint: Color? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
@@ -125,7 +125,7 @@ public struct StrandCardHover: ViewModifier {
     @State private var hovering = false
     @Environment(\.colorScheme) private var scheme
 
-    public init(cornerRadius: CGFloat = 22) {
+    public init(cornerRadius: CGFloat = NoopMetrics.cardRadius) {
         self.cornerRadius = cornerRadius
     }
 
@@ -158,7 +158,7 @@ public struct StrandCardHover: ViewModifier {
 
 public extension View {
     /// Apply the Strand card hover lift (shadow + -1px translate + border emphasis).
-    func strandCardHover(cornerRadius: CGFloat = 22) -> some View {
+    func strandCardHover(cornerRadius: CGFloat = NoopMetrics.cardRadius) -> some View {
         modifier(StrandCardHover(cornerRadius: cornerRadius))
     }
 }

@@ -107,7 +107,7 @@ struct LiquidTodayView: View {
     /// The liquid heart pink (matches LiquidThread's default + the mockup #ff6b81).
     private let liquidHeart = Color(.sRGB, red: 1, green: 107 / 255, blue: 129 / 255, opacity: 1)
     /// Hero card fill: a translucent near-black so it floats over the sky (mock rgba(13,14,20,.78)).
-    private let heroFill = Color(.sRGB, red: 13 / 255, green: 14 / 255, blue: 20 / 255, opacity: 0.80)
+    private let heroFill = Color(.sRGB, red: 25 / 255, green: 28 / 255, blue: 30 / 255, opacity: 0.98)
     /// "Card transparency" (0–100, default 100): fades every liquid card surface here — the hero, the
     /// session-start row, the metric tiles and the `card` helper — in lockstep with the frosted cards.
     /// Content sits above the surface so it stays readable. Mirrors Kotlin `NoopPrefs.cardOpacityPercent`.
@@ -115,11 +115,11 @@ struct LiquidTodayView: View {
     private var cardOpacity: Double { max(0, min(1, Double(cardOpacityPercent) / 100)) }
     /// "Sky behind cards" (default ON): extend the day-cycle sky behind the WHOLE scroll so the
     /// Card-transparency slider reveals it under every card. User-toggleable. Mirrors Kotlin `NoopPrefs.skyBehindCards`.
-    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = true
+    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = false
     /// Day-cycle scene backdrop (#698). Default ON. When off, the liquid Today drops the sky for the plain
     /// dark canvas — parity with Android and the classic TodayView, which already honour this pref. Mirrors
     /// Kotlin `NoopPrefs.showDayCycleBackground`.
-    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = true
+    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = false
 
     // MARK: - Day navigation (ported from classic Today: swipe + calendar, day-keyed reads)
 
@@ -453,8 +453,8 @@ struct LiquidTodayView: View {
             // section block below. The wordmark's bottom pad (10) + the section VStack's 12 spacing keeps
             // the default hero-under-wordmark gap at the original 22.
             LiquidWordmark()
-                .padding(.top, 30)
-                .padding(.bottom, 10)
+                .padding(.top, 22)
+                .padding(.bottom, 8)
         }
     }
 
@@ -486,10 +486,10 @@ struct LiquidTodayView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .fill(heroFill)
-                    .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(.white.opacity(0.11), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+                        .strokeBorder(StrandPalette.hairline, lineWidth: 0.75))
                     .opacity(cardOpacity)
             )
         }
@@ -503,20 +503,20 @@ struct LiquidTodayView: View {
             // the state pill) rather than an empty vessel, matching the classic Today, the widget/watch/Live
             // Activity (`Repository.widgetAnchor`) and Android. Effort deliberately does NOT carry — it is
             // today's own accumulation, so yesterday's number would be a false statement, not a stale one.
-            HeroScoreCell(label: String(localized: "Charge"), score: chargeDisplay.pct, tint: StrandPalette.chargeColor,
-                          animated: dataLoaded, onGuide: { guideSection = .charge })
+            HeroScoreCell(label: String(localized: "Recovery"), score: chargeDisplay.pct,
+                          tint: StrandPalette.chargeColor, onGuide: { guideSection = .charge })
             // #45: the hero Effort must honour the user's Effort scale like every other Effort read-out.
             // Show the value on the chosen scale (0–100 or WHOOP 0–21) with the matching vessel max, and
             // one decimal on the compressed 0–21 axis to match the app-wide `effortDisplay` convention
             // (12.6, not a rounded "13"); the 0–100 hero stays a whole number as before.
-            HeroScoreCell(label: String(localized: "Effort"),
+            HeroScoreCell(label: String(localized: "Strain"),
                           score: displayDay?.strain.map { UnitFormatter.effortValue($0, scale: effortScale) },
-                          tint: StrandPalette.effortColor, animated: dataLoaded,
+                          tint: StrandPalette.effortColor,
                           onGuide: { guideSection = .effort },
                           maxValue: effortScale == .whoop ? 21 : 100,
                           decimals: effortScale == .whoop ? 1 : 0)
-            HeroScoreCell(label: String(localized: "Rest"), score: restScore, tint: StrandPalette.restColor,
-                          animated: dataLoaded, onGuide: { guideSection = .rest })
+            HeroScoreCell(label: String(localized: "Sleep"), score: restScore,
+                          tint: StrandPalette.restColor, onGuide: { guideSection = .rest })
                 .overlay(alignment: .top) {
                     if let sourceLabel = heroSourceLabel {
                         SourceBadge("\(sourceLabel)", tint: StrandPalette.onDarkSecondary)
@@ -536,11 +536,10 @@ struct LiquidTodayView: View {
         .padding(.vertical, NoopMetrics.space4)
         .padding(.horizontal, NoopMetrics.space3)
         .background(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
+            RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                 .fill(heroFill)
-                .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous)
-                    .strokeBorder(.white.opacity(0.11), lineWidth: 1))
-                .shadow(color: .black.opacity(0.6), radius: 30, y: 16)
+                .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+                    .strokeBorder(StrandPalette.hairline, lineWidth: 0.75))
                 .opacity(cardOpacity)
         )
     }
@@ -682,9 +681,9 @@ struct LiquidTodayView: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 11)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .fill(StrandPalette.surfaceRaised)
-                    .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                         .strokeBorder(StrandPalette.hairline, lineWidth: 1))
                     .opacity(cardOpacity)
             )
@@ -890,7 +889,7 @@ struct LiquidTodayView: View {
         case .effort:
             ktile(String(localized: "Strain"), intText(displayDay?.strain), "%", StrandPalette.effortColor, frac(displayDay?.strain), key: "strain")
         case .rest:
-            ktile(String(localized: "Rest"), intText(restScore), "%", StrandPalette.restColor, frac(restScore), key: "sleep_performance")
+            ktile(String(localized: "Sleep Performance"), intText(restScore), "%", StrandPalette.restColor, frac(restScore), key: "sleep_performance")
         case .hrv:
             ktile("HRV", intText(hrv), "ms", StrandPalette.metricCyan, fracOver(hrv, 120), key: "hrv")
         case .restingHr:
@@ -1047,10 +1046,10 @@ struct LiquidTodayView: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .fill(StrandPalette.surfaceRaised)
-                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .strokeBorder(StrandPalette.hairline, lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+                        .strokeBorder(StrandPalette.hairline.opacity(0.72), lineWidth: 0.75))
                     .opacity(cardOpacity)
             )
     }
@@ -1446,16 +1445,14 @@ private struct LiquidWordmark: View {
 
 // MARK: - Hero score cell (count-up number over a filling vessel, tap-to-splash)
 
-/// One of the three hero scores (Charge / Effort / Rest). The vessel fills from empty and the number
-/// COUNTS UP to the value when data lands; tapping the gauge itself splashes (the number is
-/// hit-transparent so the tap reaches the vessel). The label row taps through to the scoring guide.
+/// One of the three daily scores. A flat open ring keeps the primary dashboard
+/// glanceable and matches the visual grammar used by the dedicated score screens.
 private struct HeroScoreCell: View {
     static let vesselDiameter: CGFloat = 96
 
     let label: String
     let score: Double?            // on whatever scale the caller passes (nil = no data yet)
     let tint: Color
-    let animated: Bool
     let onGuide: () -> Void
     // The scale `score` is already expressed on — 100 for Charge/Rest, or the user's chosen Effort scale
     // max (100 or 21, #45) — so the vessel fill matches the displayed number.
@@ -1466,31 +1463,40 @@ private struct HeroScoreCell: View {
 
     @State private var shown: Double = 0
 
-    private var frac: Double? { score.map { max(0, min(1, $0 / maxValue)) } }
-
     var body: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 8) {
             ZStack {
-                LiquidVessel(value: frac, tint: tint, animated: animated)
-                    .frame(width: Self.vesselDiameter, height: Self.vesselDiameter)
-                Group {
+                RecoveryArc(startAngle: .degrees(125), spanDegrees: 290,
+                            fraction: 1, lineWidth: 8)
+                    .stroke(StrandPalette.surfaceInset,
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                RecoveryArc(startAngle: .degrees(125), spanDegrees: 290,
+                            fraction: shownFraction, lineWidth: 8)
+                    .stroke(tint, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    .shadow(color: tint.opacity(0.18), radius: 4)
+                HStack(alignment: .firstTextBaseline, spacing: 1) {
                     if score != nil {
-                        CountUpNumber(value: shown, font: StrandFont.rounded(26), decimals: decimals)
+                        CountUpNumber(value: shown, font: StrandFont.rounded(25), decimals: decimals)
                     } else {
-                        Text("–").font(StrandFont.rounded(26))
+                        Text("–").font(StrandFont.rounded(25))
+                    }
+                    if score != nil, maxValue == 100 {
+                        Text("%")
+                            .font(StrandFont.rounded(11))
+                            .foregroundStyle(.white.opacity(0.72))
                     }
                 }
                 .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-                .allowsHitTesting(false)   // taps fall through to the vessel → splash
+                .allowsHitTesting(false)
             }
+            .frame(width: Self.vesselDiameter, height: Self.vesselDiameter)
             Button(action: onGuide) {
                 HStack(spacing: 3) {
                     // #74: one line, shrink-to-fit rather than wrap under large Dynamic Type (mirrors the
                     // score number above) so CHARGE/EFFORT/REST never grow the hero card to two lines.
-                    Text(label.uppercased()).font(StrandFont.overline).tracking(1.6)
+                    Text(label.uppercased()).font(StrandFont.overline).tracking(1.2)
                         .lineLimit(1).minimumScaleFactor(0.7)
                     Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold)).opacity(0.6)
                 }
@@ -1505,6 +1511,11 @@ private struct HeroScoreCell: View {
         .frame(maxWidth: .infinity)
         .onAppear { rollTo(score) }
         .onChangeCompat(of: score) { v in rollTo(v) }
+    }
+
+    private var shownFraction: Double {
+        guard score != nil else { return 0 }
+        return max(0, min(1, shown / maxValue))
     }
 
     private func rollTo(_ v: Double?) {

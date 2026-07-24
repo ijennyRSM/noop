@@ -624,9 +624,8 @@ private struct QuickActionSheet: View {
 
 // MARK: - Floating tab bar
 
-/// The signature bottom bar: two frosted "glass" islands (Today·Trends / Sleep·More) with the gold
-/// action button nested cleanly in the gap between them — no overlap, no glow. Real iOS 26 Liquid
-/// Glass where available, a `.ultraThinMaterial` fallback below. Replaces the hidden native tab bar.
+/// Compact performance-navigation bar. It stays visually anchored to the bottom edge,
+/// uses a graphite surface, and marks the active section with a crisp blue rule.
 private struct FloatingTabBar: View {
     @Binding var selection: Int
     /// Fires when the user taps the ALREADY-active tab (2026-07-02: re-tap should refresh).
@@ -639,33 +638,21 @@ private struct FloatingTabBar: View {
                        Item(title: "More", icon: "ellipsis", tag: 3)]
 
     var body: some View {
-        // One frosted glass bar, four evenly-spaced tabs. The quick-action "+" now lives in the
-        // top-right of each screen's header (balancing the profile avatar on the left).
         HStack(spacing: 2) {
             tabButton(nav[0])
             tabButton(nav[1])
             tabButton(nav[2])
             tabButton(nav[3])
         }
-        .padding(.vertical, 7)
-        .padding(.horizontal, 8)
-        .liquidGlass(in: Capsule())
-        // Over the liquid Today the sky ends at ~340pt, so the bar floats on flat opaque surfaceBase —
-        // a blur material has nothing to dissolve and hardens into a solid lozenge (2026-07-02:
-        // "clips into a solid shape"). A faint translucent scrim INSIDE the same Capsule keeps the pill
-        // reading as tinted glass, not a slab, even against dead-flat colour.
-        .background(.white.opacity(0.06), in: Capsule())
-        // Soft top-lit rim instead of one hard hairline, so there's no crisp cut-out edge.
-        .overlay(
-            Capsule().strokeBorder(
-                LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.04)],
-                               startPoint: .top, endPoint: .bottom),
-                lineWidth: 0.75)
-        )
-        // Lighter, wider shadow: real elevation without stamping a dark halo on the flat canvas.
-        .shadow(color: .black.opacity(0.22), radius: 18, x: 0, y: 8)
-        .padding(.horizontal, 22)
-        .padding(.bottom, 4)
+        .padding(.horizontal, 10)
+        .padding(.top, 6)
+        .padding(.bottom, 3)
+        .background(StrandPalette.surfaceRaised)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(StrandPalette.hairline.opacity(0.8))
+                .frame(height: 0.75)
+        }
     }
 
     private func tabButton(_ item: Item) -> some View {
@@ -677,15 +664,19 @@ private struct FloatingTabBar: View {
                 withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24)) { selection = item.tag }
             }
         } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: 4) {
+                Capsule()
+                    .fill(active ? StrandPalette.accent : .clear)
+                    .frame(width: 24, height: 3)
                 Image(systemName: item.icon)
-                    .font(.system(size: 18, weight: active ? .semibold : .regular))
+                    .font(.system(size: 18, weight: active ? .bold : .medium))
                 Text(item.title)
-                    .font(.system(size: 10, weight: active ? .semibold : .medium))
+                    .font(.system(size: 10, weight: active ? .bold : .semibold))
+                    .textCase(.uppercase)
             }
-            .foregroundStyle(active ? StrandPalette.accent : StrandPalette.textSecondary)
+            .foregroundStyle(active ? StrandPalette.textPrimary : StrandPalette.textTertiary)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 3)
+            .padding(.bottom, 5)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -695,17 +686,4 @@ private struct FloatingTabBar: View {
 
 }
 
-// MARK: - Liquid Glass (iOS 26) with a Material fallback
-
-private extension View {
-    /// Real iOS 26 Liquid Glass where available; `.ultraThinMaterial` on iOS 17–25 — a clean
-    /// blended degrade so the bar stays modern on new OSes without breaking older ones.
-    @ViewBuilder func liquidGlass(in shape: some Shape) -> some View {
-        if #available(iOS 26.0, *) {
-            self.glassEffect(.regular, in: shape)
-        } else {
-            self.background(.ultraThinMaterial, in: shape)
-        }
-    }
-}
 #endif
