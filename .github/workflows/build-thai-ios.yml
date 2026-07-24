@@ -193,15 +193,22 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             build 2>&1 | tee build/preview-xcodebuild.log
 
-          APP="$(
-            find build/preview-dd/Build/Products/Debug-iphonesimulator \
-              -maxdepth 1 -type d -name '*.app' -print -quit
-          )"
-          if [[ -z "$APP" || ! -f "$APP/Info.plist" ]]; then
-            echo "::error::Simulator application bundle was not found"
+          shopt -s nullglob
+          PREVIEW_APPS=(build/preview-dd/Build/Products/Debug-iphonesimulator/*.app)
+          if [[ ${#PREVIEW_APPS[@]} -ne 1 ]]; then
+            echo "::error::Expected exactly one simulator application; found ${#PREVIEW_APPS[@]}"
+            exit 1
+          fi
+          APP="${PREVIEW_APPS[0]}"
+          if [[ ! -f "$APP/Info.plist" ]]; then
+            echo "::error::Simulator application bundle is invalid: $APP"
             exit 1
           fi
 
+          # The screenshot exercises the core iPhone UI only. Embedded Watch and extension
+          # products are irrelevant here and can make an unsigned simulator install fail.
+          rm -rf "$APP/Watch" "$APP/PlugIns"
+          echo "Installing simulator app: $APP"
           xcrun simctl install "$DEVICE_UDID" "$APP"
           xcrun simctl status_bar "$DEVICE_UDID" override \
             --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
