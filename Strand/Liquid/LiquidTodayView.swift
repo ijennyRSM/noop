@@ -561,7 +561,7 @@ struct LiquidTodayView: View {
     private func monitorCard(route: TabRoute, title: String, value: String, detail: String,
                              icon: String, tint: Color) -> some View {
         NavigationLink(value: route) {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
                     Text(LocalizedStringKey(title))
                         .font(.system(size: 12, weight: .heavy, design: .rounded))
@@ -595,8 +595,8 @@ struct LiquidTodayView: View {
                     }
                 }
             }
-            .padding(15)
-            .frame(maxWidth: .infinity, minHeight: 116, alignment: .topLeading)
+            .padding(13)
+            .frame(maxWidth: .infinity, minHeight: 94, alignment: .topLeading)
             .background(
                 RoundedRectangle(cornerRadius: 15, style: .continuous)
                     .fill(Color(hex: "#2B3136"))
@@ -1676,7 +1676,7 @@ private struct LiquidWordmark: View {
 /// One of the three daily scores. A flat open ring keeps the primary dashboard
 /// glanceable and matches the visual grammar used by the dedicated score screens.
 private struct HeroScoreCell: View {
-    static let vesselDiameter: CGFloat = 104
+    static let vesselDiameter: CGFloat = 84
 
     let label: String
     let score: Double?            // on whatever scale the caller passes (nil = no data yet)
