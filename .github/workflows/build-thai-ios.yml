@@ -2,6 +2,12 @@ name: Build Thai iOS Unsigned IPA
 
 on:
   workflow_dispatch:
+    inputs:
+      capture_preview:
+        description: Capture the populated Thai Today screen in an iPhone simulator
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -141,4 +147,85 @@ jobs:
           name: NOOP-Thai-Unsigned-IPA
           path: ${{ steps.package.outputs.ipa_path }}
           if-no-files-found: error
+          retention-days: 14
+
+  preview:
+    name: Capture Thai iPhone UI preview
+    if: ${{ inputs.capture_preview }}
+    runs-on: macos-26
+    timeout-minutes: 35
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build and launch populated Thai simulator
+        run: |
+          set -euo pipefail
+
+          DEVICE_UDID="$(
+            xcrun simctl list devices available -j |
+              jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid'
+          )"
+          if [[ -z "$DEVICE_UDID" || "$DEVICE_UDID" == "null" ]]; then
+            echo "::error::No available iPhone simulator was found"
+            exit 1
+          fi
+
+          xcrun simctl boot "$DEVICE_UDID" || true
+          xcrun simctl bootstatus "$DEVICE_UDID" -b
+
+          xcodebuild \
+            -scheme NOOPiOS \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$DEVICE_UDID" \
+            -derivedDataPath build/preview-dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee build/preview-xcodebuild.log
+
+          APP="$(
+            find build/preview-dd/Build/Products/Debug-iphonesimulator \
+              -maxdepth 1 -type d -name '*.app' -print -quit
+          )"
+          if [[ -z "$APP" || ! -f "$APP/Info.plist" ]]; then
+            echo "::error::Simulator application bundle was not found"
+            exit 1
+          fi
+
+          xcrun simctl install "$DEVICE_UDID" "$APP"
+          xcrun simctl status_bar "$DEVICE_UDID" override \
+            --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
+          xcrun simctl launch "$DEVICE_UDID" com.noopapp.noop \
+            --demo-seed --demo-hour 14 \
+            -AppleLanguages "(th)" -AppleLocale th_TH
+          sleep 20
+          mkdir -p build/ui-preview
+          xcrun simctl io "$DEVICE_UDID" screenshot \
+            "build/ui-preview/NOOP-Thai-WHOOP-layout.png"
+
+      - name: Upload Thai UI preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-Thai-iPhone-UI-Preview
+          path: build/ui-preview/NOOP-Thai-WHOOP-layout.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload preview build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-Thai-iPhone-UI-Preview-Logs
+          path: build/preview-xcodebuild.log
+          if-no-files-found: ignore
           retention-days: 14
