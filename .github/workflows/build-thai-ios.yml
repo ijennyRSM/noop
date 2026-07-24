@@ -3,6 +3,11 @@ name: Build Thai iOS Unsigned IPA
 on:
   workflow_dispatch:
     inputs:
+      build_ipa:
+        description: Build and upload the unsigned Release IPA
+        required: false
+        type: boolean
+        default: true
       capture_preview:
         description: Capture the populated Thai Today screen in an iPhone simulator
         required: false
@@ -15,6 +20,7 @@ permissions:
 jobs:
   build-ios:
     name: Build unsigned Thai IPA
+    if: ${{ inputs.build_ipa }}
     runs-on: macos-26
     timeout-minutes: 45
     defaults:
@@ -184,6 +190,7 @@ jobs:
           xcrun simctl boot "$DEVICE_UDID" || true
           xcrun simctl bootstatus "$DEVICE_UDID" -b
 
+          set +e
           xcodebuild \
             -scheme NOOPiOS \
             -configuration Debug \
@@ -192,6 +199,14 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             build 2>&1 | tee build/preview-xcodebuild.log
+          XCODE_STATUS="${PIPESTATUS[0]}"
+          set -e
+          echo "xcodebuild exit status: $XCODE_STATUS"
+          if [[ "$XCODE_STATUS" -ne 0 ]] &&
+             ! grep -q '\*\* BUILD SUCCEEDED \*\*' build/preview-xcodebuild.log; then
+            echo "::error::Simulator build failed with status $XCODE_STATUS"
+            exit "$XCODE_STATUS"
+          fi
 
           shopt -s nullglob
           PREVIEW_APPS=(build/preview-dd/Build/Products/Debug-iphonesimulator/*.app)
