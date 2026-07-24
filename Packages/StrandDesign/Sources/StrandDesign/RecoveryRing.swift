@@ -180,6 +180,13 @@ public struct RecoveryArc: Shape {
     public var fraction: Double
     public var lineWidth: CGFloat
 
+    public init(startAngle: Angle, spanDegrees: Double, fraction: Double, lineWidth: CGFloat) {
+        self.startAngle = startAngle
+        self.spanDegrees = spanDegrees
+        self.fraction = fraction
+        self.lineWidth = lineWidth
+    }
+
     public var animatableData: Double {
         get { fraction }
         set { fraction = newValue }

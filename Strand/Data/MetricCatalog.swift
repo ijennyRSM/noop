@@ -69,7 +69,12 @@ struct MetricDescriptor: Identifiable, Hashable {
             // #111: a skin-temp DEVIATION (v < 20 °C) scales without the +32 offset; an absolute reading
             // (WHOOP export, v >= 20 °C) keeps the full C→F. Every other °C metric is absolute.
             if isSkinTemp && !VitalBands.isAbsoluteSkinTemp(v) {
-                return UnitFormatter.temperatureDeltaFromCelsius(v, unit: temperature, decimals: decimals)
+                // A deviation is easier to read when its direction is explicit. Keep this compact
+                // (+1.2°C / -0.8°C) so nobody mistakes it for an absolute skin temperature.
+                let formatted = UnitFormatter.temperatureDeltaFromCelsius(
+                    v, unit: temperature, decimals: decimals
+                ).replacingOccurrences(of: " ", with: "")
+                return v > 0 ? "+\(formatted)" : formatted
             }
             return UnitFormatter.temperatureFromCelsius(v, unit: temperature, decimals: decimals)
         default:    return isEffort ? format(v, effortScale: effortScale) : format(v)

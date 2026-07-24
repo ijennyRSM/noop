@@ -354,7 +354,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การอ่านค่า %lld"
+            "value": "ค่าที่วัดได้ %lld ค่า"
           }
         }
       }
@@ -1372,7 +1372,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ลึก"
+            "value": "หลับลึก"
           }
         }
       }
@@ -1674,7 +1674,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "เลื่อนสายรัด: ชื่อบนเวที เวลาเริ่มต้น-สิ้นสุด และระยะเวลา"
+            "value": "เลื่อนดูแถบเพื่อดูชื่อระยะ เวลาเริ่ม–สิ้นสุด และระยะเวลา"
           }
         }
       }
@@ -1944,7 +1944,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "หลับตื้น"
           }
         }
       }
@@ -2100,7 +2100,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "สว่าง"
           }
         }
       }
@@ -2375,7 +2375,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ภาพรวมทรัพยากรบุคคล"
+            "value": "ภาพรวมHR"
           }
         }
       }
@@ -3610,7 +3610,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "โห่ 4.0"
+            "value": "WHOOP 4.0"
           }
         }
       }
@@ -3720,7 +3720,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "สลีป %@"
+            "value": "หลับ %@"
           }
         }
       }
@@ -3905,6 +3905,53 @@
           "stringUnit": {
             "state": "translated",
             "value": "ช่วง %@ ถึง %@"
+          }
+        }
+      }
+    },
+    "sleep.stage.light": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leichtschlaf"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sueño ligero"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sommeil léger"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sono leve"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Легкий сон"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับตื้น"
           }
         }
       }

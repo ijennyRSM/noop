@@ -26,24 +26,26 @@ final class VitalReadingsTableTests: XCTestCase {
             VitalReading(day: "2026-01-03", value: 97, source: appleHealth),
         ]
     }
-    private func spo2Format(_ v: Double) -> String { String(format: "%.0f", v) }
+    private func spo2Format(_ v: Double) -> String { "\(String(format: "%.0f", v)) %" }
 
     func testRowCountEqualsReadingsCount() {
-        let rows = vitalReadingRows(readings: spo2Readings(), unit: "%", strapDeviceId: strap,
+        let rows = vitalReadingRows(readings: spo2Readings(), strapDeviceId: strap,
                                     now: now, format: spo2Format)
         XCTAssertEqual(rows.count, spo2Readings().count)
     }
 
     func testRowsAreNewestFirst() {
-        let rows = vitalReadingRows(readings: spo2Readings(), unit: "%", strapDeviceId: strap,
+        let rows = vitalReadingRows(readings: spo2Readings(), strapDeviceId: strap,
                                     now: now, format: spo2Format)
         // Ascending input (01 → 03) must render descending (03 → 01).
-        XCTAssertEqual(rows.map(\.time), ["3 Jan", "2 Jan", "1 Jan"])
+        // Date order is localized ("3 Jan" in many locales, "Jan 3" in US English), so pin the
+        // descending day numbers without hard-coding one locale's word order.
+        XCTAssertEqual(rows.map { $0.time.filter(\.isNumber) }, ["3", "2", "1"])
         XCTAssertEqual(rows.first?.value, "97 %")   // the newest reading leads
     }
 
     func testSourceLabelsResolvePerSample() {
-        let rows = vitalReadingRows(readings: spo2Readings(), unit: "%", strapDeviceId: strap,
+        let rows = vitalReadingRows(readings: spo2Readings(), strapDeviceId: strap,
                                     now: now, format: spo2Format)
         // Newest-first, so: Apple Health (03), Health Connect (02), Whoop strap (01).
         XCTAssertEqual(rows.map(\.source), ["Apple Health", "Health Connect", "Whoop"])
@@ -52,26 +54,34 @@ final class VitalReadingsTableTests: XCTestCase {
     func testComputedStrapSiblingReadsOnDevice() {
         let rows = vitalReadingRows(
             readings: [VitalReading(day: "2026-01-04", value: 55, source: strap + "-noop")],
-            unit: "yrs", strapDeviceId: strap, now: now, format: { String(format: "%.0f", $0) }
+            strapDeviceId: strap, now: now, format: { "\(String(format: "%.0f", $0)) yrs" }
         )
         XCTAssertEqual(rows.first?.source, "On-device")
     }
 
     func testValueReusesModelFormatAndUnit() {
-        // The row value is the model's own formatter applied to the reading, with the unit appended —
+        // The row value is the model's complete formatter output — including its unit —
         // 41.7 ms formats (%.0f) to "42 ms".
         let rows = vitalReadingRows(
             readings: [VitalReading(day: "2026-01-01", value: 41.7, source: strap)],
-            unit: "ms", strapDeviceId: strap, now: now, format: { String(format: "%.0f", $0) }
+            strapDeviceId: strap, now: now, format: { "\(String(format: "%.0f", $0)) ms" }
         )
         XCTAssertEqual(rows.first?.value, "42 ms")
+    }
+
+    func testTemperatureFormatterDoesNotDuplicateUnit() {
+        let rows = vitalReadingRows(
+            readings: [VitalReading(day: "2026-01-01", value: 1.2, source: strap + "-noop")],
+            strapDeviceId: strap, now: now, format: { _ in "+1.2°C" }
+        )
+        XCTAssertEqual(rows.first?.value, "+1.2°C")
     }
 
     func testUnitlessMetricLeavesNoTrailingSpace() {
         // Vitality has an empty unit; the value must not carry a dangling space.
         let rows = vitalReadingRows(
             readings: [VitalReading(day: "2026-01-01", value: 72, source: strap + "-noop")],
-            unit: "", strapDeviceId: strap, now: now, format: { String(format: "%.0f", $0) }
+            strapDeviceId: strap, now: now, format: { String(format: "%.0f", $0) }
         )
         XCTAssertEqual(rows.first?.value, "72")
     }

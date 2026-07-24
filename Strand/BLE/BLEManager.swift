@@ -473,6 +473,10 @@ public final class BLEManager: NSObject, ObservableObject {
     public let state: LiveState
     private let router: FrameRouter
     private var collector: Collector?
+    /// #716: stored on bootstrap so the scan callback can fix the seeded "WHOOP" model label.
+    private var registryStore: DeviceRegistryStore?
+    /// #716: true once the seeded "WHOOP" model has been stamped to the correct family.
+    private var modelStamped = false
 
     // MARK: Upload / server sync — REMOVED for Strand (standalone, fully on-device).
 
@@ -745,6 +749,8 @@ public final class BLEManager: NSObject, ObservableObject {
     /// readable and avoid forcing SwiftUI to auto-scroll on every ACK row.
     private var historicalAckLogCounter = 0
     private var clockRequested = false
+    /// #700: retry count for GET_CLOCK when no correlation establishes before backfill. Capped at 3.
+    private var clockRetries = 0
     private var intentionalDisconnect = false
     /// Consecutive `didFailToConnect` count, for the auto-reconnect backoff (#414). Reset to 0 on a
     /// successful connect; grows the reschedule delay so a strap that's genuinely out of range doesn't
@@ -885,7 +891,9 @@ public final class BLEManager: NSObject, ObservableObject {
         // Guarded + best-effort: if the registry is empty/unreadable, deviceId stays as it was, so no
         // crash and no behaviour change. registryWriter is nonisolated/Sendable (the Pool manages
         // its own concurrency).
-        if let activeId = try? DeviceRegistryStore(dbQueue: store.registryWriter).activeDeviceId(),
+        let registry = DeviceRegistryStore(dbQueue: store.registryWriter)
+        self.registryStore = registry
+        if let activeId = try? registry.activeDeviceId(),
            !activeId.isEmpty {
             self.deviceId = activeId
         }
@@ -1567,6 +1575,27 @@ public final class BLEManager: NSObject, ObservableObject {
     /// flag, kick the strap with sendHistoricalData, and arm the idle timeout.
     @discardableResult
     private func beginBackfill() -> Bool {
+        // #700: if backfill is about to start and we STILL have no clock correlation, re-send
+        // GET_CLOCK. The strap may have silently dropped the first response (observed on a reporter's
+        // WHOOP 4.0 — GET_CLOCK sent, no reply, entire session decodes under IDENTITY fallback, all
+        // rows land on the current day). Capped at 3 retries to avoid flooding.
+        if clockRef == nil && clockRetries < 3 {
+            clockRetries += 1
+            log("Clock: no correlation yet — re-sending GET_CLOCK (retry \(clockRetries)/3)")
+            send(.getClock, payload: [])
+            send(.getClock, payload: [0x00])
+        } else if clockRef == nil, let newest = strapNewestTs {
+            // #700 fallback: GET_CLOCK never responded even after retries. Derive a rough correlation
+            // from the Data Range's newest-banked timestamp (already parsed, always answered). The
+            // offset is approximate (the newest record could be minutes old) but vastly better than
+            // identity (offset 0), which mis-dates entire nights.
+            let wall = Int(Date().timeIntervalSince1970)
+            let ref = ClockRef(device: newest, wall: wall)
+            clockRef = ref
+            collector?.clockRef = ref
+            backfiller?.clockRef = ref
+            log("Clock: GET_CLOCK unresponsive — derived rough correlation from Data Range (device=\(newest) wall=\(wall), offset \(wall - newest)s)")
+        }
         // Never offload before the connect handshake has run: a racing foreground/restore trigger
         // firing SEND_HISTORICAL ahead of hello/SET_CLOCK was part of the storm that stopped serving.
         guard connectHandshakeDone else {
@@ -2719,8 +2748,10 @@ public final class BLEManager: NSObject, ObservableObject {
         configureCollectorFamily()
         central.stopScan()
         log("Scanning for \(model.displayName)…")
+        let diagnosticServices = [model.scanService] + WhoopGattServiceFamily.unsupportedServiceUUIDStrings
+            .map { CBUUID(string: $0) }
         central.scanForPeripherals(
-            withServices: [model.scanService],
+            withServices: diagnosticServices,
             options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
         )
         guard allowFallback else { return }
@@ -2874,6 +2905,16 @@ public final class BLEManager: NSObject, ObservableObject {
         // now — tells whether the arm even had a chance (skew ~0 but the strap still rejects ⇒ a corrupted
         // alarm register, not a clock problem).
         d.set(strapClockNow - Int(Date().timeIntervalSince1970), forKey: "alarm.lastArmClockSkew")
+        // #34: live HR at the moment of the arm, purely to test a hypothesis raised on a reporter's log —
+        // morning wake-up and morning short-horizon arms have fired reliably since v9.0.0, but an identical
+        // evening short-horizon arm (same code path, same commands, no day/night branch anywhere in this
+        // function) did not. One firmware-side explanation that would fit every reported case: the
+        // physical alarm haptic might only fire while the strap's OWN sleep/rest detection considers the
+        // wearer sleep-adjacent, independent of anything NOOP sends. This doesn't prove or fix that — it's
+        // a free read of state already tracked live, logged so the next reported failure (ideally an
+        // evening one) can be compared against the resting HR of the successful arms already on file. `nil`
+        // (no key written) means no HR had streamed yet at arm time, not zero.
+        d.set(state.heartRate, forKey: "alarm.lastArmHeartRate")
     }
 
     /// Disarm the currently-armed firmware alarm.
@@ -3176,6 +3217,30 @@ extension BLEManager: @preconcurrency CBCentralManagerDelegate {
                                advertisementData: [String: Any],
                                rssi RSSI: NSNumber) {
         let name = (advertisementData[CBAdvertisementDataLocalNameKey] as? String) ?? peripheral.name ?? "unknown"
+        // #716: the seeded "my-whoop" device has model "WHOOP" (no generation). Once a live scan
+        // confirms which service family the strap advertises, stamp the correct model so
+        // forRegistryModel returns the right DeviceFamily (fixes skin-temp ADC scale + display).
+        if !modelStamped, let rs = registryStore,
+           let stale = try? rs.all().first(where: { $0.status == .active && $0.model == "WHOOP" }) {
+            let correct = selectedModel == .whoop4 ? "WHOOP 4.0" : "WHOOP 5.0 / MG"
+            try? rs.setModel(stale.id, model: correct)
+            log("Updated device model from \"WHOOP\" to \"\(correct)\" (#716)")
+            modelStamped = true
+        }
+        let advertisedServiceUUIDs = (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? [])
+            .map { $0.uuidString.lowercased() }
+        let scanDecision = whoopGattScanDecision(
+            selectedServiceUUIDString: selectedModel.scanService.uuidString,
+            advertisedServiceUUIDStrings: advertisedServiceUUIDs
+        )
+        if !scanDecision.shouldConnect {
+            if let family = scanDecision.unsupportedFamily {
+                log("Discovered \(name) (rssi \(RSSI)) — \(family.diagnosticUnsupportedMessage)")
+                return
+            }
+            log("Discovered \(name) (rssi \(RSSI)) without \(selectedModel.displayName) service — ignoring")
+            return
+        }
         // Multi-WHOOP present-scan (Add-a-WHOOP wizard): collect the strap, do NOT auto-connect, and
         // return before touching the connect flow. Only reachable when the wizard explicitly turned on
         // `isPresentingScan` via scanForWhoops(); on the default path (false) this branch is skipped
@@ -3354,6 +3419,7 @@ extension BLEManager: @preconcurrency CBCentralManagerDelegate {
         realtimeArmed = false
         whoop5SessionStarted = false
         clockRequested = false
+        clockRetries = 0
         connectHandshakeDone = false
         cmdNotifyConfirmedActive = false   // #34: a fresh connection needs its own notify-confirm + settle
         connectSettledSignaled = false
@@ -3524,6 +3590,7 @@ extension BLEManager: @preconcurrency CBCentralManagerDelegate {
         // clockRef is nil in the fresh process after restore, so we must re-request it.
         // Reset the flag so the post-restore didWriteValueFor issues exactly one getClock.
         clockRequested = false
+        clockRetries = 0
         // Ensure the store is ready before restored BLE data arrives (idempotent; no-op if already built).
         Task { @MainActor in await bootstrapStore() }
         if p.state == .connected {
@@ -4102,7 +4169,7 @@ extension BLEManager: @preconcurrency CBPeripheralDelegate {
                         clockRef = ref
                         collector?.clockRef = ref                  // unblocks buffered persistence
                         backfiller?.clockRef = ref                 // unblocks historical chunk decode
-                        log("Clock correlated: device=\(ref.device) wall=\(ref.wall)")
+                        log("Clock correlated: device=\(ref.device) wall=\(ref.wall)\(clockRetries > 0 ? " (after retry \(clockRetries))" : "")")
                         // Conditional SET_CLOCK (mirrors WHOOP): only when the strap RTC has drifted /
                         // is frozen — not blindly every connect. Offload doesn't depend on this (it uses
                         // clockRef for decoding); SET_CLOCK only keeps FUTURE logging timestamps sane.
