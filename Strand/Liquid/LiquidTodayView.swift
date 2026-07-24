@@ -451,7 +451,7 @@ struct LiquidTodayView: View {
                 .frame(maxWidth: .infinity)
                 .background(Capsule().fill(Color(hex: "#30373D")))
                 .buttonStyle(.plain)
-                .accessibilityLabel("\(dayTitle). Tap to pick a day, use arrows or swipe to change day.")
+                .accessibilityLabel("\(dayTitle). Tap to pick a day, swipe to change day.")
                 .popover(isPresented: $showDayPicker) {
                     DatePicker("", selection: dayPickerBinding, in: ...Repository.logicalDay(Date()),
                                displayedComponents: [.date])

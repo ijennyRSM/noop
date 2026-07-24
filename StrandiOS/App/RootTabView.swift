@@ -671,8 +671,8 @@ private struct FloatingTabBar: View {
                             lineWidth: 2
                         )
                         .padding(10)
-                    Text("N")
-                        .font(.system(size: 20, weight: .light, design: .rounded))
+                    Image(systemName: "waveform.path")
+                        .font(.system(size: 19, weight: .light))
                         .foregroundStyle(.white)
                 }
                 .frame(width: 68, height: 68)
