@@ -98,7 +98,9 @@ struct RootTabView: View {
                     }
             )
 
-            FloatingTabBar(selection: $selectedTab, onReselect: { tag in
+            FloatingTabBar(selection: $selectedTab, onAction: {
+                withAnimation(Self.sheetEase) { quickAction = .menu }
+            }, onReselect: { tag in
                 // Re-tapping the active tab refreshes that page's data (2026-07-02) and, from a
                 // subpage, pops that tab's stack back to its root (#135) — an animated pop via the
                 // path, not a rebuild. At the root the pop is skipped, so scroll position survives
@@ -628,6 +630,7 @@ private struct QuickActionSheet: View {
 /// uses a graphite surface, and marks the active section with a crisp blue rule.
 private struct FloatingTabBar: View {
     @Binding var selection: Int
+    var onAction: () -> Void = {}
     /// Fires when the user taps the ALREADY-active tab (2026-07-02: re-tap should refresh).
     var onReselect: (Int) -> Void = { _ in }
 
@@ -638,21 +641,49 @@ private struct FloatingTabBar: View {
                        Item(title: "More", icon: "ellipsis", tag: 3)]
 
     var body: some View {
-        HStack(spacing: 2) {
-            tabButton(nav[0])
-            tabButton(nav[1])
-            tabButton(nav[2])
-            tabButton(nav[3])
+        HStack(alignment: .bottom, spacing: 10) {
+            HStack(spacing: 0) {
+                tabButton(nav[0])
+                tabButton(nav[1])
+                tabButton(nav[2])
+                tabButton(nav[3])
+            }
+            .padding(.horizontal, 7)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .frame(height: 70)
+            .background(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .fill(Color(hex: "#20262B").opacity(0.97))
+                    .overlay(RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .strokeBorder(.white.opacity(0.09), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.38), radius: 16, y: 7)
+            )
+
+            Button(action: onAction) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "#20232C"))
+                    Circle()
+                        .stroke(
+                            AngularGradient(colors: [Color(hex: "#13AEEF"), Color(hex: "#6658E8"),
+                                                     Color(hex: "#13AEEF")], center: .center),
+                            lineWidth: 2
+                        )
+                        .padding(10)
+                    Text("N")
+                        .font(.system(size: 20, weight: .light, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 68, height: 68)
+                .overlay(Circle().strokeBorder(.white.opacity(0.08), lineWidth: 1))
+                .shadow(color: .black.opacity(0.42), radius: 16, y: 7)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Quick actions")
         }
-        .padding(.horizontal, 10)
-        .padding(.top, 6)
-        .padding(.bottom, 3)
-        .background(StrandPalette.surfaceRaised)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(StrandPalette.hairline.opacity(0.8))
-                .frame(height: 0.75)
-        }
+        .padding(.horizontal, 14)
+        .padding(.bottom, 5)
     }
 
     private func tabButton(_ item: Item) -> some View {
@@ -664,19 +695,14 @@ private struct FloatingTabBar: View {
                 withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24)) { selection = item.tag }
             }
         } label: {
-            VStack(spacing: 4) {
-                Capsule()
-                    .fill(active ? StrandPalette.accent : .clear)
-                    .frame(width: 24, height: 3)
+            VStack(spacing: 5) {
                 Image(systemName: item.icon)
-                    .font(.system(size: 18, weight: active ? .bold : .medium))
+                    .font(.system(size: 20, weight: active ? .bold : .medium))
                 Text(item.title)
-                    .font(.system(size: 10, weight: active ? .bold : .semibold))
-                    .textCase(.uppercase)
+                    .font(.system(size: 10, weight: active ? .bold : .medium))
             }
-            .foregroundStyle(active ? StrandPalette.textPrimary : StrandPalette.textTertiary)
+            .foregroundStyle(active ? Color.white : Color.white.opacity(0.55))
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 5)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

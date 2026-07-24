@@ -189354,6 +189354,94 @@
         }
       }
     },
+    "Add Activity": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มกิจกรรม"
+          }
+        }
+      }
+    },
+    "My Day": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันของฉัน"
+          }
+        }
+      }
+    },
+    "Review": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ควรตรวจสอบ"
+          }
+        }
+      }
+    },
+    "Start Activity": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มกิจกรรม"
+          }
+        }
+      }
+    },
+    "Stress Monitor": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การติดตามความเครียด"
+          }
+        }
+      }
+    },
+    "TODAY’S ACTIVITIES": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กิจกรรมวันนี้"
+          }
+        }
+      }
+    },
+    "Within range": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อยู่ในช่วงปกติ"
+          }
+        }
+      }
+    },
+    "Your Daily Outlook": {
+      "extractionState": "manual",
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แนวโน้มวันนี้ของคุณ"
+          }
+        }
+      }
+    },
     "3W": {
       "extractionState": "manual",
       "localizations": {

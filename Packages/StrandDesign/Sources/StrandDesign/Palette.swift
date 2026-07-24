@@ -255,7 +255,7 @@ public enum StrandPalette {
     public static var effortGradient: Gradient { Gradient(colors: [effortDeep, effortBright]) }
 
     /// Rest (sleep) — blue world / Classic indigo.
-    public static var restColor: Color     { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#7867C7", dark: "#A998F5") }
+    public static var restColor: Color     { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#5F93B2", dark: "#8DB8D2") }
     public static var restDeep: Color      { isClassic ? Color(light: "#203E73", dark: "#2A4C8F") : Color(light: "#51418F", dark: "#6858AF") }
     public static var restBright: Color    { isClassic ? Color(light: "#6A4FC0", dark: "#8E6FD6") : Color(light: "#9A86EB", dark: "#C1B2FF") }
     public static var restGlow: Color      { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#7867C7", dark: "#A998F5") }
