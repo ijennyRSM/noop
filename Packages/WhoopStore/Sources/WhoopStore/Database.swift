@@ -694,6 +694,212 @@ extension WhoopStore {
                 t.primaryKey(["deviceId", "ts"])
             }
         }
+        // Local-first strength training. Built-in exercise facts are seeded from the versioned
+        // package resource after migration; user-created exercises, sessions, sets, templates and
+        // derived muscle loads live in the same database and therefore travel with `.noopbak`.
+        //
+        // Exercise references intentionally do not use a foreign key: an old workout must remain
+        // readable if a future bundled library removes or renames a definition. Stable exercise IDs
+        // and the snapshotName columns preserve history, while custom exercises use soft deletion.
+        migrator.registerMigration("v32-strength-training") { db in
+            try db.create(table: "exerciseDefinition") { t in
+                t.column("id", .text).primaryKey()
+                t.column("canonicalName", .text).notNull()
+                t.column("equipmentJSON", .text).notNull()
+                t.column("movementPattern", .text).notNull()
+                t.column("laterality", .text).notNull()
+                t.column("loadType", .text).notNull()
+                t.column("effectiveBodyweightCoefficient", .double)
+                t.column("source", .text).notNull()
+                t.column("sourceURL", .text).notNull()
+                t.column("license", .text).notNull()
+                t.column("licenseURL", .text).notNull()
+                t.column("libraryVersion", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+            }
+            try db.create(table: "exerciseAlias") { t in
+                t.autoIncrementedPrimaryKey("rowId")
+                t.column("exerciseId", .text).notNull()
+                t.column("alias", .text).notNull()
+                t.column("normalizedAlias", .text).notNull()
+                t.uniqueKey(["exerciseId", "normalizedAlias"])
+            }
+            try db.create(index: "idx_exerciseAlias_normalized",
+                          on: "exerciseAlias", columns: ["normalizedAlias"])
+            try db.create(table: "exerciseMuscle") { t in
+                t.autoIncrementedPrimaryKey("rowId")
+                t.column("exerciseId", .text).notNull()
+                t.column("muscleId", .text).notNull()
+                t.column("role", .text).notNull()
+                t.column("contribution", .double).notNull()
+                t.uniqueKey(["exerciseId", "muscleId", "role"])
+            }
+            try db.create(index: "idx_exerciseMuscle_muscle",
+                          on: "exerciseMuscle", columns: ["muscleId", "exerciseId"])
+            try db.create(table: "customExercise") { t in
+                t.column("id", .text).primaryKey()
+                t.column("canonicalName", .text).notNull()
+                t.column("aliasesJSON", .text).notNull()
+                t.column("equipmentJSON", .text).notNull()
+                t.column("movementPattern", .text).notNull()
+                t.column("laterality", .text).notNull()
+                t.column("loadType", .text).notNull()
+                t.column("musclesJSON", .text).notNull()
+                t.column("effectiveBodyweightCoefficient", .double)
+                t.column("createdAt", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+                t.column("deletedAt", .integer)
+            }
+            try db.create(index: "idx_customExercise_name",
+                          on: "customExercise", columns: ["canonicalName"])
+
+            try db.create(table: "strengthSession") { t in
+                t.column("id", .text).primaryKey()
+                t.column("deviceId", .text).notNull()
+                t.column("workoutStartTs", .integer)
+                t.column("startedAt", .integer).notNull()
+                t.column("endedAt", .integer)
+                t.column("title", .text).notNull()
+                t.column("status", .text).notNull()
+                t.column("source", .text).notNull()
+                t.column("sessionRPE", .double)
+                t.column("notes", .text)
+                t.column("quickRegion", .text)
+                t.column("quickIntensity", .text)
+                t.column("confidence", .text).notNull()
+                t.column("cardiovascularEffort", .double)
+                t.column("muscularLoad", .double)
+                t.column("totalTrainingLoad", .double)
+                t.column("createdAt", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+            }
+            try db.create(index: "idx_strengthSession_device_started",
+                          on: "strengthSession", columns: ["deviceId", "startedAt"])
+            try db.create(index: "idx_strengthSession_status",
+                          on: "strengthSession", columns: ["status", "updatedAt"])
+
+            try db.create(table: "strengthSessionExercise") { t in
+                t.column("id", .text).primaryKey()
+                t.column("sessionId", .text).notNull()
+                    .references("strengthSession", onDelete: .cascade)
+                t.column("exerciseId", .text).notNull()
+                t.column("snapshotName", .text).notNull()
+                t.column("orderIndex", .integer).notNull()
+                t.column("notes", .text)
+                t.column("createdAt", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+                t.uniqueKey(["sessionId", "orderIndex"])
+            }
+            try db.create(index: "idx_strengthSessionExercise_session",
+                          on: "strengthSessionExercise", columns: ["sessionId", "orderIndex"])
+            try db.create(index: "idx_strengthSessionExercise_exercise",
+                          on: "strengthSessionExercise", columns: ["exerciseId"])
+
+            try db.create(table: "strengthSet") { t in
+                t.column("id", .text).primaryKey()
+                t.column("sessionExerciseId", .text).notNull()
+                    .references("strengthSessionExercise", onDelete: .cascade)
+                t.column("setIndex", .integer).notNull()
+                t.column("setType", .text).notNull()
+                t.column("weightKg", .double)
+                t.column("reps", .integer)
+                t.column("rpe", .double)
+                t.column("rir", .double)
+                t.column("side", .text).notNull()
+                t.column("completed", .boolean).notNull().defaults(to: false)
+                t.column("reachedFailure", .boolean).notNull().defaults(to: false)
+                t.column("notes", .text)
+                t.column("createdAt", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+                t.uniqueKey(["sessionExerciseId", "setIndex"])
+            }
+            try db.create(index: "idx_strengthSet_exercise",
+                          on: "strengthSet", columns: ["sessionExerciseId", "setIndex"])
+
+            try db.create(table: "workoutTemplate") { t in
+                t.column("id", .text).primaryKey()
+                t.column("name", .text).notNull()
+                t.column("notes", .text)
+                t.column("createdAt", .integer).notNull()
+                t.column("updatedAt", .integer).notNull()
+            }
+            try db.create(table: "workoutTemplateExercise") { t in
+                t.column("id", .text).primaryKey()
+                t.column("templateId", .text).notNull()
+                    .references("workoutTemplate", onDelete: .cascade)
+                t.column("exerciseId", .text).notNull()
+                t.column("snapshotName", .text).notNull()
+                t.column("orderIndex", .integer).notNull()
+                t.column("notes", .text)
+                t.uniqueKey(["templateId", "orderIndex"])
+            }
+            try db.create(table: "workoutTemplateSet") { t in
+                t.column("id", .text).primaryKey()
+                t.column("templateExerciseId", .text).notNull()
+                    .references("workoutTemplateExercise", onDelete: .cascade)
+                t.column("setIndex", .integer).notNull()
+                t.column("setType", .text).notNull()
+                t.column("targetWeightKg", .double)
+                t.column("targetReps", .integer)
+                t.column("targetRPE", .double)
+                t.column("targetRIR", .double)
+                t.uniqueKey(["templateExerciseId", "setIndex"])
+            }
+
+            try db.create(table: "dailyMuscleLoad") { t in
+                t.column("deviceId", .text).notNull()
+                t.column("day", .text).notNull()
+                t.column("muscleId", .text).notNull()
+                t.column("side", .text).notNull()
+                t.column("rawStimulus", .double).notNull()
+                t.column("normalizedLoad", .double).notNull()
+                t.column("workingSets", .integer).notNull()
+                t.column("confidence", .text).notNull()
+                t.column("updatedAt", .integer).notNull()
+                t.primaryKey(["deviceId", "day", "muscleId", "side"])
+            }
+            try db.create(index: "idx_dailyMuscleLoad_device_muscle_day",
+                          on: "dailyMuscleLoad", columns: ["deviceId", "muscleId", "day"])
+            try db.create(table: "strengthSessionMuscleLoad") { t in
+                t.column("sessionId", .text).notNull()
+                    .references("strengthSession", onDelete: .cascade)
+                t.column("deviceId", .text).notNull()
+                t.column("day", .text).notNull()
+                t.column("trainedAt", .integer).notNull()
+                t.column("muscleId", .text).notNull()
+                t.column("side", .text).notNull()
+                t.column("rawStimulus", .double).notNull()
+                t.column("normalizedLoad", .double).notNull()
+                t.column("workingSets", .integer).notNull()
+                t.column("confidence", .text).notNull()
+                t.primaryKey(["sessionId", "muscleId", "side"])
+            }
+            try db.create(index: "idx_strengthSessionMuscleLoad_device_day",
+                          on: "strengthSessionMuscleLoad",
+                          columns: ["deviceId", "day", "muscleId", "side"])
+            try db.create(table: "muscleResidualSnapshot") { t in
+                t.column("deviceId", .text).notNull()
+                t.column("capturedAt", .integer).notNull()
+                t.column("muscleId", .text).notNull()
+                t.column("side", .text).notNull()
+                t.column("residualLoad", .double).notNull()
+                t.column("confidence", .text).notNull()
+                t.column("lastTrainedAt", .integer)
+                t.primaryKey(["deviceId", "capturedAt", "muscleId", "side"])
+            }
+            try db.create(index: "idx_muscleResidual_latest",
+                          on: "muscleResidualSnapshot",
+                          columns: ["deviceId", "muscleId", "side", "capturedAt"])
+            try db.create(table: "exerciseFavorite") { t in
+                t.column("exerciseId", .text).primaryKey()
+                t.column("createdAt", .integer).notNull()
+            }
+            try db.create(table: "exerciseRecent") { t in
+                t.column("exerciseId", .text).primaryKey()
+                t.column("lastUsedAt", .integer).notNull()
+                t.column("useCount", .integer).notNull().defaults(to: 1)
+            }
+        }
         return migrator
     }
 }

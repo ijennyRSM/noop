@@ -20,7 +20,8 @@ let package = Package(
                 "WhoopProtocol",
                 "OuraProtocol",
                 .product(name: "GRDB", package: "GRDB.swift"),
-            ]
+            ],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "WhoopStoreTests",

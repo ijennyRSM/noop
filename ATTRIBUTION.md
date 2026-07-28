@@ -49,6 +49,11 @@ remains available as a fallback.
 - **GRDB.swift** (`groue/GRDB.swift`) — SQLite persistence (via Swift Package Manager).
 - **MarkdownUI** (`gonzalezreal/swift-markdown-ui`) — renders the AI Coach's Markdown
   replies (via Swift Package Manager).
+- **free-exercise-db** (`yuhonas/free-exercise-db`) — public-domain factual exercise
+  names, equipment, category, and muscle metadata used to build NOOP's offline
+  exercise library. Pinned revision and reproducible import details are documented
+  in `docs/EXERCISE_LIBRARY.md`. Licensed under The Unlicense. NOOP bundles no
+  upstream images, videos, or instructional prose.
 
 NOOP contains no WHOOP proprietary code, binaries, firmware, logos, or assets, and
 performs no DRM circumvention. It operates only with the user's own device and data.
