@@ -18071,6 +18071,12 @@
             "state": "translated",
             "value": "7 วัน"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 days"
+          }
         }
       }
     },
@@ -40038,6 +40044,12 @@
             "state": "translated",
             "value": "ยกเลิก"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
         }
       }
     },
@@ -46201,7 +46213,13 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ความมั่นใจ"
+            "value": "ความเชื่อมั่น"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confidence"
           }
         }
       }
@@ -53920,6 +53938,12 @@
             "state": "translated",
             "value": "ลบ"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
         }
       }
     },
@@ -56211,6 +56235,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "เสร็จสิ้น"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
           }
         }
       }
@@ -73299,6 +73329,12 @@
             "state": "translated",
             "value": "สูง"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High"
+          }
         }
       }
     },
@@ -85250,7 +85286,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "เบา"
           }
         }
       }
@@ -93102,6 +93138,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ปานกลาง"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moderate"
           }
         }
       }
@@ -104798,7 +104840,13 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ไม่ได้ตั้งค่า"
+            "value": "ยังไม่กำหนด"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
           }
         }
       }
@@ -122701,7 +122749,13 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ลบ"
+            "value": "นำออก"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
           }
         }
       }
@@ -125123,7 +125177,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การพักผ่อน"
+            "value": "พัก"
           }
         }
       }
@@ -129767,6 +129821,12 @@
             "state": "translated",
             "value": "บันทึก"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
         }
       }
     },
@@ -130834,7 +130894,13 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ประหยัด…"
+            "value": "กำลังบันทึก…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving…"
           }
         }
       }
@@ -141484,6 +141550,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "หยุด"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
           }
         }
       }
@@ -153962,7 +154034,13 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ทั้งหมด"
+            "value": "รวม"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total"
           }
         }
       }
@@ -190251,6 +190329,1878 @@
           "stringUnit": {
             "state": "translated",
             "value": "เครื่องหมายจะเริ่มช่วงที่เลือกและจบช่วงก่อนหน้า การทำงานนี้เพียงบันทึกเวลาลงในไฟล์ที่เก็บในเครื่อง และไม่ส่งข้อมูลใดไปยังสายรัด"
+          }
+        }
+      }
+    },
+    "Add exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มท่า"
+          }
+        }
+      }
+    },
+    "Add missing exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add missing exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มท่าที่ตกหล่น"
+          }
+        }
+      }
+    },
+    "Add set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add set"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มเซต"
+          }
+        }
+      }
+    },
+    "All equipment": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All equipment"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อุปกรณ์ทั้งหมด"
+          }
+        }
+      }
+    },
+    "All muscles": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All muscles"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กล้ามเนื้อทั้งหมด"
+          }
+        }
+      }
+    },
+    "Body region": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body region"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ส่วนของร่างกาย"
+          }
+        }
+      }
+    },
+    "Complete set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete set"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำเซตเสร็จ"
+          }
+        }
+      }
+    },
+    "Copy previous set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy previous set"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คัดลอกเซตก่อนหน้า"
+          }
+        }
+      }
+    },
+    "Create from current workout": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create from current workout"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สร้างจากการฝึกครั้งนี้"
+          }
+        }
+      }
+    },
+    "Delete set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete set"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลบเซต"
+          }
+        }
+      }
+    },
+    "Duplicate exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำสำเนาท่า"
+          }
+        }
+      }
+    },
+    "Edit strength workout": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit strength workout"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แก้ไขการฝึกเวท"
+          }
+        }
+      }
+    },
+    "Estimated load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระโดยประมาณ"
+          }
+        }
+      }
+    },
+    "Estimated muscular load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated muscular load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระกล้ามเนื้อโดยประมาณ"
+          }
+        }
+      }
+    },
+    "Estimated from logged training. Colors are not direct measurements of muscle activation, damage, inflammation, or injury risk.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated from logged training. Colors are not direct measurements of muscle activation, damage, inflammation, or injury risk."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ประเมินจากการฝึกที่บันทึกไว้ สีไม่ใช่การวัดการทำงาน ความเสียหาย การอักเสบ หรือความเสี่ยงบาดเจ็บของกล้ามเนื้อโดยตรง"
+          }
+        }
+      }
+    },
+    "Exercise actions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise actions"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตัวเลือกของท่า"
+          }
+        }
+      }
+    },
+    "Exercise and set log": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise and set log"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกท่าและเซต"
+          }
+        }
+      }
+    },
+    "Favorite exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorite exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ท่าโปรด"
+          }
+        }
+      }
+    },
+    "Intensity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intensity"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระดับความหนัก"
+          }
+        }
+      }
+    },
+    "Keep the detected heart-rate workout and add either a complete exercise log or a faster estimated muscle summary.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep the detected heart-rate workout and add either a complete exercise log or a faster estimated muscle summary."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เก็บข้อมูลการออกกำลังกายที่ตรวจจับจากอัตราการเต้นหัวใจไว้ แล้วเพิ่มรายละเอียดท่าครบถ้วนหรือสรุปภาระกล้ามเนื้อแบบรวดเร็ว"
+          }
+        }
+      }
+    },
+    "Loading offline exercise library…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading offline exercise library…"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังโหลดคลังท่าออฟไลน์…"
+          }
+        }
+      }
+    },
+    "Loading strength workout…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading strength workout…"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังโหลดการฝึกเวท…"
+          }
+        }
+      }
+    },
+    "Main contributing exercises": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Main contributing exercises"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ท่าที่ส่งผลหลัก"
+          }
+        }
+      }
+    },
+    "Mark set incomplete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark set incomplete"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำเครื่องหมายว่าเซตยังไม่เสร็จ"
+          }
+        }
+      }
+    },
+    "Move down": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move down"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนลง"
+          }
+        }
+      }
+    },
+    "Move up": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move up"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนขึ้น"
+          }
+        }
+      }
+    },
+    "MUSCLE MAP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MUSCLE MAP"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แผนที่กล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "Muscle details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muscle details"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รายละเอียดกล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "Muscle map range": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muscle map range"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ช่วงข้อมูลแผนที่กล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "No strength workouts yet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No strength workouts yet"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีประวัติการฝึกเวท"
+          }
+        }
+      }
+    },
+    "No templates yet.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No templates yet."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีเทมเพลต"
+          }
+        }
+      }
+    },
+    "Open strength training history": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open strength training history"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิดประวัติการฝึกเวท"
+          }
+        }
+      }
+    },
+    "Quick muscle and intensity summary": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick muscle and intensity summary"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สรุปกล้ามเนื้อและความหนักแบบรวดเร็ว"
+          }
+        }
+      }
+    },
+    "Quick summaries have medium confidence. They do not invent exercises, sets, side-to-side asymmetry, or measured muscle activation.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick summaries have medium confidence. They do not invent exercises, sets, side-to-side asymmetry, or measured muscle activation."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สรุปแบบรวดเร็วมีความเชื่อมั่นระดับปานกลาง ระบบจะไม่เดาท่า จำนวนเซต ความแตกต่างซ้าย–ขวา หรือการทำงานของกล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "Remove exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นำท่าออก"
+          }
+        }
+      }
+    },
+    "Residual": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Residual"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระคงค้าง"
+          }
+        }
+      }
+    },
+    "Rest complete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rest complete"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พักครบแล้ว"
+          }
+        }
+      }
+    },
+    "RPE optional": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE optional"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE (ไม่บังคับ)"
+          }
+        }
+      }
+    },
+    "Save quick summary": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save quick summary"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกสรุปแบบรวดเร็ว"
+          }
+        }
+      }
+    },
+    "Save template": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save template"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกเทมเพลต"
+          }
+        }
+      }
+    },
+    "Saved templates": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved templates"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เทมเพลตที่บันทึกไว้"
+          }
+        }
+      }
+    },
+    "Session notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session notes"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกการฝึก"
+          }
+        }
+      }
+    },
+    "Session notes (optional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session notes (optional)"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกการฝึก (ไม่บังคับ)"
+          }
+        }
+      }
+    },
+    "Session RPE": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session RPE"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE ของการฝึก"
+          }
+        }
+      }
+    },
+    "Session RPE (optional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session RPE (optional)"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE ของการฝึก (ไม่บังคับ)"
+          }
+        }
+      }
+    },
+    "Skip strength details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip strength details"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้ามรายละเอียดการฝึกเวท"
+          }
+        }
+      }
+    },
+    "Start Strength Training to log exercises, sets, reps, and load.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Strength Training to log exercises, sets, reps, and load."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มการฝึกเวทเพื่อบันทึกท่า เซต จำนวนครั้ง และภาระการฝึก"
+          }
+        }
+      }
+    },
+    "STRENGTH DETAILS": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRENGTH DETAILS"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รายละเอียดการฝึกเวท"
+          }
+        }
+      }
+    },
+    "STRENGTH TRAINING": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRENGTH TRAINING"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การฝึกเวท"
+          }
+        }
+      }
+    },
+    "Strength history": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strength history"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ประวัติการฝึกเวท"
+          }
+        }
+      }
+    },
+    "Strength Training": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strength Training"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การฝึกเวท"
+          }
+        }
+      }
+    },
+    "This is a conservative estimate based on logged training and recovery data. It is not a direct measurement and is not medical advice.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is a conservative estimate based on logged training and recovery data. It is not a direct measurement and is not medical advice."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เป็นการประเมินแบบระมัดระวังจากการฝึกและข้อมูลการฟื้นตัวที่บันทึกไว้ ไม่ใช่การวัดโดยตรงหรือคำแนะนำทางการแพทย์"
+          }
+        }
+      }
+    },
+    "Today's estimated load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's estimated load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระโดยประมาณวันนี้"
+          }
+        }
+      }
+    },
+    "Update": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัปเดต"
+          }
+        }
+      }
+    },
+    "Very Hard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very Hard"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หนักมาก"
+          }
+        }
+      }
+    },
+    "Very high": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very high"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สูงมาก"
+          }
+        }
+      }
+    },
+    "Workout templates": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workout templates"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เทมเพลตการฝึก"
+          }
+        }
+      }
+    },
+    "7-day estimated load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7-day estimated load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระโดยประมาณใน 7 วัน"
+          }
+        }
+      }
+    },
+    "Estimated residual load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated residual load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระคงค้างโดยประมาณ"
+          }
+        }
+      }
+    },
+    "Working sets today": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working sets today"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซตหลักวันนี้"
+          }
+        }
+      }
+    },
+    "Last trained": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last trained"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฝึกล่าสุด"
+          }
+        }
+      }
+    },
+    "Add complete exercise details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add complete exercise details"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มรายละเอียดท่าครบถ้วน"
+          }
+        }
+      }
+    },
+    "Add strength details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add strength details"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มรายละเอียดการฝึกเวท"
+          }
+        }
+      }
+    },
+    "Add exercises and sets, or save a quick muscle and intensity summary.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add exercises and sets, or save a quick muscle and intensity summary."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่มท่าและเซต หรือบันทึกสรุปกล้ามเนื้อและความหนักแบบรวดเร็ว"
+          }
+        }
+      }
+    },
+    "No templates yet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No templates yet"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีเทมเพลต"
+          }
+        }
+      }
+    },
+    "Template name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Template name"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ชื่อเทมเพลต"
+          }
+        }
+      }
+    },
+    "Create custom exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create custom exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สร้างท่ากำหนดเอง"
+          }
+        }
+      }
+    },
+    "Search exercises or aliases": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search exercises or aliases"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค้นหาชื่อท่าหรือชื่อเรียกอื่น"
+          }
+        }
+      }
+    },
+    "Set type": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set type"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ประเภทเซต"
+          }
+        }
+      }
+    },
+    "Warm-up": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warm-up"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วอร์มอัป"
+          }
+        }
+      }
+    },
+    "Working": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซตหลัก"
+          }
+        }
+      }
+    },
+    "Drop": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ดรอปเซต"
+          }
+        }
+      }
+    },
+    "Failure": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failure"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จนหมดแรง"
+          }
+        }
+      }
+    },
+    "Hard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hard"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หนัก"
+          }
+        }
+      }
+    },
+    "Full Body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Body"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทั่วร่างกาย"
+          }
+        }
+      }
+    },
+    "Upper Body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upper Body"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ร่างกายส่วนบน"
+          }
+        }
+      }
+    },
+    "Lower Body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lower Body"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ร่างกายส่วนล่าง"
+          }
+        }
+      }
+    },
+    "Core": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Core"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แกนกลางลำตัว"
+          }
+        }
+      }
+    },
+    "%lld exercises": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld exercises"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ท่า"
+          }
+        }
+      }
+    },
+    "Confidence: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confidence: %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ความเชื่อมั่น: %@"
+          }
+        }
+      }
+    },
+    "Estimated Muscular Load %lld out of 100": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated Muscular Load %lld out of 100"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระกล้ามเนื้อโดยประมาณ %lld จาก 100"
+          }
+        }
+      }
+    },
+    "Estimated Muscular Load: %lld/100 · Confidence: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated Muscular Load: %lld/100 · Confidence: %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระกล้ามเนื้อโดยประมาณ: %lld/100 · ความเชื่อมั่น: %@"
+          }
+        }
+      }
+    },
+    "Exercise actions for %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise actions for %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตัวเลือกสำหรับท่า %@"
+          }
+        }
+      }
+    },
+    "Favorite %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorite %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตั้ง %@ เป็นท่าโปรด"
+          }
+        }
+      }
+    },
+    "%@, %@ estimated load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ estimated load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ภาระโดยประมาณระดับ%@"
+          }
+        }
+      }
+    },
+    "Muscular": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muscular"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "Sets": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซต"
+          }
+        }
+      }
+    },
+    "Volume": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปริมาณรวม"
+          }
+        }
+      }
+    },
+    "Aliases separated by commas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aliases separated by commas"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ชื่อเรียกอื่น คั่นด้วยจุลภาค"
+          }
+        }
+      }
+    },
+    "BACK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BACK"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ด้านหลัง"
+          }
+        }
+      }
+    },
+    "Bodyweight exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bodyweight exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ท่าที่ใช้น้ำหนักตัว"
+          }
+        }
+      }
+    },
+    "Both": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทั้งสองข้าง"
+          }
+        }
+      }
+    },
+    "Equipment": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipment"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อุปกรณ์"
+          }
+        }
+      }
+    },
+    "Equipment and load": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipment and load"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อุปกรณ์และแรงต้าน"
+          }
+        }
+      }
+    },
+    "Exercise identity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise identity"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลท่า"
+          }
+        }
+      }
+    },
+    "Exercise name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise name"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ชื่อท่า"
+          }
+        }
+      }
+    },
+    "Exercise name is required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exercise name is required."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กรุณาระบุชื่อท่า"
+          }
+        }
+      }
+    },
+    "FRONT": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FRONT"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ด้านหน้า"
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ซ้าย"
+          }
+        }
+      }
+    },
+    "Movement pattern": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement pattern"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รูปแบบการเคลื่อนไหว"
+          }
+        }
+      }
+    },
+    "Muscles": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muscles"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กล้ามเนื้อ"
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มี"
+          }
+        }
+      }
+    },
+    "Not to failure": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not to failure"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่ได้ทำจนหมดแรง"
+          }
+        }
+      }
+    },
+    "Primary muscle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primary muscle"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กล้ามเนื้อหลัก"
+          }
+        }
+      }
+    },
+    "Reached failure": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reached failure"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำจนหมดแรง"
+          }
+        }
+      }
+    },
+    "Right": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ขวา"
+          }
+        }
+      }
+    },
+    "Secondary muscle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secondary muscle"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กล้ามเนื้อรอง"
+          }
+        }
+      }
+    },
+    "Side": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Side"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้าง"
+          }
+        }
+      }
+    },
+    "Unilateral exercise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unilateral exercise"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ท่าฝึกข้างเดียว"
+          }
+        }
+      }
+    },
+    "SET": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SET"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซต"
+          }
+        }
+      }
+    },
+    "REPS": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REPS"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ครั้ง"
+          }
+        }
+      }
+    },
+    "RPE": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RPE"
+          }
+        }
+      }
+    },
+    "RIR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RIR"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RIR"
+          }
+        }
+      }
+    },
+    "Bodyweight": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bodyweight"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "น้ำหนักตัว"
+          }
+        }
+      }
+    },
+    "Estimated 1RM: %.1f kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimated 1RM: %.1f kg"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1RM โดยประมาณ: %.1f kg"
+          }
+        }
+      }
+    },
+    "No previous sessions": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No previous sessions"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีการฝึกครั้งก่อน"
+          }
+        }
+      }
+    },
+    "Personal best": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal best"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สถิติส่วนตัว"
           }
         }
       }
