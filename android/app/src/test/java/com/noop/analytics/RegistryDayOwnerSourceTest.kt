@@ -44,9 +44,6 @@ class RegistryDayOwnerSourceTest {
             devices[id]?.let { devices[id] = it.copy(model = model) }
         }
         override suspend fun renameDevice(id: String, nickname: String?) {}
-        override suspend fun setModel(id: String, model: String) {
-            devices[id]?.let { devices[id] = it.copy(model = model) }
-        }
         override suspend fun setPeripheralId(id: String, peripheralId: String?) {
             devices[id]?.let { devices[id] = it.copy(peripheralId = peripheralId) }
         }
