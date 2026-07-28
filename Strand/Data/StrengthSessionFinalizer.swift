@@ -4,6 +4,7 @@ import WhoopStore
 
 /// Safety net for ending a manual strength workout outside the expanded strength logger.
 /// The logger normally finalizes first; this path only completes a matching draft that remains.
+@MainActor
 enum StrengthSessionFinalizer {
     static func finalizeMatchingDraft(
         store: WhoopStore,

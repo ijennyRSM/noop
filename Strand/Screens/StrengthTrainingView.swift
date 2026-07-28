@@ -726,7 +726,7 @@ struct StrengthWorkoutLogger: View {
         switch value {
         case 75...: StrandPalette.metricRose
         case 50..<75: StrandPalette.statusWarning
-        case 25..<50: StrandPalette.sleepColor
+        case 25..<50: StrandPalette.sleepLight
         default: StrandPalette.accent
         }
     }

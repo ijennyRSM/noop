@@ -156,7 +156,7 @@ struct MuscleBodyMapCard: View {
         HStack(spacing: 10) {
             legendItem(String(localized: "No data"), color: StrandPalette.textTertiary.opacity(0.35))
             legendItem(String(localized: "Low"), color: StrandPalette.accent)
-            legendItem(String(localized: "Moderate"), color: StrandPalette.sleepColor)
+            legendItem(String(localized: "Moderate"), color: StrandPalette.sleepLight)
             legendItem(String(localized: "High"), color: StrandPalette.statusWarning)
             legendItem(String(localized: "Very high"), color: StrandPalette.metricRose)
         }
@@ -293,7 +293,7 @@ private struct MuscleFigure: View {
         switch value {
         case 75...: StrandPalette.metricRose
         case 50..<75: StrandPalette.statusWarning
-        case 25..<50: StrandPalette.sleepColor
+        case 25..<50: StrandPalette.sleepLight
         case 0.01..<25: StrandPalette.accent
         default: StrandPalette.textTertiary.opacity(0.22)
         }

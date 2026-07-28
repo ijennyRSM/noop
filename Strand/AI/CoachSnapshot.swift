@@ -104,6 +104,7 @@ struct CoachSnapshot: Equatable {
     var strength: Strength?
 }
 
+@MainActor
 enum CoachSnapshotBuilder {
     static func build(repository: Repository, question: String? = nil,
                       now: Date = Date()) async -> CoachSnapshot {
@@ -177,9 +178,14 @@ enum CoachSnapshotBuilder {
         let chronic = mean(strains28)
         let hardDays = consecutiveHardDays(sorted)
         let latestHard = workouts.filter { ($0.strain ?? 0) >= 70 }.map(\.endTs).max()
-        let counts = Dictionary(grouping: rows28, by: \.sport)
-            .map { ($0.key, $0.value.count) }
-            .sorted { $0.1 == $1.1 ? $0.0 < $1.0 : $0.1 > $1.1 }
+        let groupedActivities: [String: [WorkoutRow]] = Dictionary(
+            grouping: rows28,
+            by: { workout in workout.sport })
+        let counts: [(sport: String, count: Int)] = groupedActivities.map {
+            (sport: $0.key, count: $0.value.count)
+        }.sorted {
+            $0.count == $1.count ? $0.sport < $1.sport : $0.count > $1.count
+        }
         let training = CoachSnapshot.Training(
             workoutCount7: rows7.count,
             workoutCount28: rows28.count,
@@ -199,7 +205,7 @@ enum CoachSnapshotBuilder {
             hoursSinceHardWorkout: latestHard.map {
                 max(0, now.timeIntervalSince1970 - Double($0)) / 3_600
             },
-            frequentActivities: counts.prefix(4).map(\.0),
+            frequentActivities: counts.prefix(4).map { $0.sport },
             readiness: readiness.level.rawValue,
             readinessDrivers: readiness.signals.map {
                 [$0.label, $0.evidence, $0.detail].compactMap { $0 }.joined(separator: ": ")

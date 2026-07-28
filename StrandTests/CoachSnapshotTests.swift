@@ -1,6 +1,7 @@
 import XCTest
 @testable import Strand
 
+@MainActor
 final class CoachSnapshotTests: XCTestCase {
     private func metric(_ current: Double? = nil, _ seven: Double? = nil,
                         _ baseline: Double? = nil) -> CoachSnapshot.Metric {
