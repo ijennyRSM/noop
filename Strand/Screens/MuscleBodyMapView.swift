@@ -148,7 +148,7 @@ struct MuscleBodyMapCard: View {
             NavigationStack {
                 MuscleLoadDetail(summary: summary)
             }
-            .noopSheetPresentation(largeFirst: false)
+            .strengthSheetPresentation(largeFirst: false)
         }
     }
 

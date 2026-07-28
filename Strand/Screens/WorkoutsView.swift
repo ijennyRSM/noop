@@ -268,7 +268,7 @@ struct WorkoutsView: View {
             StrengthHistoryView()
                 .environmentObject(repo)
                 .environmentObject(model)
-                .noopSheetPresentation(largeFirst: true)
+                .strengthSheetPresentation(largeFirst: true)
         }
         // #64: name the merged session when every selected row is a bare detected bout (there's no sport
         // to inherit). Reuses the "Start a workout" named-sport picker.

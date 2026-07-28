@@ -101,7 +101,7 @@ struct WorkoutDetailView: View {
             DetectedStrengthDetailsSheet(workout: row)
                 .environmentObject(repo)
                 .environmentObject(model)
-                .noopSheetPresentation(largeFirst: true)
+                .strengthSheetPresentation(largeFirst: true)
         }
     }
 

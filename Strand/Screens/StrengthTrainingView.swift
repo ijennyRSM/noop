@@ -577,11 +577,11 @@ struct StrengthWorkoutLogger: View {
         }
         .sheet(isPresented: $viewModel.showingPicker) {
             ExercisePicker(viewModel: viewModel)
-                .noopSheetPresentation(largeFirst: true)
+                .strengthSheetPresentation(largeFirst: true)
         }
         .sheet(isPresented: $viewModel.showingTemplates) {
             StrengthTemplateSheet(viewModel: viewModel)
-                .noopSheetPresentation(largeFirst: true)
+                .strengthSheetPresentation(largeFirst: true)
         }
     }
 
@@ -957,7 +957,7 @@ private struct ExercisePicker: View {
             .onChangeCompat(of: viewModel.equipmentFilter) { _ in Task { await viewModel.search() } }
             .sheet(isPresented: $viewModel.showingCustomExercise) {
                 CustomExerciseSheet(viewModel: viewModel)
-                    .noopSheetPresentation(largeFirst: true)
+                    .strengthSheetPresentation(largeFirst: true)
             }
         }
     }
@@ -1130,7 +1130,7 @@ struct StrengthHistoryView: View {
                 }
                 .environmentObject(repository)
                 .environmentObject(model)
-                .noopSheetPresentation(largeFirst: true)
+                .strengthSheetPresentation(largeFirst: true)
             }
         }
     }
@@ -1302,13 +1302,13 @@ struct StrengthCompletedEditor: View {
             }
             .sheet(isPresented: $viewModel.showingPicker) {
                 ExercisePicker(viewModel: viewModel)
-                    .noopSheetPresentation(largeFirst: true)
+                    .strengthSheetPresentation(largeFirst: true)
             }
             .sheet(item: $historyExercise) { exercise in
                 ExerciseHistorySheet(exerciseId: exercise.exerciseId,
                                      exerciseName: exercise.snapshotName)
                     .environmentObject(repository)
-                    .noopSheetPresentation(largeFirst: true)
+                    .strengthSheetPresentation(largeFirst: true)
             }
         }
     }
@@ -1320,6 +1320,17 @@ struct StrengthCompletedEditor: View {
             }
             return MuscularLoadEngine.estimatedOneRepMax(weightKg: weight, reps: reps)
         }.max()
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func strengthSheetPresentation(largeFirst: Bool) -> some View {
+        #if os(iOS)
+        self.noopSheetPresentation(largeFirst: largeFirst)
+        #else
+        self.frame(minWidth: 520, minHeight: largeFirst ? 680 : 520)
+        #endif
     }
 }
 
