@@ -244,6 +244,18 @@ public final class LiveState: ObservableObject {
     /// #690: the body-location probe result (or the waiting sentinel), shown + copied in the Devices dialog.
     /// Cleared on disconnect and on dialog dismiss. Twin of the Android WhoopBleClient.bodyLocationProbe flow.
     @Published public var bodyLocationProbe: String? = nil
+
+    /// #761: the READ-ONLY feature-flag enumeration report — the flag NAMES the strap's own firmware lists
+    /// (`START_FF_KEY_EXCHANGE`/`SEND_NEXT_FF`), or the waiting sentinel while the walk runs. Nothing is
+    /// written to the strap to produce it. Cleared on disconnect and on dialog dismiss. Twin of the Android
+    /// WhoopBleClient.featureFlagProbe flow.
+    @Published public var featureFlagProbe: String? = nil
+
+    /// #103: the READ-ONLY device-config read report — what `GET_DEVICE_CONFIG_VALUE`(121) and
+    /// `GET_FF_VALUE`(128) answer when asked for a key's VALUE (the #761 follow-up), or the waiting
+    /// sentinel while the walk runs. Nothing is written to the strap to produce it. Cleared on disconnect
+    /// and on dialog dismiss. Twin of the Android WhoopBleClient.deviceConfigProbe flow.
+    @Published public var deviceConfigProbe: String? = nil
     /// Wrist-wear state from WRIST_ON/WRIST_OFF events. Defaults true so wear-gated features work
     /// before the first event arrives; flipped by FrameRouter on a real event.
     @Published public var worn: Bool = true
@@ -494,6 +506,10 @@ public final class LiveState: ObservableObject {
         clearStrapRange()                 // a stale clock-drift window must not outlive the link either
         lastFrameAtUnix = nil             // #987: a stale "last frame" freshness must not outlive it either
         ouraWearState = nil               // a stale worn/charging badge must not outlive the link either
+        // Perf: flush the durable log tail on disconnect (mirroring is batched in `append`), so a completed
+        // session's tail is always persisted for a later scheduled export despite the per-line throttle.
+        Self.persistTail(log)
+        logsSincePersist = 0
     }
 
     /// Cap on the in-app strap-log ring buffer. Raised from the old ~1h (200 lines) to retain a rolling
@@ -503,14 +519,35 @@ public final class LiveState: ObservableObject {
     /// unbounded. Drives the Live log card AND the shareable `exportableLogText()`.
     static let maxLogLines = 5_000
 
+    /// Perf: the durable UserDefaults tail (`persistTail`) only feeds a scheduled export that fires hours
+    /// later, so it needn't be current to the last line. Mirroring the whole tail on EVERY append was a
+    /// hot-path cost that grew as more diagnostics (offload/backfill/#700/#714/#720) funnel through this one
+    /// sink. Persist in batches of `persistEveryNLines` instead, and always flush on disconnect
+    /// (`clearBiometrics`) so a finished session stays durable; a few unmirrored lines on an abrupt kill is
+    /// harmless for a debug tail. iOS-only — Android's `logBuffer` is an O(1) `ArrayDeque` with no per-line
+    /// persist, already correct.
+    private static let persistEveryNLines = 32
+    private var logsSincePersist = 0
+    /// Amortize the ring trim: let the buffer overrun by this slack, then trim back to the cap in one batch
+    /// — turning an O(n) `Array.removeFirst` on every line at steady state into one per `trimSlack` lines.
+    /// Still hard-bounded (never exceeds `maxLogLines + trimSlack`).
+    private static let trimSlack = 256
+
     public func append(log line: String, domain: TestDomain? = nil) {
         // Tag inert when nil (today's behaviour, byte-identical). When tagged, prefix a compact,
         // parseable marker the export filters on. Redaction is STILL the only scrub point
         // (redactPii below); tagging happens BEFORE redaction so the scrub covers the whole line.
         let tagged = domain.map { "[\($0.id)] " + line } ?? line
         log.append(Self.redactPii(tagged))
-        if log.count > Self.maxLogLines { log.removeFirst(log.count - Self.maxLogLines) }
-        Self.persistTail(log)
+        // Batched trim: overrun by `trimSlack`, then trim back to the cap in one shot (amortized O(1)/line).
+        if log.count > Self.maxLogLines + Self.trimSlack { log.removeFirst(log.count - Self.maxLogLines) }
+        // Batched durable-tail mirror: persist every `persistEveryNLines` lines, not on every line;
+        // `clearBiometrics()` flushes on disconnect so a completed session is always fully mirrored.
+        logsSincePersist += 1
+        if logsSincePersist >= Self.persistEveryNLines {
+            logsSincePersist = 0
+            Self.persistTail(log)
+        }
         // #990: fold the Backfiller's per-session "session persisted N rows" summary into the persisted
         // ALL-TIME drained-rows tally, right here at the single log sink (no new BLE seam). The summary
         // is emitted unconditionally whenever rows landed (#150), so the cumulative counter accrues on

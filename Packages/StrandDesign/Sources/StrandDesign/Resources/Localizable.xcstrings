@@ -1,116 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "%@ · recovery %lld": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · Wiederherstellung %lld"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · recovery %lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · recuperación %lld"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · récupération %lld"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · การฟื้นตัว %lld"
-          }
-        }
-      }
-    },
-    "chart.tooltip.value_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@, %2$@"
-          }
-        }
-      }
-    },
-    "%lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld"
-          }
-        }
-      }
-    },
     "%lld days ago": {
       "localizations": {
         "de": {
@@ -127,8 +17,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "há %lld dias"
+            "state": "translated",
+            "value": "%lld há dias"
           }
         },
         "ru": {
@@ -185,7 +75,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld horas"
           }
         },
@@ -237,7 +127,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld minutos"
           }
         },
@@ -283,7 +173,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld pontos, média %@, intervalo de %@ a %@"
           }
         },
@@ -329,7 +219,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld leituras"
           }
         },
@@ -354,7 +244,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การอ่านค่า %lld"
+            "value": "ค่าที่วัดได้ %lld ค่า"
           }
         }
       }
@@ -375,7 +265,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld treinos"
           }
         },
@@ -421,8 +311,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "há %lldd"
+            "state": "translated",
+            "value": "%lldd atrás"
           }
         },
         "ru": {
@@ -479,8 +369,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "há %lldh"
+            "state": "translated",
+            "value": "há %lld h"
           }
         },
         "ru": {
@@ -531,8 +421,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "há %lldm"
+            "state": "translated",
+            "value": "há %lld min"
           }
         },
         "ru": {
@@ -557,34 +447,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lldm มาแล้ว"
-          }
-        }
-      }
-    },
-    "0xAA 41 00 1c crc32=f3a1  mono 13": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "0xAA 41 00 1c crc32=f3a1 โมโน 13"
           }
         }
       }
@@ -617,7 +479,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "1 hora"
           }
         },
@@ -669,7 +531,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "1 minuto"
           }
         },
@@ -715,7 +577,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "1 treino"
           }
         },
@@ -745,90 +607,6 @@
         }
       }
     },
-    "51 bpm": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "51 bpm"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "51 bpm"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "51 bpm"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "51 ครั้งต่อนาที"
-          }
-        }
-      }
-    },
-    "7h 42m asleep · 92% efficiency": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7h 42m schlafen · 92%1$ efficiency"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7h 42m dormido · 92%1$ efficiency"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "7h 42m sommeil · 92%1$ eefficacité"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "นอนหลับ 7 ชม. 42 นาที · 92% efficiency"
-          }
-        }
-      }
-    },
-    "87% · streaming": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "87% · Streaming"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "87% · streaming"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "87% · streaming"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "87% · สตรีมมิ่ง"
-          }
-        }
-      }
-    },
     "ALL-OUT": {
       "localizations": {
         "de": {
@@ -845,8 +623,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "MÁXIMO"
+            "state": "translated",
+            "value": "TOTALMENTE"
           }
         },
         "ru": {
@@ -871,68 +649,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ออกทั้งหมด"
-          }
-        }
-      }
-    },
-    "Add": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hinzufügen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Añadir"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ajouter"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เพิ่ม"
-          }
-        }
-      }
-    },
-    "Adopted via NoopButtonStyle": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Über NoopButtonStyle übernommen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adoptado a través de NoopButtonStyle"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adopté par NoopButtonStyle"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "นำมาใช้ผ่าน NoopButtonStyle"
           }
         }
       }
@@ -971,7 +687,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Acordado"
           }
         },
@@ -1001,174 +717,6 @@
         }
       }
     },
-    "Bar only": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "nur Bar"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bar sólo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Barre seulement"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "บาร์เท่านั้น"
-          }
-        }
-      }
-    },
-    "Body / Regular 15 — the thread of you, read in full.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Body / Regular 15 - der Faden von dir, vollständig gelesen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cuerpo / Regular 15 — el hilo de ustedes, leído en su totalidad."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Corps / Régulier 15 — le fil de vous, lire en entier."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Body / Regular 15 — กระทู้ของคุณ อ่านเต็มๆ"
-          }
-        }
-      }
-    },
-    "COUNT-UP SCORE": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ANWENDUNGSBEREICH"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "COUNT-UP SCORE"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "COUNT-UP SCORE"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "คะแนนนับขึ้น"
-          }
-        }
-      }
-    },
-    "Calm night": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ruhige Nacht"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noche de calma"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nuit calme"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "คืนที่เงียบสงบ"
-          }
-        }
-      }
-    },
-    "Caption 12": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bildunterschrift 12"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Capítulo 12"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Légende 12"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "คำบรรยายภาพ 12"
-          }
-        }
-      }
-    },
-    "Card %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Karte %1$lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tarjeta %1$lld"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carte %1$lld"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การ์ด %lld"
-          }
-        }
-      }
-    },
     "Classic": {
       "localizations": {
         "de": {
@@ -1185,7 +733,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Clássico"
           }
         },
@@ -1231,7 +779,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "ESGOTADO"
           }
         },
@@ -1289,7 +837,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Escuro"
           }
         },
@@ -1347,7 +895,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Profundo"
           }
         },
@@ -1372,7 +920,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ลึก"
+            "value": "หลับลึก"
           }
         }
       }
@@ -1405,7 +953,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Predefinição"
           }
         },
@@ -1441,68 +989,6 @@
         }
       }
     },
-    "Done": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fertig"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminé"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "完成"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เสร็จสิ้น"
-          }
-        }
-      }
-    },
-    "Footnote 11": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fußnote 11"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nota 11"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Référence 11"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เชิงอรรถ 11"
-          }
-        }
-      }
-    },
     "HIGH": {
       "localizations": {
         "de": {
@@ -1531,7 +1017,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "ALTO"
           }
         },
@@ -1567,342 +1053,6 @@
         }
       }
     },
-    "HRV (ms) — 30 days": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HRV (ms) — 30 Tage"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HRV (ms) - 30 días"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HRV (ms) — 30 jours"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HRV (มิลลิวินาที) — 30 วัน"
-          }
-        }
-      }
-    },
-    "Headline / Semibold 17": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Headline / Semibold 17"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Título / Semibold 17"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entête / Semibold 17"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พาดหัว / กึ่งหนา 17"
-          }
-        }
-      }
-    },
-    "Heart rate, 24 hours": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Herzfrequenz, 24 Stunden"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Frecuencia cardíaca, 24 horas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fréquence cardiaque, 24 heures"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "อัตราการเต้นหัวใจ 24 ชั่วโมง"
-          }
-        }
-      }
-    },
-    "Hover a band: stage name, clock start–end and duration.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie eine Band: Künstlername, Uhr Start-Ende und Dauer."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marcar una banda: nombre del escenario, inicio del reloj y duración."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacer un groupe : nom de la scène, début d'horloge et durée."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนสายรัด: ชื่อบนเวที เวลาเริ่มต้น-สิ้นสุด และระยะเวลา"
-          }
-        }
-      }
-    },
-    "Hover a cell: ring + date, score and recovery-state tooltip.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie eine Zelle: Ring + Datum, Punktzahl und Recovery-State-Tooltip."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacer une cellule : anneau + date, score et tooltip état de récupération."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนเซลล์: แหวน + วันที่ คะแนน และคำแนะนำเครื่องมือสถานะการฟื้นตัว"
-          }
-        }
-      }
-    },
-    "Hover a gauge for a strain + load-word tooltip.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie ein Messgerät für eine Dehnung + Load-Word-Tooltip."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Coloque un medidor para una pinza + punta de herramienta de carga."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacez une jauge pour un tooltip de contrainte + mot charge."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนมาตรวัดสำหรับโหลดเนื้อหา + คำแนะนำเครื่องมือโหลด"
-          }
-        }
-      }
-    },
-    "Hover a ring for a recovery + state-word tooltip.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie einen Ring für eine Wiederherstellung + State-Wort-Tooltip."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abra un anillo para una recuperación + estado-palabra herramientatip."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacez une bague pour un tooltip de récupération + mot état."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนวงแหวนสำหรับการฟื้นตัว + คำแนะนำเครื่องมือสถานะ"
-          }
-        }
-      }
-    },
-    "Hover any sparkline to read the exact sample under the cursor.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie eine beliebige Funklinie, um das genaue Sample unter dem Cursor zu lesen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Revise cualquier chispa para leer la muestra exacta bajo el cursor."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacez n'importe quelle étincelle pour lire l'échantillon exact sous le curseur."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "วางเมาส์เหนือเส้นประกายไฟเพื่ออ่านตัวอย่างที่ต้องการใต้เคอร์เซอร์"
-          }
-        }
-      }
-    },
-    "Hover the cards to see the lift.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie die Karten, um den Aufzug zu sehen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mueve las cartas para ver el ascensor."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Passez les cartes pour voir l'ascenseur."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนการ์ดเพื่อดูลิฟต์"
-          }
-        }
-      }
-    },
-    "Hover the line: crosshair + dot + date/value tooltip.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegen Sie die Linie: Fadenkreuz + Punkt + Datum / Wert Tooltip."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marcar la línea: crosshair + dot + fecha/valor tooltip."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Passez la ligne : crosshair + point + date/valeur tooltip."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลื่อนเส้น: เป้าเล็ง + จุด + เคล็ดลับเครื่องมือวันที่/ค่า"
-          }
-        }
-      }
-    },
-    "Hover to read each day's HRV in ms.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fahren sie, um jeden tag hrv in ms zu lesen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hover para leer cada día HRV en ms."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plongez pour lire le VHR de chaque jour en ms."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "วางเมาส์เหนือเพื่ออ่าน HRV ในแต่ละวันในหน่วยมิลลิวินาที"
-          }
-        }
-      }
-    },
-    "In a card": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In einer Karte"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En una tarjeta"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dans une carte"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ในการ์ด"
-          }
-        }
-      }
-    },
     "LIGHT": {
       "localizations": {
         "de": {
@@ -1919,8 +1069,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "LEVE"
+            "state": "translated",
+            "value": "LUZ"
           }
         },
         "ru": {
@@ -1944,7 +1094,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "หลับตื้น"
           }
         }
       }
@@ -1977,7 +1127,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "BAIXO"
           }
         },
@@ -2009,34 +1159,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ต่ำ"
-          }
-        }
-      }
-    },
-    "Last night": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Letzte Nacht"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anoche"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La nuit dernière"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เมื่อคืน"
           }
         }
       }
@@ -2075,8 +1197,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Leve"
+            "state": "translated",
+            "value": "Luz"
           }
         },
         "ru": {
@@ -2100,7 +1222,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "สว่าง"
           }
         }
       }
@@ -2121,7 +1243,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "MODERADO"
           }
         },
@@ -2147,69 +1269,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ปานกลาง"
-          }
-        }
-      }
-    },
-    "Movement during sleep": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bewegung während des Schlafes"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Movimiento durante el sueño"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mouvement pendant le sommeil"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การเคลื่อนไหวระหว่างการนอน"
-          }
-        }
-      }
-    },
-    "Next day": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Am nächsten Tag"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Next day"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dia siguiente"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lendemain"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "วันถัดไป"
           }
         }
       }
@@ -2248,7 +1307,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Sem dados"
           }
         },
@@ -2294,8 +1353,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Sem dados de frequência cardíaca"
+            "state": "translated",
+            "value": "Não há dados de frequência cardíaca"
           }
         },
         "ru": {
@@ -2320,62 +1379,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
-          }
-        }
-      }
-    },
-    "Overline": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Überleitung"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overline"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Surligne"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "โอเวอร์ไลน์"
-          }
-        }
-      }
-    },
-    "Overview HR": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Übersicht HR"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reseña"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aperçu général"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ภาพรวมทรัพยากรบุคคล"
           }
         }
       }
@@ -2408,7 +1411,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "PICO"
           }
         },
@@ -2460,8 +1463,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "PREPARADO"
+            "state": "translated",
+            "value": "PRIMADO"
           }
         },
         "ru": {
@@ -2490,104 +1493,6 @@
         }
       }
     },
-    "Pick a date": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wählen Sie ein Datum"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pick a date"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elige una fecha"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choisissez une date"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เลือกวันที่"
-          }
-        }
-      }
-    },
-    "Previous day": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vorheriger Tag"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Previous day"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "dia anterior"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jour précédent"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "วันก่อนหน้า"
-          }
-        }
-      }
-    },
-    "RECOVERY GRADIENT": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RÜCKWERTE"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RECOVERY GRADIENT"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "GRADIENTS DE RECOUVREMENT"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ไล่ระดับการฟื้นฟู"
-          }
-        }
-      }
-    },
     "Recovery calendar, %lld days, average %lld, low %lld, high %lld": {
       "localizations": {
         "de": {
@@ -2604,8 +1509,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Calendário de recuperação, %lld dias, média %lld, mín %lld, máx %lld"
+            "state": "translated",
+            "value": "Calendário de recuperação, %lld dias, média %lld, baixa %lld, alta %lld"
           }
         },
         "ru": {
@@ -2650,7 +1555,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Calendário de recuperação, sem dados"
           }
         },
@@ -2680,326 +1585,6 @@
         }
       }
     },
-    "Recovery — 30 days": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erholung — 30 Tage"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recuperación — 30 días"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Récupération — 30 jours"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พักฟื้น — 30 วัน"
-          }
-        }
-      }
-    },
-    "Recovery — past year": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rückforderung — vergangenes Jahr"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recuperación - el año pasado"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Relèvement — année écoulée"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ฟื้นตัว — ปีที่แล้ว"
-          }
-        }
-      }
-    },
-    "Reduce Motion renders static at the final frame.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reduce Motion macht statisch im letzten Frame."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reducir los renders de moción estáticos en el marco final."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réduire Motion rend statique au cadre final."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ลดการเคลื่อนไหว แสดงผลคงที่ในเฟรมสุดท้าย"
-          }
-        }
-      }
-    },
-    "Remove": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eliminar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supprimer"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "移除"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ลบ"
-          }
-        }
-      }
-    },
-    "Replay reveal": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wiedergabe enthüllt"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Replay revela"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rejouer révéler"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เปิดเผยการเล่นซ้ำ"
-          }
-        }
-      }
-    },
-    "Resting HR": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ruhe-HF"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC en reposo"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC au repos"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "静息心率"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "อัตราการเต้นหัวใจขณะพัก"
-          }
-        }
-      }
-    },
-    "Restless night": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ruhelose Nacht"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Noche de descanso"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nuit sans repos"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "คืนกระสับกระส่าย"
-          }
-        }
-      }
-    },
-    "Roll the number": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zahl angeben"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enrolla el número"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Roulez le numéro"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หมุนหมายเลข"
-          }
-        }
-      }
-    },
-    "SOFT CARD TRANSITION": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SOFT CARD TRANSITION"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TRANSICIÓN DE CARDE"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TRANSITION DES CARTES DE LOGEMENT"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การเปลี่ยนซอฟท์การ์ด"
-          }
-        }
-      }
-    },
-    "STAGGERED APPEAR": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "STAGGER APPEAR"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "APPEAR"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "APPAREILS STAGGERED"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ปรากฏขึ้นอย่างเซ"
-          }
-        }
-      }
-    },
-    "STRAIN RAMP": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "STAMMRAMP"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "STRAIN RAMP"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RAMPE DE STRAIN"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "RAMP ภาระร่างกาย"
-          }
-        }
-      }
-    },
     "STRENUOUS": {
       "localizations": {
         "de": {
@@ -3016,8 +1601,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "EXTENUANTE"
+            "state": "translated",
+            "value": "EXTENSO"
           }
         },
         "ru": {
@@ -3046,124 +1631,6 @@
         }
       }
     },
-    "Save": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sichern"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guardar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enregistrer"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "บันทึก"
-          }
-        }
-      }
-    },
-    "Segment counts & heights": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Segmentzahl und -höhe"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El segmento cuenta con &amp; alturas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nombre de segments et hauteurs"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "จำนวนเซกเมนต์และความสูง"
-          }
-        }
-      }
-    },
-    "Sleep performance": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schlafleistung"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rendimiento del sueño"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Performance du sommeil"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ประสิทธิภาพการนอน"
-          }
-        }
-      }
-    },
-    "Sleep stages": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schlafphasen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Etapas de sueño"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stades de sommeil"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ขั้นตอนการนอน"
-          }
-        }
-      }
-    },
     "Sleep stages, %@": {
       "localizations": {
         "de": {
@@ -3180,8 +1647,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Fases do sono, %@"
+            "state": "translated",
+            "value": "Estágios do sono, %@"
           }
         },
         "ru": {
@@ -3226,8 +1693,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Fases do sono, sem dados"
+            "state": "translated",
+            "value": "Estágios do sono, sem dados"
           }
         },
         "ru": {
@@ -3256,34 +1723,6 @@
         }
       }
     },
-    "Subhead 13": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unterposition 13"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subhead 13"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sous-tête 13"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หัวข้อย่อย 13"
-          }
-        }
-      }
-    },
     "System": {
       "localizations": {
         "de": {
@@ -3300,7 +1739,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Sistema"
           }
         },
@@ -3326,62 +1765,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "ระบบ"
-          }
-        }
-      }
-    },
-    "Title 1 / Bold 28": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Titel 1 / Fett 28"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Título 1 / Bold 28"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Titre 1 / Or 28"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หัวข้อ 1 / ตัวหนา 28"
-          }
-        }
-      }
-    },
-    "Title 2 / Semibold 22": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Titel 2 / Semibold 22"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Título 2 / Semibold 22"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Titre 2 / Semibold 22"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หัวข้อ 2 / เซมิโบลด์ 22"
           }
         }
       }
@@ -3420,7 +1803,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Hoje"
           }
         },
@@ -3450,69 +1833,6 @@
         }
       }
     },
-    "Toggle gentle spring": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weiche sanfte Feder"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toggle suave primavera"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Briser le printemps doux"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "สลับสปริงอ่อนโยน"
-          }
-        }
-      }
-    },
-    "Trend": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trend"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trend"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tendencia"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "S'orienter"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "แนวโน้ม"
-          }
-        }
-      }
-    },
     "Trend, %lld points, latest %@, low %@, high %@": {
       "localizations": {
         "de": {
@@ -3529,8 +1849,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Tendência, %lld pontos, mais recente %@, mín %@, máx %@"
+            "state": "translated",
+            "value": "Tendência, %lld pontos, último %@, baixo %@, alto %@"
           }
         },
         "ru": {
@@ -3555,62 +1875,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "เทรนด์ จุด %lld %@ ล่าสุด %@ ต่ำ %@ สูง"
-          }
-        }
-      }
-    },
-    "Values": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Werte"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valores"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valeurs"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ค่านิยม"
-          }
-        }
-      }
-    },
-    "Whoop 4.0": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Whoop 4.0"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Whoop 4.0"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Oups 4.0"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "โห่ 4.0"
           }
         }
       }
@@ -3643,7 +1907,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Ontem"
           }
         },
@@ -3695,7 +1959,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "a dormir %@"
           }
         },
@@ -3720,7 +1984,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "สลีป %@"
+            "value": "หลับ %@"
           }
         }
       }
@@ -3741,8 +2005,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "média %@ bpm"
+            "state": "translated",
+            "value": "média de %@ bpm"
           }
         },
         "ru": {
@@ -3767,34 +2031,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "เฉลี่ย %@ ครั้งต่อนาที"
-          }
-        }
-      }
-    },
-    "hour %lld": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stunde %1$lld"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "hora %1$lld"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "heure %1$lld"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ชั่วโมง %lld"
           }
         }
       }
@@ -3827,7 +2063,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "agora mesmo"
           }
         },
@@ -3879,7 +2115,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "intervalo de %@ a %@"
           }
         },
@@ -3905,6 +2141,2327 @@
           "stringUnit": {
             "state": "translated",
             "value": "ช่วง %@ ถึง %@"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        }
+      }
+    },
+    "0xAA 41 00 1c crc32=f3a1  mono 13": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32 = f3a1 mono 13"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1 โมโน 13"
+          }
+        }
+      }
+    },
+    "51 bpm": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 ครั้งต่อนาที"
+          }
+        }
+      }
+    },
+    "7h 42m asleep · 92% efficiency": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m schlafen · 92%1$ efficiency"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m dormido · 92%1$ efficiency"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m sommeil · 92%1$ eefficacité"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m a dormir · 92% de eficiência"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นอนหลับ 7 ชม. 42 นาที · 92% efficiency"
+          }
+        }
+      }
+    },
+    "87% · streaming": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · Streaming"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · สตรีมมิ่ง"
+          }
+        }
+      }
+    },
+    "Add": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่ม"
+          }
+        }
+      }
+    },
+    "Adopted via NoopButtonStyle": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über NoopButtonStyle übernommen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptado a través de NoopButtonStyle"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopté par NoopButtonStyle"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adoptado via NoopButtonStyle"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นำมาใช้ผ่าน NoopButtonStyle"
+          }
+        }
+      }
+    },
+    "Bar only": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nur Bar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar sólo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Barre seulement"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apenas barra"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บาร์เท่านั้น"
+          }
+        }
+      }
+    },
+    "Body / Regular 15 — the thread of you, read in full.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 - der Faden von dir, vollständig gelesen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuerpo / Regular 15 — el hilo de ustedes, leído en su totalidad."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corps / Régulier 15 — le fil de vous, lire en entier."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — o vosso tópico, leiam na íntegra."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — กระทู้ของคุณ อ่านเต็มๆ"
+          }
+        }
+      }
+    },
+    "COUNT-UP SCORE": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ANWENDUNGSBEREICH"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คะแนนนับขึ้น"
+          }
+        }
+      }
+    },
+    "Calm night": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ruhige Nacht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noche de calma"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuit calme"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noite calma"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คืนที่เงียบสงบ"
+          }
+        }
+      }
+    },
+    "Caption 12": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildunterschrift 12"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capítulo 12"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Légende 12"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legenda 12"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คำบรรยายภาพ 12"
+          }
+        }
+      }
+    },
+    "Card %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karte %1$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarjeta %1$lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte %1$lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cartão %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การ์ด %lld"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concluído"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จสิ้น"
+          }
+        }
+      }
+    },
+    "Footnote 11": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fußnote 11"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nota 11"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Référence 11"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nota de rodapé 11"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เชิงอรรถ 11"
+          }
+        }
+      }
+    },
+    "HRV (ms) — 30 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 Tage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) - 30 días"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 jours"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VFC (ms) – 30 dias"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (มิลลิวินาที) — 30 วัน"
+          }
+        }
+      }
+    },
+    "Headline / Semibold 17": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headline / Semibold 17"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título / Semibold 17"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entête / Semibold 17"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título/Seminegrito 17"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พาดหัว / กึ่งหนา 17"
+          }
+        }
+      }
+    },
+    "Heart rate, 24 hours": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herzfrequenz, 24 Stunden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frecuencia cardíaca, 24 horas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fréquence cardiaque, 24 heures"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frequência cardíaca, 24 horas"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจ 24 ชั่วโมง"
+          }
+        }
+      }
+    },
+    "Hover a band: stage name, clock start–end and duration.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie eine Band: Künstlername, Uhr Start-Ende und Dauer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar una banda: nombre del escenario, inicio del reloj y duración."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer un groupe : nom de la scène, début d'horloge et durée."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre uma banda: nome do palco, início e fim do relógio e duração."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนดูแถบเพื่อดูชื่อระยะ เวลาเริ่ม–สิ้นสุด และระยะเวลา"
+          }
+        }
+      }
+    },
+    "Hover a cell: ring + date, score and recovery-state tooltip.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie eine Zelle: Ring + Datum, Punktzahl und Recovery-State-Tooltip."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer une cellule : anneau + date, score et tooltip état de récupération."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre uma célula: anel + data, pontuação e dica de estado de recuperação."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนเซลล์: แหวน + วันที่ คะแนน และคำแนะนำเครื่องมือสถานะการฟื้นตัว"
+          }
+        }
+      }
+    },
+    "Hover a gauge for a strain + load-word tooltip.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie ein Messgerät für eine Dehnung + Load-Word-Tooltip."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coloque un medidor para una pinza + punta de herramienta de carga."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacez une jauge pour un tooltip de contrainte + mot charge."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre um medidor para obter uma dica de ferramenta de palavra de tensão + carga."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนมาตรวัดสำหรับโหลดเนื้อหา + คำแนะนำเครื่องมือโหลด"
+          }
+        }
+      }
+    },
+    "Hover a ring for a recovery + state-word tooltip.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie einen Ring für eine Wiederherstellung + State-Wort-Tooltip."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abra un anillo para una recuperación + estado-palabra herramientatip."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacez une bague pour un tooltip de récupération + mot état."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre um anel para obter uma dica de ferramenta de recuperação + palavra de estado."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนวงแหวนสำหรับการฟื้นตัว + คำแนะนำเครื่องมือสถานะ"
+          }
+        }
+      }
+    },
+    "Hover any sparkline to read the exact sample under the cursor.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie eine beliebige Funklinie, um das genaue Sample unter dem Cursor zu lesen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revise cualquier chispa para leer la muestra exacta bajo el cursor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacez n'importe quelle étincelle pour lire l'échantillon exact sous le curseur."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre qualquer minigráfico para ler a amostra exata sob o cursor."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วางเมาส์เหนือเส้นประกายไฟเพื่ออ่านตัวอย่างที่ต้องการใต้เคอร์เซอร์"
+          }
+        }
+      }
+    },
+    "Hover the cards to see the lift.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie die Karten, um den Aufzug zu sehen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mueve las cartas para ver el ascensor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passez les cartes pour voir l'ascenseur."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe as cartas para ver o elevador."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนการ์ดเพื่อดูลิฟต์"
+          }
+        }
+      }
+    },
+    "Hover the line: crosshair + dot + date/value tooltip.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegen Sie die Linie: Fadenkreuz + Punkt + Datum / Wert Tooltip."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar la línea: crosshair + dot + fecha/valor tooltip."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passez la ligne : crosshair + point + date/valeur tooltip."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato sobre a linha: mira + ponto + dica de data/valor."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนเส้น: เป้าเล็ง + จุด + เคล็ดลับเครื่องมือวันที่/ค่า"
+          }
+        }
+      }
+    },
+    "Hover to read each day's HRV in ms.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fahren sie, um jeden tag hrv in ms zu lesen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover para leer cada día HRV en ms."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Survolez pour lire la VFC de chaque jour en ms."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passe o rato para ler a VFC de cada dia em ms."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วางเมาส์เหนือเพื่ออ่าน HRV ในแต่ละวันในหน่วยมิลลิวินาที"
+          }
+        }
+      }
+    },
+    "In a card": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In einer Karte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En una tarjeta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans une carte"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Num cartão"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ในการ์ด"
+          }
+        }
+      }
+    },
+    "Last night": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte Nacht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anoche"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La nuit dernière"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noite passada"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เมื่อคืน"
+          }
+        }
+      }
+    },
+    "Movement during sleep": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewegung während des Schlafes"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movimiento durante el sueño"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mouvement pendant le sommeil"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movimento durante o sono"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การเคลื่อนไหวระหว่างการนอน"
+          }
+        }
+      }
+    },
+    "Overline": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überleitung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overline"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Surligne"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sobrelinha"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "โอเวอร์ไลน์"
+          }
+        }
+      }
+    },
+    "Overview HR": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersicht HR"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reseña"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu général"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visão geral dos RH"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาพรวมHR"
+          }
+        }
+      }
+    },
+    "RECOVERY GRADIENT": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RÜCKWERTE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECOVERY GRADIENT"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GRADIENT DE RÉCUPÉRATION"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GRADIENTE DE RECUPERAÇÃO"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไล่ระดับการฟื้นฟู"
+          }
+        }
+      }
+    },
+    "Recovery — 30 days": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erholung — 30 Tage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuperación — 30 días"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récupération — 30 jours"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuperação – 30 dias"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พักฟื้น — 30 วัน"
+          }
+        }
+      }
+    },
+    "Recovery — past year": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rückforderung — vergangenes Jahr"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuperación - el año pasado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relèvement — année écoulée"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuperação – no ano passado"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฟื้นตัว — ปีที่แล้ว"
+          }
+        }
+      }
+    },
+    "Reduce Motion renders static at the final frame.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce Motion macht statisch im letzten Frame."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reducir los renders de moción estáticos en el marco final."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réduire Motion rend statique au cadre final."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduzir movimento renderiza estática no fotograma final."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลดการเคลื่อนไหว แสดงผลคงที่ในเฟรมสุดท้าย"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remover"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลบ"
+          }
+        }
+      }
+    },
+    "Replay reveal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabe enthüllt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replay revela"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejouer révéler"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revelação de repetição"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิดเผยการเล่นซ้ำ"
+          }
+        }
+      }
+    },
+    "Resting HR": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ruhe-HF"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC en reposo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC au repos"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "静息心率"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descansando RH"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจขณะพัก"
+          }
+        }
+      }
+    },
+    "Restless night": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ruhelose Nacht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noche de descanso"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuit sans repos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noite agitada"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คืนกระสับกระส่าย"
+          }
+        }
+      }
+    },
+    "Roll the number": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zahl angeben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enrolla el número"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roulez le numéro"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Role o número"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หมุนหมายเลข"
+          }
+        }
+      }
+    },
+    "SOFT CARD TRANSITION": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOFT CARD TRANSITION"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRANSICIÓN DE CARDE"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRANSITION DES CARTES DE LOGEMENT"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRANSIÇÃO DO CARTÃO SOFT"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การเปลี่ยนซอฟท์การ์ด"
+          }
+        }
+      }
+    },
+    "STAGGERED APPEAR": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAGGER APPEAR"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APPEAR"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APPAREILS STAGGERED"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "APARÊNCIA ESTAGIADA"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปรากฏขึ้นอย่างเซ"
+          }
+        }
+      }
+    },
+    "STRAIN RAMP": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAMMRAMP"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRAIN RAMP"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAMPE DE STRAIN"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAMPA DE TENSÃO"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAMP ภาระร่างกาย"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichern"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึก"
+          }
+        }
+      }
+    },
+    "Segment counts & heights": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segmentzahl und -höhe"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El segmento cuenta con &amp; alturas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre de segments et hauteurs"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contagens e alturas dos segmentos"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จำนวนเซกเมนต์และความสูง"
+          }
+        }
+      }
+    },
+    "Sleep performance": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlafleistung"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rendimiento del sueño"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance du sommeil"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desempenho do sono"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ประสิทธิภาพการนอน"
+          }
+        }
+      }
+    },
+    "Sleep stages": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlafphasen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etapas de sueño"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stades de sommeil"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estágios do sono"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ขั้นตอนการนอน"
+          }
+        }
+      }
+    },
+    "Subhead 13": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterposition 13"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subhead 13"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sous-tête 13"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subtítulo 13"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อย่อย 13"
+          }
+        }
+      }
+    },
+    "Title 1 / Bold 28": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel 1 / Fett 28"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título 1 / Bold 28"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre 1 / Or 28"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título 1 / Negrito 28"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อ 1 / ตัวหนา 28"
+          }
+        }
+      }
+    },
+    "Title 2 / Semibold 22": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel 2 / Semibold 22"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título 2 / Semibold 22"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre 2 / Semibold 22"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título 2 / Seminegrito 22"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อ 2 / เซมิโบลด์ 22"
+          }
+        }
+      }
+    },
+    "Toggle gentle spring": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiche sanfte Feder"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle suave primavera"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briser le printemps doux"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternar mola suave"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สลับสปริงอ่อนโยน"
+          }
+        }
+      }
+    },
+    "Values": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Werte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valores"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeurs"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valores"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค่านิยม"
+          }
+        }
+      }
+    },
+    "Whoop 4.0": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oups 4.0"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uau 4.0"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHOOP 4.0"
+          }
+        }
+      }
+    },
+    "hour %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stunde %1$lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hora %1$lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "heure %1$lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hora %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ชั่วโมง %lld"
+          }
+        }
+      }
+    },
+    "%@ · recovery %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Wiederherstellung %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recovery %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recuperación %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · récupération %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · การฟื้นตัว %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@· recupero%lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@· recuperação%lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@· восстановление%lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@· 恢复%lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@· 恢復%lld"
+          }
+        }
+      }
+    },
+    "chart.tooltip.value_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@，%2$@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@，%2$@"
+          }
+        }
+      }
+    },
+    "Next day": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Am nächsten Tag"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dia siguiente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lendemain"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันถัดไป"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il giorno dopo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dia seguinte"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "На следующий день"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二天"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第二天"
+          }
+        }
+      }
+    },
+    "Pick a date": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie ein Datum"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a date"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige una fecha"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez une date"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลือกวันที่"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli una data"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha uma data"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите дату"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择日期"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇日期"
+          }
+        }
+      }
+    },
+    "Previous day": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriger Tag"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dia anterior"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour précédent"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันก่อนหน้า"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il giorno precedente"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dia anterior"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предыдущий день"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前一天"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前一天"
+          }
+        }
+      }
+    },
+    "Trend": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tendencia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S'orienter"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แนวโน้ม"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tendenza"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tendência"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тренд"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "趋势"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "趨勢"
+          }
+        }
+      }
+    },
+    "sleep.stage.light": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leichtschlaf"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sueño ligero"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sommeil léger"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonno leggero"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sono leve"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Легкий сон"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับตื้น"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "浅睡"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "淺眠"
           }
         }
       }

@@ -74,6 +74,7 @@ struct LiveView: View {
     /// active. Auto-opens when a workout begins; closing just hides it (the workout keeps recording).
     @State private var showLiveWorkout = false
     @State private var showStartSport = false
+    @State private var confirmingEndWorkout = false
 
     /// Manual HRV snapshot (#127) — presents the "Take an HRV reading" screen as a sheet. Entry sits in
     /// the Session console and is only enabled while bonded (the reading needs the live R-R stream).
@@ -148,6 +149,14 @@ struct LiveView: View {
                 .environmentObject(model)
                 .environmentObject(live)
         }
+        .alert("End this workout?", isPresented: $confirmingEndWorkout) {
+            Button("Cancel", role: .cancel) { }
+            Button("End workout", role: .destructive) {
+                model.endWorkout()
+            }
+        } message: {
+            Text("This stops recording and saves what's captured so far. It can't be resumed.")
+        }
     }
 
     // MARK: - Frosted card helper (matches LiquidTodayView.card: rounded 22 + resting hairline)
@@ -157,9 +166,9 @@ struct LiveView: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .fill(StrandPalette.surfaceRaised)
-                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                         .strokeBorder(StrandPalette.hairline, lineWidth: 1))
                     .opacity(cardOpacity)
             )
@@ -378,7 +387,7 @@ struct LiveView: View {
                     }
                     NoopButton("End workout", systemImage: "stop.circle.fill",
                                kind: .destructive, fullWidth: true) {
-                        model.endWorkout()
+                        confirmingEndWorkout = true
                     }
                 }
             }
@@ -555,7 +564,7 @@ struct LiveView: View {
                 scanButton
             }
         }
-        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+        .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
             .strokeBorder(StrandPalette.accent.opacity(0.30), lineWidth: 1))
     }
 
@@ -1164,9 +1173,9 @@ private struct LiveLogCard: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
+            RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                 .fill(StrandPalette.surfaceRaised)
-                .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .strokeBorder(StrandPalette.hairline, lineWidth: 1))
                 .opacity(cardOpacity)
         )
@@ -1251,9 +1260,9 @@ private struct SignalTrustTile: View {
         .frame(minHeight: 112, alignment: .top)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                 .fill(StrandPalette.surfaceRaised)
-                .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
                     .strokeBorder(StrandPalette.hairline, lineWidth: 1))
                 .opacity(cardOpacity)
         )

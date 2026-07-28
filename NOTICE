@@ -16,6 +16,11 @@ ZIPFoundation — https://github.com/weichsel/ZIPFoundation
   License: MIT
   Used for: reading WHOOP / Apple Health export archives during import.
 
+free-exercise-db — https://github.com/yuhonas/free-exercise-db
+  License: The Unlicense (public-domain dedication)
+  Used for: factual exercise names, equipment, category, and muscle metadata in
+  the bundled offline Exercise Library. Images, videos, and instructions excluded.
+
 The MIT license is permissive: these components may be used, modified, and
 redistributed (including commercially) on their own terms. When they are used as
 part of NOOP's combined work, the combined work as a whole is governed by NOOP's

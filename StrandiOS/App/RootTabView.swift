@@ -63,6 +63,28 @@ struct RootTabView: View {
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 
+    /// The anywhere-swipe tab-switch drag (2026-07-02). Held as a property so the attachment site can
+    /// enable or disable it through a `GestureMask` instead of attaching it conditionally: a conditional
+    /// attachment changes view identity, and this condition toggles on every push and pop, which would
+    /// rebuild the tab roots underneath it. The same class of rebuild is what #197 caused with an
+    /// `.id()` reset and #198 had to undo — it lost scroll position and re-ran `.task`.
+    ///
+    /// Only a decisive horizontal flick switches tabs, and Today is carved out because it uses
+    /// horizontal swipe to change DAYS. Both thresholds are unchanged from the original gesture.
+    private var tabSwipeGesture: some Gesture {
+        DragGesture(minimumDistance: 24)
+            .onEnded { v in
+                // Today (tab 0) uses horizontal swipe to change DAYS, so tab-swipe is off there.
+                guard selectedTab != 0 else { return }
+                let dx = v.translation.width, dy = v.translation.height
+                guard abs(dx) > 60, abs(dx) > abs(dy) * 1.6 else { return }
+                let next = min(3, max(0, selectedTab + (dx < 0 ? 1 : -1)))
+                if next != selectedTab {
+                    withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24)) { selectedTab = next }
+                }
+            }
+    }
+
     var body: some View {
         // The native TabView keeps every existing destination + system gesture; the signature
         // raised gold FAB is overlaid on top, bottom-centre, floating ~20pt above the bar (a
@@ -82,23 +104,31 @@ struct RootTabView: View {
             // Tab crossfade — README §Motion: ~240ms opacity swap between tab roots, global calm
             // easing cubic-bezier(0.22,1,0.36,1).
             .animation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24), value: selectedTab)
-            // Swipe left/right anywhere to move between tabs (2026-07-02). Simultaneous so vertical
-            // scrolling still works; only a decisive horizontal flick switches tabs.
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 24)
-                    .onEnded { v in
-                        // Today (tab 0) uses horizontal swipe to change DAYS, so tab-swipe is off there.
-                        guard selectedTab != 0 else { return }
-                        let dx = v.translation.width, dy = v.translation.height
-                        guard abs(dx) > 60, abs(dx) > abs(dy) * 1.6 else { return }
-                        let next = min(3, max(0, selectedTab + (dx < 0 ? 1 : -1)))
-                        if next != selectedTab {
-                            withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24)) { selectedTab = next }
-                        }
-                    }
-            )
+            // Swipe left/right anywhere to move between tabs (2026-07-02), but ONLY while the current
+            // tab is at its root. Attaching this ancestor drag gesture unconditionally defeated the
+            // edge-restriction of a pushed NavigationStack screen's native interactive-pop gesture —
+            // any More-tab subscreen (Settings, Devices, …) became draggable/rubber-banding from
+            // anywhere, not just the left edge (#519). Disabling the recognizer once a push is active,
+            // rather than just gating the onEnded action, is what stops the interference: the action
+            // never runs early enough, because the recognizer competes during recognition.
+            //
+            // The mask does that WITHOUT changing view identity. #519 attached the gesture through a
+            // conditional ViewModifier, which put the two states in separate _ConditionalContent
+            // branches — and since this condition toggles on every push and pop, each navigation
+            // rebuilt the whole TabView subtree and could reset @State inside the tab roots (scroll
+            // offsets, chart ranges, expanded sections). `including:` keeps one view type in both
+            // states, so nothing is torn down.
+            //
+            // The mask MUST be `.subviews`, not `.none`. `.subviews` means "enable the subview
+            // hierarchy's gestures, disable the added one" — exactly this requirement. `.none` disables
+            // the subview hierarchy TOO, which on a pushed screen would take out scrolling, taps and the
+            // interactive-pop itself: far worse than the bug being fixed.
+            .simultaneousGesture(tabSwipeGesture,
+                                 including: tabPaths[selectedTab].isEmpty ? .all : .subviews)
 
-            FloatingTabBar(selection: $selectedTab, onReselect: { tag in
+            FloatingTabBar(selection: $selectedTab, onAction: {
+                withAnimation(Self.sheetEase) { quickAction = .menu }
+            }, onReselect: { tag in
                 // Re-tapping the active tab refreshes that page's data (2026-07-02) and, from a
                 // subpage, pops that tab's stack back to its root (#135) — an animated pop via the
                 // path, not a rebuild. At the root the pop is skipped, so scroll position survives
@@ -492,6 +522,7 @@ private enum MoreDestination: Hashable {
     }
 }
 
+
 /// One tappable destination row in the More index. A `NavigationLink` whose label is the standard app row:
 /// the SF Symbol icon tinted `StrandPalette.accent`, the title in the body text colour, a `Spacer`, and a
 /// trailing `chevron.right` in `textTertiary`. ~44pt min height + the card's row insets keep the whole row a
@@ -624,11 +655,11 @@ private struct QuickActionSheet: View {
 
 // MARK: - Floating tab bar
 
-/// The signature bottom bar: two frosted "glass" islands (Today·Trends / Sleep·More) with the gold
-/// action button nested cleanly in the gap between them — no overlap, no glow. Real iOS 26 Liquid
-/// Glass where available, a `.ultraThinMaterial` fallback below. Replaces the hidden native tab bar.
+/// Compact performance-navigation bar. It stays visually anchored to the bottom edge,
+/// uses a graphite surface, and marks the active section with a crisp blue rule.
 private struct FloatingTabBar: View {
     @Binding var selection: Int
+    var onAction: () -> Void = {}
     /// Fires when the user taps the ALREADY-active tab (2026-07-02: re-tap should refresh).
     var onReselect: (Int) -> Void = { _ in }
 
@@ -639,33 +670,49 @@ private struct FloatingTabBar: View {
                        Item(title: "More", icon: "ellipsis", tag: 3)]
 
     var body: some View {
-        // One frosted glass bar, four evenly-spaced tabs. The quick-action "+" now lives in the
-        // top-right of each screen's header (balancing the profile avatar on the left).
-        HStack(spacing: 2) {
-            tabButton(nav[0])
-            tabButton(nav[1])
-            tabButton(nav[2])
-            tabButton(nav[3])
+        HStack(alignment: .bottom, spacing: 10) {
+            HStack(spacing: 0) {
+                tabButton(nav[0])
+                tabButton(nav[1])
+                tabButton(nav[2])
+                tabButton(nav[3])
+            }
+            .padding(.horizontal, 7)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .frame(height: 70)
+            .background(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .fill(Color(hex: "#20262B").opacity(0.97))
+                    .overlay(RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .strokeBorder(.white.opacity(0.09), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.38), radius: 16, y: 7)
+            )
+
+            Button(action: onAction) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "#20232C"))
+                    Circle()
+                        .stroke(
+                            AngularGradient(colors: [Color(hex: "#13AEEF"), Color(hex: "#6658E8"),
+                                                     Color(hex: "#13AEEF")], center: .center),
+                            lineWidth: 2
+                        )
+                        .padding(10)
+                    Image(systemName: "waveform.path")
+                        .font(.system(size: 19, weight: .light))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 68, height: 68)
+                .overlay(Circle().strokeBorder(.white.opacity(0.08), lineWidth: 1))
+                .shadow(color: .black.opacity(0.42), radius: 16, y: 7)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Quick actions")
         }
-        .padding(.vertical, 7)
-        .padding(.horizontal, 8)
-        .liquidGlass(in: Capsule())
-        // Over the liquid Today the sky ends at ~340pt, so the bar floats on flat opaque surfaceBase —
-        // a blur material has nothing to dissolve and hardens into a solid lozenge (2026-07-02:
-        // "clips into a solid shape"). A faint translucent scrim INSIDE the same Capsule keeps the pill
-        // reading as tinted glass, not a slab, even against dead-flat colour.
-        .background(.white.opacity(0.06), in: Capsule())
-        // Soft top-lit rim instead of one hard hairline, so there's no crisp cut-out edge.
-        .overlay(
-            Capsule().strokeBorder(
-                LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.04)],
-                               startPoint: .top, endPoint: .bottom),
-                lineWidth: 0.75)
-        )
-        // Lighter, wider shadow: real elevation without stamping a dark halo on the flat canvas.
-        .shadow(color: .black.opacity(0.22), radius: 18, x: 0, y: 8)
-        .padding(.horizontal, 22)
-        .padding(.bottom, 4)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 5)
     }
 
     private func tabButton(_ item: Item) -> some View {
@@ -677,15 +724,14 @@ private struct FloatingTabBar: View {
                 withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.24)) { selection = item.tag }
             }
         } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: 5) {
                 Image(systemName: item.icon)
-                    .font(.system(size: 18, weight: active ? .semibold : .regular))
+                    .font(.system(size: 20, weight: active ? .bold : .medium))
                 Text(item.title)
-                    .font(.system(size: 10, weight: active ? .semibold : .medium))
+                    .font(.system(size: 10, weight: active ? .bold : .medium))
             }
-            .foregroundStyle(active ? StrandPalette.accent : StrandPalette.textSecondary)
+            .foregroundStyle(active ? Color.white : Color.white.opacity(0.55))
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 3)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -695,17 +741,4 @@ private struct FloatingTabBar: View {
 
 }
 
-// MARK: - Liquid Glass (iOS 26) with a Material fallback
-
-private extension View {
-    /// Real iOS 26 Liquid Glass where available; `.ultraThinMaterial` on iOS 17–25 — a clean
-    /// blended degrade so the bar stays modern on new OSes without breaking older ones.
-    @ViewBuilder func liquidGlass(in shape: some Shape) -> some View {
-        if #available(iOS 26.0, *) {
-            self.glassEffect(.regular, in: shape)
-        } else {
-            self.background(.ultraThinMaterial, in: shape)
-        }
-    }
-}
 #endif

@@ -30,6 +30,7 @@ struct WorkoutDetailView: View {
     let row: WorkoutRow
 
     @EnvironmentObject private var repo: Repository
+    @EnvironmentObject private var model: AppModel
     @StateObject private var profile = ProfileStore()
     @Environment(\.dismiss) private var dismiss
 
@@ -60,6 +61,7 @@ struct WorkoutDetailView: View {
     /// import). nil = not an on-foot sport, or no step source had data for the window.
     private struct StepReadout { let count: Int; let fromStrap: Bool }
     @State private var steps: StepReadout?
+    @State private var showStrengthDetails = false
 
     var body: some View {
         ScreenScaffold(title: "\(WorkoutSource.displaySport(row.sport))",
@@ -75,6 +77,10 @@ struct WorkoutDetailView: View {
                        // needs no extra macOS NavigationStack of its own.
                        topBackground: liquidScaffoldSky()) {
             headerCard
+            if WorkoutSource.classify(row.source) == .detected
+                || row.sport.localizedCaseInsensitiveContains("strength") {
+                strengthDetailsCard
+            }
             statStrip
             routeCard
             hrCurveCard
@@ -91,6 +97,30 @@ struct WorkoutDetailView: View {
             }
         }
         .task { await load() }
+        .sheet(isPresented: $showStrengthDetails) {
+            DetectedStrengthDetailsSheet(workout: row)
+                .environmentObject(repo)
+                .environmentObject(model)
+                .strengthSheetPresentation(largeFirst: true)
+        }
+    }
+
+    private var strengthDetailsCard: some View {
+        NoopCard(tint: StrandPalette.metricCyan) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("STRENGTH DETAILS")
+                    .font(StrandFont.overline)
+                    .tracking(StrandFont.overlineTracking)
+                    .foregroundStyle(StrandPalette.metricCyan)
+                Text("Add exercises and sets, or save a quick muscle and intensity summary.")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textSecondary)
+                NoopButton("Add strength details", systemImage: "dumbbell",
+                           kind: .secondary, fullWidth: true) {
+                    showStrengthDetails = true
+                }
+            }
+        }
     }
 
     // MARK: - Load
@@ -107,7 +137,7 @@ struct WorkoutDetailView: View {
 
         // HR curve over the exact session window — a finer bucket than the 24h chart so a short run
         // still reads as a curve, not a handful of points.
-        let buckets = await repo.workoutHrBuckets(from: row.startTs, to: row.endTs)
+        let buckets = await repo.workoutHrBuckets(from: row.startTs, to: row.endTs, source: row.source)
         let points = buckets.map { TrendPoint(date: Date(timeIntervalSince1970: TimeInterval($0.ts)), value: $0.bpm) }
 
         // Zones: prefer the imported per-workout percentages (a WHOOP-computed split), and only fall
@@ -123,11 +153,12 @@ struct WorkoutDetailView: View {
             }
         }
         if minutes == nil {
-            minutes = await repo.workoutZoneMinutes(from: row.startTs, to: row.endTs, age: profile.age)
+            minutes = await repo.workoutZoneMinutes(from: row.startTs, to: row.endTs, age: profile.age,
+                                                    source: row.source)
         }
 
         let hrr = await repo.workoutHeartRateRecovery(
-            from: row.startTs, to: row.endTs, maxHR: Double(profile.hrMax))
+            from: row.startTs, to: row.endTs, maxHR: Double(profile.hrMax), source: row.source)
 
         // Steps for an on-foot session (#398), computed at display time over the exact window so it
         // "fills in after sync": prefer the strap's own counter (MG/5.0) once it has offloaded the window,

@@ -32,7 +32,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%@ bpm"
           }
         },
@@ -96,7 +96,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld bpm"
           }
         },
@@ -486,8 +486,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Esforço"
+            "state": "translated",
+            "value": "Effort"
           }
         },
         "ru": {
@@ -608,8 +608,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "FC %@ · Esforço %@"
+            "state": "translated",
+            "value": "HR %@ · Effort %@"
           }
         },
         "ru": {
@@ -739,8 +739,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga NOOP"
+            "state": "translated",
+            "value": "NOOP Charge"
           }
         },
         "ru": {
@@ -867,8 +867,8 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "FC repouso"
+            "state": "translated",
+            "value": "Rest HR"
           }
         },
         "ru": {

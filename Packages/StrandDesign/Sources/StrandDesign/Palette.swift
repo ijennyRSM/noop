@@ -68,17 +68,17 @@ public enum StrandPalette {
 
     // MARK: Surfaces — deep navy canvas, tinted frosted cards
     // Background is a near-black navy (NOT pure black); cards float just above it.
-    public static let surfaceBase    = Color(light: "#F2F2F7", dark: "#121518") // WHOOP dark blue-grey canvas (sampled)
-    public static let surfaceRaised  = Color(light: "#FFFFFF", dark: "#25292C") // WHOOP grey list-card fill (sampled)
-    public static let surfaceOverlay = Color(light: "#FFFFFF", dark: "#1C1F26") // popovers / sheets / tooltips
-    public static let surfaceInset   = Color(light: "#E9E9EE", dark: "#1F2229") // wells / chart insets / segmented track
-    public static let hairline       = Color(light: "#D8D0BD", dark: "#21304A") // soft 1px border (stronger on light for card edges)
-    public static let hairlineStrong = Color(light: "#C7BCA4", dark: "#2E3C57") // hover / emphasis border
+    public static let surfaceBase    = Color(light: "#F3F4F4", dark: "#0B0D0E")
+    public static let surfaceRaised  = Color(light: "#FFFFFF", dark: "#191C1E")
+    public static let surfaceOverlay = Color(light: "#FFFFFF", dark: "#222629")
+    public static let surfaceInset   = Color(light: "#E9EBEC", dark: "#111416")
+    public static let hairline       = Color(light: "#D8DCDE", dark: "#2B3033")
+    public static let hairlineStrong = Color(light: "#C1C7CA", dark: "#3C4347")
 
     // MARK: Text — deep navy-ink on paper / cool off-white on navy
-    public static let textPrimary    = Color(light: "#1A2230", dark: "#F4F6F8")
-    public static let textSecondary  = Color(light: "#4C5564", dark: "#C8CFD8")
-    public static let textTertiary   = Color(light: "#7C8696", dark: "#8A94A4")
+    public static let textPrimary    = Color(light: "#111416", dark: "#F7F8F8")
+    public static let textSecondary  = Color(light: "#50575B", dark: "#B8BEC1")
+    public static let textTertiary   = Color(light: "#747D82", dark: "#7F898E")
 
     // MARK: Text ON a permanently-dark surface (scheme-invariant)
     // Use these — NOT textPrimary/Secondary/Tertiary — for labels/pills drawn over a fill that is pinned
@@ -86,21 +86,21 @@ public enum StrandPalette {
     // a fixed near-black). The regular text tokens FLIP to dark ink in Light mode, so on a fixed-dark card
     // they render dark-on-near-black and vanish (#1013). These hold the light-on-dark values in BOTH
     // schemes, so a label always reads on the card. (Same hex as the *.dark side of the text tokens.)
-    public static let onDarkPrimary   = Color(hex: "#F4F6F8")
-    public static let onDarkSecondary = Color(hex: "#C8CFD8")
-    public static let onDarkTertiary  = Color(hex: "#8A94A4")
+    public static let onDarkPrimary   = Color(hex: "#F7F8F8")
+    public static let onDarkSecondary = Color(hex: "#B8BEC1")
+    public static let onDarkTertiary  = Color(hex: "#7F898E")
 
     // MARK: Glow — ambient bloom behind heroes / charts (additive on dark; faint warm on light)
-    public static let glowAmbient    = Color(light: "#F0E4C0", dark: "#3A2D0A")
+    public static let glowAmbient    = Color(light: "#DDEEF7", dark: "#072637")
 
     // MARK: Accent — chrome anchor (links, selection, focus, generic accent). On DARK this is the brand
     // GOLD; on LIGHT it shifts to the deep brand BLUE so gold is reserved for the recovery/Charge world
     // and the gold FAB — keeping the light theme from reading as wall-to-wall gold (the maintainer 2026-06-16).
-    public static let accent         = Color(light: "#234F9E", dark: "#60A0E0") // WHOOP link/action blue (gold killed 2026-06-22)
-    public static let accentHover    = Color(light: "#1C3F80", dark: "#8FBEEC")
-    public static let accentMuted    = Color(light: "#E4ECF6", dark: "#16233A") // selected-row tint (pale blue / dark blue)
+    public static let accent         = Color(light: "#087FB4", dark: "#20AEEF")
+    public static let accentHover    = Color(light: "#066A98", dark: "#63C9F4")
+    public static let accentMuted    = Color(light: "#DDEFF7", dark: "#0C2A38")
     /// Focus ring color (blue on both schemes — WHOOP has no gold).
-    public static let focusRing      = Color(light: "#2F6FCB", dark: "#60A0E0")
+    public static let focusRing      = Color(light: "#087FB4", dark: "#20AEEF")
     /// Opacity for dimmed/disabled sections (shared so screens don't invent their own value).
     public static let disabledOpacity: Double = 0.45
 
@@ -248,17 +248,17 @@ public enum StrandPalette {
     public static var chargeGradient: Gradient { Gradient(colors: [chargeDeep, chargeBright]) }
 
     /// Effort (strain) — amber world / Classic blue.
-    public static var effortColor: Color   { isClassic ? Color(light: "#3A74C4", dark: "#4A90E2") : Color(light: "#2A78C8", dark: "#4090E0") }
-    public static var effortDeep: Color    { isClassic ? Color(light: "#284F9C", dark: "#2F6FCB") : Color(light: "#1E5B96", dark: "#2A6FB0") }
-    public static var effortBright: Color  { isClassic ? Color(light: "#5E92D6", dark: "#7FB2E8") : Color(light: "#5AA0E0", dark: "#74B6F0") }
-    public static var effortGlow: Color    { isClassic ? Color(light: "#3A74C4", dark: "#4A90E2") : Color(light: "#2A78C8", dark: "#4090E0") }
+    public static var effortColor: Color   { isClassic ? Color(light: "#3A74C4", dark: "#4A90E2") : Color(light: "#087FB4", dark: "#20AEEF") }
+    public static var effortDeep: Color    { isClassic ? Color(light: "#284F9C", dark: "#2F6FCB") : Color(light: "#075C84", dark: "#087FB4") }
+    public static var effortBright: Color  { isClassic ? Color(light: "#5E92D6", dark: "#7FB2E8") : Color(light: "#36A6D8", dark: "#63C9F4") }
+    public static var effortGlow: Color    { isClassic ? Color(light: "#3A74C4", dark: "#4A90E2") : Color(light: "#087FB4", dark: "#20AEEF") }
     public static var effortGradient: Gradient { Gradient(colors: [effortDeep, effortBright]) }
 
     /// Rest (sleep) — blue world / Classic indigo.
-    public static var restColor: Color     { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#5E7896", dark: "#83A0B8") }
-    public static var restDeep: Color      { isClassic ? Color(light: "#203E73", dark: "#2A4C8F") : Color(light: "#234F9E", dark: "#2F6FCB") }
-    public static var restBright: Color    { isClassic ? Color(light: "#6A4FC0", dark: "#8E6FD6") : Color(light: "#5790DA", dark: "#6FA8E8") }
-    public static var restGlow: Color      { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#3A80D6", dark: "#4A90E2") }
+    public static var restColor: Color     { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#5F93B2", dark: "#8DB8D2") }
+    public static var restDeep: Color      { isClassic ? Color(light: "#203E73", dark: "#2A4C8F") : Color(light: "#51418F", dark: "#6858AF") }
+    public static var restBright: Color    { isClassic ? Color(light: "#6A4FC0", dark: "#8E6FD6") : Color(light: "#9A86EB", dark: "#C1B2FF") }
+    public static var restGlow: Color      { isClassic ? Color(light: "#3A80D6", dark: "#6FA8E8") : Color(light: "#7867C7", dark: "#A998F5") }
     public static var restGradient: Gradient { Gradient(colors: [restDeep, restBright]) }
 
     /// Stress — blue→gold→orange world / Classic green→amber→red.
@@ -271,14 +271,14 @@ public enum StrandPalette {
 
     // MARK: Scenic background (NEW) — detail-screen hero gradient + starfield.
     /// Radial canvas: lit center → deep edge. Used by `ScenicHeroBackground` (warm-lit on light).
-    public static let scenicCenter     = Color(light: "#FBF6EA", dark: "#1C2128")
-    public static let scenicEdge       = Color(light: "#EDE6D6", dark: "#121518")
+    public static let scenicCenter     = Color(light: "#F4F7F8", dark: "#11171A")
+    public static let scenicEdge       = Color(light: "#E9EDEF", dark: "#0B0D0E")
     /// Star tint for the scenic starfield (very faint on light; the hero suppresses stars there).
     public static let scenicStar       = Color(light: "#D8CDB6", dark: "#C8CFD8")
 
     /// Frosted-card tint endpoints (white→warm on light; the accent wash sits over them).
-    public static let cardFillTop      = Color(light: "#FFFFFF", dark: "#15243C")
-    public static let cardFillBottom   = Color(light: "#FAF7F0", dark: "#0B1424")
+    public static let cardFillTop      = Color(light: "#FFFFFF", dark: "#1D2123")
+    public static let cardFillBottom   = Color(light: "#F7F8F8", dark: "#171A1C")
 
     // MARK: - Titanium & Gold core tokens (NEW)
     //
@@ -471,7 +471,7 @@ public enum SleepStage: String, CaseIterable, Sendable {
     public var label: String {
         switch self {
         case .awake: return String(localized: "Awake", bundle: .module)
-        case .light: return String(localized: "Light", bundle: .module)
+        case .light: return String(localized: "sleep.stage.light", bundle: .module)
         case .deep:  return String(localized: "Deep", bundle: .module)
         case .rem:   return "REM"
         }

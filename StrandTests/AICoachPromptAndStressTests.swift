@@ -21,6 +21,10 @@ final class AICoachPromptAndStressTests: XCTestCase {
 
     override func tearDown() {
         UserDefaults.standard.removeObject(forKey: AICoachEngine.systemPromptKey)
+        UserDefaults.standard.removeObject(
+            forKey: AICoachEngine.defaultPromptReviewedVersionKey)
+        UserDefaults.standard.removeObject(forKey: LocalCoachPreferences.profileKey)
+        UserDefaults.standard.removeObject(forKey: LocalCoachPreferences.sorenessKey)
         super.tearDown()
     }
 
@@ -67,6 +71,51 @@ final class AICoachPromptAndStressTests: XCTestCase {
         XCTAssertNil(UserDefaults.standard.string(forKey: AICoachEngine.systemPromptKey))
         XCTAssertEqual(engine.systemPrompt, AICoachEngine.defaultSystemPrompt)
         XCTAssertFalse(engine.hasCustomSystemPrompt)
+    }
+
+    func testPromptUpgradePreservesCustomUntilUserChooses() {
+        UserDefaults.standard.set(
+            "My custom prompt",
+            forKey: AICoachEngine.systemPromptKey
+        )
+        UserDefaults.standard.set(
+            AICoachEngine.defaultSystemPromptVersion - 1,
+            forKey: AICoachEngine.defaultPromptReviewedVersionKey
+        )
+        let engine = AICoachEngine(
+            repo: Repository(deviceId: "test-prompt-upgrade"))
+        XCTAssertTrue(engine.hasPendingDefaultPromptReview)
+        XCTAssertEqual(engine.systemPrompt, "My custom prompt")
+        engine.keepCustomSystemPrompt()
+        XCTAssertFalse(engine.hasPendingDefaultPromptReview)
+        XCTAssertEqual(engine.systemPrompt, "My custom prompt")
+    }
+
+    func testUseNewDefaultClearsCustomPromptOnlyAfterChoice() {
+        let engine = makeEngine()
+        engine.customSystemPrompt = "My custom prompt"
+        engine.useLatestDefaultSystemPrompt()
+        XCTAssertFalse(engine.hasCustomSystemPrompt)
+        XCTAssertEqual(engine.systemPrompt, AICoachEngine.defaultSystemPrompt)
+    }
+
+    func testContextCapNeverBreaksWholeLines() {
+        let source = (1...50).map { "line-\($0)-abcdefghij" }.joined(separator: "\n")
+        let bounded = AICoachEngine.boundedContext(source, maxCharacters: 80)
+        XCTAssertLessThanOrEqual(bounded.count, 80)
+        XCTAssertFalse(bounded.hasSuffix("\n"))
+        XCTAssertTrue(bounded.split(separator: "\n").allSatisfy {
+            source.contains(String($0))
+        })
+    }
+
+    func testLocalProfileIsExcludedWithoutDataConsent() async {
+        let engine = makeEngine()
+        engine.localProfile.primaryGoals = ["private-goal-marker"]
+        engine.dataConsent = false
+        let context = await engine.contextForCurrentConsent()
+        XCTAssertFalse(context.contains("private-goal-marker"))
+        XCTAssertTrue(context.contains("has not granted access"))
     }
 
     // MARK: - Feature 2: derived stress line

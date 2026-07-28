@@ -195,6 +195,18 @@ final class AICoachEngine: ObservableObject {
     @Published var includeOnDeviceSignals: Bool {
         didSet { UserDefaults.standard.set(includeOnDeviceSignals, forKey: Self.onDeviceSignalsKey) }
     }
+    @Published var localProfile: LocalCoachProfile {
+        didSet { LocalCoachPreferences.saveProfile(localProfile) }
+    }
+    @Published var sorenessCheckIn: CoachSorenessCheckIn? {
+        didSet {
+            LocalCoachPreferences.saveCheckIn(sorenessCheckIn)
+            Task {
+                await CurrentMuscleResidualService.shared.invalidate(
+                    deviceId: repo.deviceId)
+            }
+        }
+    }
 
     private let repo: Repository
     private let session: URLSession
@@ -204,6 +216,8 @@ final class AICoachEngine: ObservableObject {
     private static let consentKey = "ai.dataConsent"
     private static let customConnectedKey = "ai.customConnected"
     private static let onDeviceSignalsKey = "ai.includeOnDeviceSignals"
+    static let defaultSystemPromptVersion = 3
+    static let defaultPromptReviewedVersionKey = "ai.defaultPromptReviewedVersion"
     /// UserDefaults key holding the user's EDITED system prompt. Absent (or blank) means "use the
     /// built-in default". Small text key, never a secret, so plain UserDefaults is fine. Read FRESH
     /// per request (see `systemPrompt`) so an edit takes effect on the very next message.
@@ -213,23 +227,31 @@ final class AICoachEngine: ObservableObject {
     /// coach. Exposed (read-only) so the UI's "Reset to default" can restore it and show it when nothing
     /// custom is stored. Editing the live prompt overrides this via `systemPromptKey`.
     static let defaultSystemPrompt = """
-    You are an elite, supportive recovery and performance coach with a real training methodology. \
-    You may be given a summary of the user's own wearable data (charge 0-100, effort 0-100, rest 0-100, \
-    HRV, resting heart rate) and recent workouts. Charge is the daily recovery/readiness score, effort \
-    is the daily cardiovascular load score, and rest is the nightly sleep-quality score. \
-    Coach using autoregulation:
-    • Readiness → prescription: charge 67-100 = green light to build/push, higher effort is fine; \
-    34-66 = maintain, quality over volume, keep it controlled; 0-33 = active recovery only \
-    (Zone 2, mobility, extra sleep) and protect against accumulating effort debt.
-    • Workout optimisation: progressive overload, polarised ~80/20 intensity, space hard sessions, \
-    program deloads/periodisation, and treat sleep as the single biggest recovery lever.
-    • Always cite the user's ACTUAL numbers, give a concrete plan (today and the week ahead), and \
-    be specific, punchy and motivating - like a coach who knows them.
-    If no data is provided, coach generally and invite them to turn on data access for personalised \
-    advice. You are NOT a doctor - never diagnose; suggest a professional for genuine health concerns.
-    Format replies in simple Markdown, chat-sized: short paragraphs, **bold** for key numbers, \
-    bullet or numbered lists for plans, ### headings only when structure genuinely helps, and a \
-    small table only for a week-ahead plan. No code blocks.
+    You are NOOP's supportive performance coach. Use only the structured summary supplied with the \
+    question. It may contain recovery, sleep, cardiovascular Effort on NOOP's 0-100 scale, recent \
+    workouts, heart-rate-zone summaries, and Estimated Muscular Load from user-entered strength work. \
+    Estimated Muscular Load and Residual Load are transparent heuristics, not direct measurements of \
+    muscle activation, damage, inflammation, or injury.
+
+    Coach across strength training, football, conditioning, running, cycling, swimming, mobility, and \
+    recovery according to the user's stated goals, schedule, equipment, limitations, and recent work. \
+    Low cardiovascular Effort during strength training does not prove low muscular fatigue. Keep \
+    cardiovascular stress, muscular stress, sleep/recovery, and sport-specific demands distinct.
+
+    Never fabricate a missing score or metric. Never invent a date, workout, baseline, or symptom. \
+    Respect freshness, coverage, and confidence labels; say when evidence is stale or insufficient. \
+    Do not describe a metric marked current as stale: current means the summary's local calendar date, \
+    recent means the previous local calendar date, and stale means two or more local dates old. \
+    Historical baseline coverage is separate from current freshness; 0/30 prior baseline days can \
+    coexist with a valid current value. Do not call current-day data incomplete merely because prior \
+    baseline coverage is low. Treat ACWR and \
+    monotony as load-change heuristics, never as injury predictions. Soreness may modestly inform a \
+    conservative suggestion. Pain/discomfort is separate from load: recommend caution or a qualified \
+    professional when appropriate, but never diagnose.
+
+    Cite only actual available numbers. Give a practical next step for today and, when asked, a concise \
+    week plan. If no data is supplied, coach generally and explain that data access is optional. Use \
+    simple Markdown, short paragraphs, and compact bullets. Do not output code blocks.
     """
 
     /// The system prompt actually sent, read FRESH from UserDefaults on every request so an edit in
@@ -265,10 +287,33 @@ final class AICoachEngine: ObservableObject {
         return !(stored ?? "").isEmpty && stored != Self.defaultSystemPrompt
     }
 
+    var hasPendingDefaultPromptReview: Bool {
+        hasCustomSystemPrompt
+            && UserDefaults.standard.integer(
+                forKey: Self.defaultPromptReviewedVersionKey
+            ) < Self.defaultSystemPromptVersion
+    }
+
+    func keepCustomSystemPrompt() {
+        UserDefaults.standard.set(
+            Self.defaultSystemPromptVersion,
+            forKey: Self.defaultPromptReviewedVersionKey
+        )
+        objectWillChange.send()
+    }
+
+    func useLatestDefaultSystemPrompt() {
+        UserDefaults.standard.removeObject(forKey: Self.systemPromptKey)
+        UserDefaults.standard.set(
+            Self.defaultSystemPromptVersion,
+            forKey: Self.defaultPromptReviewedVersionKey
+        )
+        objectWillChange.send()
+    }
+
     /// Restore the built-in system prompt by clearing the stored override.
     func resetSystemPrompt() {
-        UserDefaults.standard.removeObject(forKey: Self.systemPromptKey)
-        objectWillChange.send()
+        useLatestDefaultSystemPrompt()
     }
 
     /// Used in place of the metrics context when the user has NOT granted data access.
@@ -305,6 +350,14 @@ final class AICoachEngine: ObservableObject {
         self.customBaseURL = UserDefaults.standard.string(forKey: AIProvider.customBaseURLKey) ?? ""
         self.customConnected = UserDefaults.standard.bool(forKey: Self.customConnectedKey)
         self.includeOnDeviceSignals = UserDefaults.standard.bool(forKey: Self.onDeviceSignalsKey)
+        self.localProfile = LocalCoachPreferences.loadProfile()
+        self.sorenessCheckIn = LocalCoachPreferences.loadCheckIn()
+        if !self.hasCustomSystemPrompt {
+            UserDefaults.standard.set(
+                Self.defaultSystemPromptVersion,
+                forKey: Self.defaultPromptReviewedVersionKey
+            )
+        }
     }
 
     // MARK: Key management
@@ -453,6 +506,20 @@ final class AICoachEngine: ObservableObject {
 
     // MARK: Sending
 
+    /// Hard rolling cap on the STORED transcript. The network payload is separately windowed by
+    /// `windowedMessages()` (`maxHistoryMessages`); this bounds the in-memory `messages` array — and the
+    /// SwiftUI transcript rendered from it — so a long-lived session can't grow it without bound. `coach`
+    /// is a single app-lifetime instance on `AppModel`, so before this an active chat grew `messages`
+    /// until the process was killed: the "gets laggy the longer the app runs, reopening fixes it, feels
+    /// like RAM" report. Cap >> the wire window, so it never changes what's sent. (parity with Android)
+    private static let maxStoredMessages = 40
+    private func appendMessage(_ message: ChatMessage) {
+        messages.append(message)
+        if messages.count > Self.maxStoredMessages {
+            messages.removeFirst(messages.count - Self.maxStoredMessages)
+        }
+    }
+
     /// Send a question: append it, build the metrics context, call the chosen provider with the
     /// system prompt + context + running history, parse the reply, append it. Never throws/crashes;
     /// failures land in `errorText`.
@@ -462,7 +529,7 @@ final class AICoachEngine: ObservableObject {
         guard let key = resolvedKey else { errorText = AICoachError.noKey.errorDescription; return }
 
         errorText = nil
-        messages.append(ChatMessage(role: .user, text: trimmed))
+        appendMessage(ChatMessage(role: .user, text: trimmed))
         sending = true
         defer { sending = false }
 
@@ -470,13 +537,13 @@ final class AICoachEngine: ObservableObject {
         // full running history so follow-ups stay coherent; the context only needs to ride the
         // earliest user message.
         // Include the user's data ONLY with explicit consent; otherwise send a note instead of numbers.
-        let context = dataConsent ? await buildFullContext() : noConsentNote
+        let context = await contextForCurrentConsent(question: trimmed)
         let wire = wireMessages(context: context)
 
         do {
             let reply = try await callProvider(key: key, messages: wire)
             let clean = reply.trimmingCharacters(in: .whitespacesAndNewlines)
-            messages.append(ChatMessage(role: .assistant, text: clean.isEmpty ? "(no reply)" : clean))
+            appendMessage(ChatMessage(role: .assistant, text: clean.isEmpty ? "(no reply)" : clean))
         } catch let e as AICoachError {
             errorText = e.errorDescription
         } catch {
@@ -495,17 +562,17 @@ final class AICoachEngine: ObservableObject {
 
         let context = await buildFullContext()
         let instruction = """
-        Based on the data above, give me TODAY'S coaching brief in three short parts: \
-        (1) my readiness in one line, citing charge, HRV and rest; \
-        (2) exactly what training to do today and what to avoid; \
-        (3) one specific thing to improve my charge. Be punchy and motivating.
+        Based only on the available, sufficiently fresh data above, give me TODAY'S coaching brief in \
+        three short parts: (1) what the evidence supports about readiness, explicitly noting missing or \
+        stale inputs; (2) a practical training or recovery option for today; (3) one specific next step. \
+        Do not require Charge, HRV, Rest, or any other metric when it is unavailable.
         """
         let wire: [(role: ChatMessage.Role, content: String)] = [(.user, context + "\n\n---\n\n" + instruction)]
         do {
             let reply = try await callProvider(key: key, messages: wire)
             let clean = reply.trimmingCharacters(in: .whitespacesAndNewlines)
             if !clean.isEmpty {
-                messages.append(ChatMessage(role: .assistant, text: "Today's brief\n\n" + clean))
+                appendMessage(ChatMessage(role: .assistant, text: "Today's brief\n\n" + clean))
             }
         } catch let e as AICoachError {
             errorText = e.errorDescription
@@ -516,9 +583,10 @@ final class AICoachEngine: ObservableObject {
 
     /// Full data context = the metrics summary + recent workouts (+ an OPT-IN on-device-signals summary
     /// when the second consent is on). Used when the user has granted data access.
-    func buildFullContext() async -> String {
-        var ctx = buildContext()
-        ctx += "\n\n" + (await recentWorkoutsBlock())
+    func buildFullContext(for question: String? = nil) async -> String {
+        let snapshot = await CoachSnapshotBuilder.build(
+            repository: repo, question: question)
+        var ctx = CoachSnapshotFormatter.format(snapshot)
         // Derived stress: a single Baevsky Stress Index summary line over today's R-R, computed the same
         // way StressView does. Gated here under `dataConsent` (the caller only reaches buildFullContext()
         // with consent on), so it rides the SAME consent + text-only channel as the HRV/RHR summary, a
@@ -528,7 +596,35 @@ final class AICoachEngine: ObservableObject {
             let block = await onDeviceSignalsBlock()
             if !block.isEmpty { ctx += "\n\n" + block }
         }
-        return ctx
+        return Self.boundedContext(ctx)
+    }
+
+    func contextForCurrentConsent(question: String? = nil) async -> String {
+        guard dataConsent else { return noConsentNote }
+        return await buildFullContext(for: question)
+    }
+
+    #if DEBUG
+    /// DEBUG-only inspection seam for the exact summary text sent to the provider.
+    /// It contains derived summaries only and never API keys or raw sensor streams.
+    func debugContextForCurrentConsent(question: String? = nil) async -> String {
+        await contextForCurrentConsent(question: question)
+    }
+    #endif
+
+    static func boundedContext(_ context: String,
+                               maxCharacters: Int = 6_000) -> String {
+        guard context.count > maxCharacters else { return context }
+        var lines: [String] = []
+        var count = 0
+        for line in context.split(separator: "\n", omittingEmptySubsequences: false) {
+            let text = String(line)
+            let addition = text.count + (lines.isEmpty ? 0 : 1)
+            guard count + addition <= maxCharacters else { break }
+            lines.append(text)
+            count += addition
+        }
+        return lines.joined(separator: "\n")
     }
 
     /// One derived stress line for the coach context: the Baevsky Stress Index over TODAY's R-R, read
@@ -641,101 +737,4 @@ final class AICoachEngine: ObservableObject {
         return out
     }
 
-    // MARK: - Context builder
-
-    /// Build a compact plain-text summary of the user's recent data: last ~14 days of
-    /// recovery/strain/sleep-hours/HRV/restingHR where present, plus 30-day averages, plus a few
-    /// recent workouts. Kept well under ~1500 tokens. If there's no data, it says so.
-    func buildContext() -> String {
-        let days = repo.days // oldest → newest
-        var lines: [String] = ["USER BIOMETRIC SUMMARY (the user's own wearable data):"]
-
-        guard !days.isEmpty else {
-            return """
-            USER BIOMETRIC SUMMARY:
-            No wearable data is available yet. Acknowledge this and give general, encouraging guidance \
-            while inviting the user to sync their device so future advice can reference real numbers.
-            """
-        }
-
-        // Last ~14 days, newest first for readability.
-        let recent = Array(days.suffix(14)).reversed()
-        lines.append("")
-        lines.append("Recent days (newest first) — charge(0-100), effort(0-100), rest/sleep(h), HRV(ms), RHR(bpm):")
-        for d in recent {
-            lines.append("  " + dayLine(d))
-        }
-
-        // 30-day averages.
-        let last30 = Array(days.suffix(30))
-        lines.append("")
-        lines.append("30-day averages:")
-        lines.append("  charge: \(avgInt(last30.compactMap { $0.recovery }))"
-                     + ", effort: \(avgOne(last30.compactMap { $0.strain }))"
-                     + ", sleep: \(avgSleepHours(last30))h"
-                     + ", HRV: \(avgInt(last30.compactMap { $0.avgHrv })) ms"
-                     + ", RHR: \(avgInt(last30.compactMap { $0.restingHr.map(Double.init) })) bpm")
-        // Additional vitals when present (#124, the coach used to see only recovery/strain/sleep/HRV/RHR).
-        lines.append("  SpO2: \(avgInt(last30.compactMap { $0.spo2Pct }))%"
-                     + ", respiration: \(avgOne(last30.compactMap { $0.respRateBpm }))/min"
-                     + ", skin-temp deviation: \(avgOne(last30.compactMap { $0.skinTempDevC }))°C"
-                     + ", steps: \(avgInt(last30.compactMap { $0.steps.map(Double.init) }))/day"
-                     + ", active energy: \(avgInt(last30.compactMap { $0.activeKcalEst }))kcal/day")
-
-        return lines.joined(separator: "\n")
-    }
-
-    /// Append recent workouts to an existing context string. Async (workouts are read from the store),
-    /// so callers that want workouts in the context can await this and feed the result to `send`'s
-    /// flow via the chat, kept separate so `buildContext()` stays synchronous per the spec.
-    func recentWorkoutsBlock(limit: Int = 6) async -> String {
-        let rows = await repo.workoutRows(days: 30) // newest first
-        guard !rows.isEmpty else { return "Recent workouts: none recorded in the last 30 days." }
-        var lines = ["Recent workouts (newest first):"]
-        for w in rows.prefix(limit) {
-            var parts = ["  \(dateString(w.startTs)) \(w.sport)"]
-            if let dur = w.durationS { parts.append("\(Int((dur / 60).rounded())) min") }
-            if let s = w.strain { parts.append("effort \(String(format: "%.1f", s))") }
-            if let hr = w.avgHr { parts.append("avg HR \(hr)") }
-            if let kcal = w.energyKcal { parts.append("\(Int(kcal.rounded())) kcal") }
-            if let dist = w.distanceM { parts.append("\(String(format: "%.1f", dist / 1000)) km") }
-            lines.append(parts.joined(separator: ", "))
-        }
-        return lines.joined(separator: "\n")
-    }
-
-    // MARK: Formatting helpers
-
-    private func dayLine(_ d: DailyMetric) -> String {
-        var parts: [String] = [d.day + ":"]
-        parts.append("charge " + (d.recovery.map { "\(Int($0.rounded()))" } ?? "—"))
-        parts.append("effort " + (d.strain.map { String(format: "%.1f", $0) } ?? "—"))
-        parts.append("rest " + (d.totalSleepMin.map { String(format: "%.1fh", $0 / 60) } ?? "—"))
-        parts.append("HRV " + (d.avgHrv.map { "\(Int($0.rounded()))ms" } ?? "—"))
-        parts.append("RHR " + (d.restingHr.map { "\($0)bpm" } ?? "—"))
-        return parts.joined(separator: ", ")
-    }
-
-    private func avgOne(_ xs: [Double]) -> String {
-        guard !xs.isEmpty else { return "—" }
-        return String(format: "%.1f", xs.reduce(0, +) / Double(xs.count))
-    }
-
-    private func avgInt(_ xs: [Double]) -> String {
-        guard !xs.isEmpty else { return "—" }
-        return "\(Int((xs.reduce(0, +) / Double(xs.count)).rounded()))"
-    }
-
-    private func avgSleepHours(_ days: [DailyMetric]) -> String {
-        let mins = days.compactMap { $0.totalSleepMin }
-        guard !mins.isEmpty else { return "—" }
-        return String(format: "%.1f", (mins.reduce(0, +) / Double(mins.count)) / 60)
-    }
-
-    private func dateString(_ ts: Int) -> String {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: Date(timeIntervalSince1970: TimeInterval(ts)))
-    }
 }

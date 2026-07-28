@@ -24,8 +24,9 @@ struct StrandiOSApp: App {
     @StateObject private var router = NavRouter()
     @State private var liveActivity = LiveActivityController()
     @Environment(\.scenePhase) private var scenePhase
-    /// Appearance preference (System/Light/Dark). Default follows the OS; the Settings picker writes it.
-    @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.system.rawValue
+    /// The performance dashboard is designed dark-first. Users can still select
+    /// System or Light from Settings; only a fresh install's default changes.
+    @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.dark.rawValue
     /// Chart data-colour style (Titanium / Classic throwback). Re-colours gauges + charts.
     @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.titanium.rawValue
 
@@ -200,6 +201,9 @@ struct StrandiOSApp: App {
                 // Re-arm the strap's smart alarm on foreground: the firmware alarm is a single instant
                 // and iOS can't re-arm it while suspended, so it would otherwise fire once and stop.
                 model.applySmartAlarm()
+                Task {
+                    await CurrentMuscleResidualService.shared.invalidateAll()
+                }
                 // #267: pull a reasonably fresh sync on open rather than waiting for the 900s periodic
                 // timer or an incidental reconnect. Floored at 90s and never clock/empty-streak-suppressed
                 // (BackfillPolicy.shouldRun's .foreground case), so this is a safe no-op on rapid re-opens.

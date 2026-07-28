@@ -6,9 +6,9 @@ import SwiftUI
 // the uniform, instrument-grade look from the reference. Do not invent ad-hoc cards.
 
 public enum NoopMetrics {
-    public static let cardRadius: CGFloat = 22   // Apple x WHOOP rounded cards — matches the liquid home card (LiquidTodayView.card)   // Apple x WHOOP: rounded cards
+    public static let cardRadius: CGFloat = 14
     public static let cardPadding: CGFloat = 16  // Apple x WHOOP: roomier card interior
-    public static let gap: CGFloat = 12          // gap between cards
+    public static let gap: CGFloat = 10
     public static let sectionGap: CGFloat = 22   // Apple x WHOOP: breathing room (not cramped)
     public static let screenPadding: CGFloat = 18
     public static let tileHeight: CGFloat = 96   // Design Reset: tighter metric tile
@@ -39,7 +39,7 @@ public enum NoopMetrics {
 
     // MARK: Named layout constants — the canonical margins/heights screens compose with.
     /// Horizontal page margin (the gutter on the left/right edge of a screen). Use via `.screenPadding()`.
-    public static let screenHPadding: CGFloat = 20
+    public static let screenHPadding: CGFloat = 16
     /// Vertical gap between top-level page sections.
     public static let sectionSpacing: CGFloat = 24
     /// Interior padding inside a card's content (matches `cardPadding`).
@@ -136,10 +136,14 @@ public struct SectionHeader: View {
         self.title = title; self.overline = overline; self.trailing = trailing
     }
     public var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
                 if let overline { Text(overline).strandOverline() }
-                Text(title).font(StrandFont.title2).foregroundStyle(StrandPalette.textPrimary)
+                Text(title)
+                    .font(StrandFont.title2)
+                    .fontWeight(.bold)
+                    .textCase(.uppercase)
+                    .foregroundStyle(StrandPalette.textPrimary)
             }
             Spacer()
             if let trailing {
@@ -365,20 +369,52 @@ public struct InsightCard: View {
 public struct SegmentedPillControl<T: Hashable>: View {
     let items: [T]
     let label: (T) -> String
+    /// When requested, keep the regular intrinsic control wherever it fits and fall back to
+    /// equal-width segments inside the parent's available width on compact screens. This prevents
+    /// long option sets from widening an entire page beyond the viewport while leaving the many
+    /// shorter segmented controls byte-identical.
+    let adaptsToAvailableWidth: Bool
     /// Per-segment availability (#943): a disabled segment stays visible (so users learn the
     /// option exists) but renders extra-dim and ignores taps; VoiceOver announces it dimmed.
     /// Defaults to everything enabled; ADDED additively, no existing call site touched.
     let isEnabled: (T) -> Bool
     @Binding var selection: T
     @Environment(\.colorScheme) private var scheme
-    public init(_ items: [T], selection: Binding<T>, label: @escaping (T) -> String) {
-        self.init(items, selection: selection, isEnabled: { _ in true }, label: label)
-    }
-    public init(_ items: [T], selection: Binding<T>, isEnabled: @escaping (T) -> Bool,
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    public init(_ items: [T], selection: Binding<T>, adaptsToAvailableWidth: Bool = false,
                 label: @escaping (T) -> String) {
-        self.items = items; self._selection = selection; self.isEnabled = isEnabled; self.label = label
+        self.init(items, selection: selection, adaptsToAvailableWidth: adaptsToAvailableWidth,
+                  isEnabled: { _ in true }, label: label)
     }
+    public init(_ items: [T], selection: Binding<T>, adaptsToAvailableWidth: Bool = false,
+                isEnabled: @escaping (T) -> Bool,
+                label: @escaping (T) -> String) {
+        self.items = items
+        self._selection = selection
+        self.adaptsToAvailableWidth = adaptsToAvailableWidth
+        self.isEnabled = isEnabled
+        self.label = label
+    }
+    @ViewBuilder
     public var body: some View {
+        if adaptsToAvailableWidth {
+            if dynamicTypeSize > .large {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    track(equalWidth: false)
+                        .fixedSize(horizontal: true, vertical: false)
+                }
+            } else {
+                ViewThatFits(in: .horizontal) {
+                    track(equalWidth: false)
+                    track(equalWidth: true)
+                }
+            }
+        } else {
+            track(equalWidth: false)
+        }
+    }
+
+    private func track(equalWidth: Bool) -> some View {
         HStack(spacing: 4) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                 let sel = item == selection
@@ -390,6 +426,7 @@ public struct SegmentedPillControl<T: Hashable>: View {
                 } label: {
                     Text(label(item))
                         .font(StrandFont.captionNumber)
+                        .lineLimit(equalWidth ? 1 : nil)
                         // Active segment is SELECTION CHROME, so it follows the accent: on dark a
                         // gold-gradient pill with gold-deep ink; on light a flat blue accent pill with
                         // white ink (so the light theme's selection matches its blue chrome, not gold).
@@ -399,8 +436,10 @@ public struct SegmentedPillControl<T: Hashable>: View {
                         // Fill the segment height so the selected pill has EQUAL margins to the track
                         // on every side. (The old compact pill inside a taller 44pt touch frame left
                         // more vertical margin than horizontal — it read as off-centre.)
-                        .frame(minWidth: 26, maxHeight: .infinity)
-                        .padding(.horizontal, 9)
+                        .frame(minWidth: equalWidth ? nil : 26,
+                               maxWidth: equalWidth ? .infinity : nil,
+                               maxHeight: .infinity)
+                        .padding(.horizontal, equalWidth ? NoopMetrics.space1 : 9)
                         .background(
                             // WHOOP selection chrome: a flat LIGHTER-grey pill on dark (white ink), a flat
                             // blue accent pill on light — no gold, no gradient.
@@ -413,6 +452,7 @@ public struct SegmentedPillControl<T: Hashable>: View {
                         .contentShape(Capsule(style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .frame(maxWidth: equalWidth ? .infinity : nil)
                 .frame(height: 32)   // segment height; the pill fills it for an even inset
                 .disabled(!enabled)
                 // Announce the active range to VoiceOver and give a non-colour cue.
@@ -420,6 +460,7 @@ public struct SegmentedPillControl<T: Hashable>: View {
             }
         }
         .padding(3)
+        .frame(maxWidth: equalWidth ? .infinity : nil)
         .background(StrandPalette.surfaceInset, in: Capsule(style: .continuous))
         .overlay(Capsule(style: .continuous).strokeBorder(StrandPalette.hairline, lineWidth: 1))
     }
@@ -480,7 +521,7 @@ public extension View {
 // CTAs. Drop in via `.buttonStyle(.noopPrimary)` etc. on any `Button`. All read off
 // the new gold tokens so they match Apple ⇄ Android. Pressed = subtle dim + scale.
 
-/// Primary call-to-action: gold-gradient fill, dark gold-deep ink (700), rounded 13.
+/// Primary call-to-action: solid performance blue, compact corners and no glow.
 public struct NoopPrimaryButtonStyle: ButtonStyle {
     public init() {}
     public func makeBody(configuration: Configuration) -> some View {
@@ -491,12 +532,9 @@ public struct NoopPrimaryButtonStyle: ButtonStyle {
             .padding(.vertical, 11).padding(.horizontal, 18)
             .frame(maxWidth: .infinity)
             .background(
-                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .fill(LinearGradient(gradient: StrandPalette.goldGradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(StrandPalette.accent)
             )
-            // A crisp, subtle NEUTRAL elevation — the gold cast-glow read as too much against the
-            // clean design, so it's a soft dark lift now, no bloom.
-            .shadow(color: .black.opacity(pressed ? 0.08 : 0.16), radius: 6, x: 0, y: 3)
             .opacity(pressed ? 0.9 : 1)
             .scaleEffect(pressed ? 0.98 : 1)
             .animation(StrandMotion.interactive, value: pressed)
@@ -509,7 +547,7 @@ public struct NoopSecondaryButtonStyle: ButtonStyle {
     public init() {}
     public func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
-        let shape = RoundedRectangle(cornerRadius: 13, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
         return configuration.label
             .font(StrandFont.body.weight(.semibold))
             .foregroundStyle(StrandPalette.textPrimary)
@@ -529,7 +567,7 @@ public struct NoopGhostButtonStyle: ButtonStyle {
     public init() {}
     public func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
-        let shape = RoundedRectangle(cornerRadius: 13, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: 8, style: .continuous)
         return configuration.label
             .font(StrandFont.body.weight(.semibold))
             .foregroundStyle(StrandPalette.gold)
