@@ -54,7 +54,7 @@ MUSCLES = {
 }
 
 ALIASES = {
-    "barbell_back_squat": ["Back Squat", "Barbell Squat"],
+    "barbell_squat": ["Back Squat", "Barbell Squat"],
     "romanian_deadlift_with_dumbbells": ["Dumbbell RDL", "Romanian DL"],
     "romanian_deadlift": ["RDL", "Romanian DL"],
     "stiff_legged_barbell_deadlift": ["Stiff-Leg Deadlift", "SLDL"],
@@ -69,8 +69,31 @@ ALIASES = {
     "side_lateral_raise": ["Lateral Raise", "Side Raise"],
     "face_pull": ["Cable Face Pull"],
     "barbell_hip_thrust": ["Hip Thrust"],
-    "single_leg_press": ["Unilateral Leg Press"],
     "bulgarian_split_squat": ["Rear-Foot-Elevated Split Squat", "RFESS"],
+}
+
+CANONICAL_OVERRIDES = {
+    "barbell_squat": "Barbell Back Squat",
+    "seated_cable_rows": "Seated Cable Row",
+    "standing_calf_raises": "Standing Calf Raise",
+}
+
+# Curated anchors must survive the balancing pass. They cover the common names used in product
+# examples and guarantee that important aliases such as RDL remain searchable in every version.
+MANDATORY_IDS = {
+    "barbell_squat",
+    "romanian_deadlift",
+    "barbell_deadlift",
+    "dumbbell_bench_press",
+    "wide_grip_lat_pulldown",
+    "seated_cable_rows",
+    "standing_calf_raises",
+    "pullups",
+    "chin_up",
+    "standing_military_press",
+    "side_lateral_raise",
+    "face_pull",
+    "leg_press",
 }
 
 ALLOWED_CATEGORIES = {
@@ -188,6 +211,7 @@ def bodyweight_coefficient(name: str) -> float | None:
 def normalize_exercise(item: dict) -> dict | None:
     name = canonical_name(item["name"])
     identifier = slug(item.get("id") or name)
+    name = CANONICAL_OVERRIDES.get(identifier, name)
     primary = [muscle_id(m, name) for m in item.get("primaryMuscles", [])]
     secondary = [muscle_id(m, name) for m in item.get("secondaryMuscles", [])]
     primary = list(dict.fromkeys(m for m in primary if m))
@@ -228,13 +252,23 @@ def normalize_exercise(item: dict) -> dict | None:
 
 def select_balanced(exercises: list[dict], count: int) -> list[dict]:
     """Round-robin by primary muscle/equipment before filling alphabetically."""
+    mandatory = sorted(
+        (exercise for exercise in exercises if exercise["id"] in MANDATORY_IDS),
+        key=lambda exercise: exercise["canonicalName"].lower(),
+    )
+    missing = MANDATORY_IDS - {exercise["id"] for exercise in mandatory}
+    if missing:
+        raise SystemExit(f"mandatory curated exercises missing from source: {sorted(missing)}")
     buckets: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    mandatory_ids = {exercise["id"] for exercise in mandatory}
     for ex in exercises:
+        if ex["id"] in mandatory_ids:
+            continue
         key = (ex["muscles"][0]["muscleId"], ex["equipment"][0])
         buckets[key].append(ex)
     for values in buckets.values():
         values.sort(key=lambda ex: (ex["canonicalName"].lower(), ex["id"]))
-    chosen: list[dict] = []
+    chosen: list[dict] = list(mandatory)
     keys = sorted(buckets)
     while len(chosen) < count and keys:
         next_keys = []

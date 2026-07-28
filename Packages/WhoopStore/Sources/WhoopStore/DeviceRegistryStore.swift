@@ -110,6 +110,11 @@ public struct DeviceRegistryStore: Sendable {
         // v31-deep-capture-channels: the banked 5/MG v18 auxiliary fields are deviceId-keyed per-second
         // rows like every stream above, so a "delete all of this device's data" must clear them too.
         "v18AuxSample",
+        // v32-strength-training: completed/draft strength sessions and every derived daily/session/
+        // residual muscle-load row are device-scoped health data. Deleting a device must remove them
+        // with the same all-or-nothing privacy guarantee as HR, sleep, and workout history.
+        "strengthSession", "dailyMuscleLoad", "strengthSessionMuscleLoad",
+        "muscleResidualSnapshot",
     ]
 
     /// Permanently delete every recorded sample/derived row belonging to one device, across all
