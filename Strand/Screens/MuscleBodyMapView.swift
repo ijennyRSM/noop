@@ -346,7 +346,7 @@ private struct MuscleLoadDetail: View {
 
     private func metric(_ title: String, _ value: Double) -> some View {
         let displayValue = value > 0 ? "\(Int(value.rounded()))/100" : "—"
-        NoopCard {
+        return NoopCard {
             HStack {
                 Text(title).foregroundStyle(StrandPalette.textSecondary)
                 Spacer()
