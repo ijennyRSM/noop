@@ -172,6 +172,34 @@ class ScanAndroidEndToEnd(unittest.TestCase):
         found = {lit for _p, _l, lit in ia.scan_android()}
         self.assertEqual(found, {"A", "B"})
 
+    def test_notification_builder_literals_found(self):
+        # A NotificationCompat chain is not Compose: it has no `Text(` and no
+        # `title=`/`text=` kwarg, so every pattern here missed it and the whole
+        # notification surface — including the always-on foreground-service one —
+        # shipped English in every locale unnoticed. Adding the two setters to
+        # ANDROID_CALL_PATTERN is what surfaced it (#867).
+        self.write(
+            "Notifier.kt",
+            "NotificationCompat.Builder(context, CHANNEL_ID)\n"
+            '    .setContentTitle("Strap battery low")\n'
+            '    .setContentText("Recharge your WHOOP before tonight.")\n'
+            "    .build()\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, {"Strap battery low", "Recharge your WHOOP before tonight."})
+
+    def test_notification_builder_resource_lookup_not_flagged(self):
+        # The fixed form must stay green, or the pattern above would be reverted
+        # the first time it cried wolf on a correctly-localised notifier.
+        self.write(
+            "Notifier.kt",
+            "NotificationCompat.Builder(context, CHANNEL_ID)\n"
+            "    .setContentTitle(context.getString(R.string.battery_low_title))\n"
+            "    .setContentText(body)\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, set())
+
     def test_local_val_declaration_not_scanned_as_kwarg(self):
         # `val text = when { ... }` is a local declaration, not a composable
         # kwarg — ANDROID_KWARG_PATTERN's `text=` must not treat its `when`
@@ -246,6 +274,98 @@ class ScanAndroidEndToEnd(unittest.TestCase):
         )
         found = sorted(lit for _p, _l, lit in ia.scan_android())
         self.assertEqual(found, ["Deep child", "Tap target"])
+
+    def test_content_description_follows_visible_local_val(self):
+        # The remaining #571 case: the a11y assignment contains only a
+        # reference, while its visible local initializer carries the UI copy.
+        self.write(
+            "Coupled.kt",
+            "fun Hero() {\n"
+            "    val a11y = when {\n"
+            '        ready -> "Recovery $score percent"\n'
+            '        calibrating -> "Recovery calibrating, $n nights"\n'
+            '        else -> "Recovery, no data yet"\n'
+            "    }\n"
+            "    Box(Modifier.semantics { contentDescription = a11y })\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(
+            found,
+            {
+                "Recovery $score percent",
+                "Recovery calibrating, $n nights",
+                "Recovery, no data yet",
+            },
+        )
+
+    def test_content_description_does_not_follow_parameter(self):
+        self.write(
+            "Component.kt",
+            "fun Label(content: String) {\n"
+            "    Box(Modifier.semantics { contentDescription = content })\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, set())
+
+    def test_content_description_respects_val_scope(self):
+        self.write(
+            "Sibling.kt",
+            "fun Screen() {\n"
+            "    if (condition) {\n"
+            '        val a11y = "Sibling-only text"\n'
+            "    }\n"
+            "    Box(Modifier.semantics { contentDescription = a11y })\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, set())
+
+    def test_content_description_uses_nearest_shadowing_val(self):
+        self.write(
+            "Shadowed.kt",
+            "fun Screen() {\n"
+            '    val a11y = "Outer hardcoded text"\n'
+            "    if (condition) {\n"
+            "        val a11y = uiString(R.string.localized)\n"
+            "        Box(Modifier.semantics { contentDescription = a11y })\n"
+            "    }\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, set())
+
+    def test_val_initializer_does_not_sweep_following_statements(self):
+        self.write(
+            "Bounded.kt",
+            "fun Screen() {\n"
+            '    val a11y = "Target text"\n'
+            '    val internal = "Not accessibility text"\n'
+            "    Box(Modifier.semantics { contentDescription = a11y })\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(found, {"Target text"})
+
+    def test_val_initializer_follows_explicit_line_continuation(self):
+        self.write(
+            "Continued.kt",
+            "fun Screen() {\n"
+            '    val a11y = "Workout row" +\n'
+            "        if (selected) {\n"
+            '            ". Selected."\n'
+            "        } else {\n"
+            '            ". Not selected."\n'
+            "        }\n"
+            "    Box(Modifier.semantics { contentDescription = a11y })\n"
+            "}\n",
+        )
+        found = {lit for _p, _l, lit in ia.scan_android()}
+        self.assertEqual(
+            found,
+            {"Workout row", ". Selected.", ". Not selected."},
+        )
 
 
 class Baseline(unittest.TestCase):

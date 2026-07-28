@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Spacer
@@ -71,6 +72,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -307,7 +309,11 @@ fun ConnectionDot(
         // are several on Today (each StatePill, source pill, etc.) — kept a running animation-clock
         // subscription invalidating the frame, for a halo that wasn't even drawn. Hoisting it into a child
         // that's composed only when `pulsing` means a still dot does zero per-frame work. Identical visuals.
-        if (pulsing) {
+        // ...and not at all under Reduce Motion or battery saver: the halo is decoration, and an
+        // infinite transition per live dot is exactly the idle per-frame work battery saver asks an app
+        // to stop. A still dot still reads as live — the colour carries that. (#909)
+        val renderStill = rememberPoseStill()
+        if (pulsing && !renderStill) {
             PulsingDotHalo(tone = tone, size = size)
         }
         Box(
@@ -573,18 +579,27 @@ fun <T> SegmentedPillControl(
     label: (T) -> String,
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
+    // Opt-in compact mode for long option sets. The track fills its parent and gives each segment an
+    // equal share instead of letting intrinsic label padding widen the surrounding card past the screen.
+    // Defaulted so the shorter controls keep their existing sizing.
+    adaptsToAvailableWidth: Boolean = false,
     // Per-segment availability (#943): a disabled segment stays VISIBLE (dimmed, not clickable) so the
     // control can teach that an option exists before it is usable, e.g. trend ranges that unlock as
     // history builds. Defaulted so every existing call site is untouched.
     enabled: (T) -> Boolean = { true },
 ) {
     val outerShape = RoundedCornerShape(50)
+    val scrollsForLargeText = adaptsToAvailableWidth && LocalDensity.current.fontScale > 1f
+    val usesEqualWidth = adaptsToAvailableWidth && !scrollsForLargeText
+    val rangeScrollState = rememberScrollState()
     // The track is a fixed-height pill; the selected pill FILLS that height so its inset is EQUAL on
     // every side (container padding 4, pill horizontal padding only). The old compact pill inside a
     // taller row left more vertical margin than horizontal — it read as off-centre. Mirrors iOS's
     // SegmentedPillControl refresh (segment height 36, pill fills it for an even inset).
     Row(
         modifier = modifier
+            .then(if (scrollsForLargeText) Modifier.horizontalScroll(rangeScrollState) else Modifier)
+            .then(if (usesEqualWidth) Modifier.fillMaxWidth() else Modifier)
             .height(36.dp)
             .clip(outerShape)
             .background(Palette.surfaceInset)
@@ -609,16 +624,19 @@ fun <T> SegmentedPillControl(
             Box(
                 modifier = Modifier
                     // Fill the track height so the pill's inset is equal top/bottom/left/right.
+                    .then(if (usesEqualWidth) Modifier.weight(1f) else Modifier)
                     .fillMaxHeight()
                     .clip(pillShape)
                     .then(pillBg)
                     .then(if (itemEnabled) Modifier.clickableNoRipple { onSelect(item) } else Modifier)
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = if (usesEqualWidth) Metrics.space4 else 12.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = label(item),
                     style = NoopType.captionNumber,
+                    maxLines = if (adaptsToAvailableWidth) 1 else Int.MAX_VALUE,
+                    overflow = if (adaptsToAvailableWidth) TextOverflow.Ellipsis else TextOverflow.Clip,
                     color = when {
                         selected && Palette.isLight -> androidx.compose.ui.graphics.Color.White
                         selected -> Palette.goldDeepText
