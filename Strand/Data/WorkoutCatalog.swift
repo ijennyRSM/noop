@@ -39,6 +39,9 @@ enum WorkoutCatalog {
         Sport(name: "Pool swim", isDistanceSport: false),
         Sport(name: "Row machine", isDistanceSport: false),
         Sport(name: "Elliptical", isDistanceSport: false),
+        // Structured local exercise/set logging is attached to this explicit activity. Keep the
+        // legacy "Strength" value below so older history and cross-platform imports still resolve.
+        Sport(name: "Strength Training", isDistanceSport: false),
         Sport(name: "Strength", isDistanceSport: false),
         // Bodybuilding (#714). A strength-style session with no route, so GPS off.
         Sport(name: "Bodybuilding", isDistanceSport: false),
