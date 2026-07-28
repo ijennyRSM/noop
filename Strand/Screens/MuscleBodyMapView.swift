@@ -345,11 +345,12 @@ private struct MuscleLoadDetail: View {
     }
 
     private func metric(_ title: String, _ value: Double) -> some View {
+        let displayValue = value > 0 ? "\(Int(value.rounded()))/100" : "—"
         NoopCard {
             HStack {
                 Text(title).foregroundStyle(StrandPalette.textSecondary)
                 Spacer()
-                Text(value > 0 ? "\(Int(value.rounded()))/100" : "—")
+                Text(verbatim: displayValue)
                     .font(StrandFont.number(24))
             }
         }

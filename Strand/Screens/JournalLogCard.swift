@@ -140,6 +140,15 @@ struct JournalLogCard: View {
         // Empty groups hidden outside edit mode; in edit mode all six show so items can be moved in.
         if !groupItems.isEmpty || editing {
             let collapsed = collapsedGroups.contains(group.rawValue)
+            let accessibilityState = collapsed
+                ? String(localized: "Collapsed")
+                : String(localized: "Expanded")
+            let accessibilityLabel = String.localizedStringWithFormat(
+                String(localized: "%@, %lld items, %@"),
+                group.title,
+                Int64(groupItems.count),
+                accessibilityState
+            )
             VStack(alignment: .leading, spacing: 8) {
                 Button { toggleCollapsed(group) } label: {
                     HStack(spacing: 6) {
@@ -157,7 +166,7 @@ struct JournalLogCard: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "\(group.title), \(groupItems.count) items, \(collapsed ? String(localized: "Collapsed") : String(localized: "Expanded"))"))
+                .accessibilityLabel(accessibilityLabel)
 
                 if !collapsed {
                     ForEach(groupItems) { item in itemRow(item) }
