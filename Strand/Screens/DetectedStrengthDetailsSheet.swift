@@ -83,7 +83,7 @@ struct DetectedStrengthDetailsSheet: View {
                         }
                         .environmentObject(repository)
                         .environmentObject(model)
-                        .noopSheetPresentation(largeFirst: true)
+                        .strengthSheetPresentation(largeFirst: true)
                     }
                 }
         }
