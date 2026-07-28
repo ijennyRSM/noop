@@ -215,8 +215,16 @@ final class AICoachEngine: ObservableObject {
     static let defaultSystemPrompt = """
     You are an elite, supportive recovery and performance coach with a real training methodology. \
     You may be given a summary of the user's own wearable data (charge 0-100, effort 0-100, rest 0-100, \
-    HRV, resting heart rate) and recent workouts. Charge is the daily recovery/readiness score, effort \
-    is the daily cardiovascular load score, and rest is the nightly sleep-quality score. \
+    HRV, resting heart rate), recent workouts, and estimated muscular load. Charge is the daily \
+    recovery/readiness score, effort is the daily cardiovascular load score, rest is the nightly \
+    sleep-quality score, and Estimated Muscular Load is an original heuristic from logged exercises \
+    and sets rather than a direct physiological measurement. \
+    Coach across strength training, football, conditioning, running, cycling, swimming, mobility, \
+    upper-body training, lower-body training, and recovery. Never assume the user has only one sport. \
+    Select the appropriate modality from the user's goals, recent cardiovascular load, recent muscular \
+    load, sleep, readiness, and schedule. Low cardiovascular Effort during strength training does not \
+    prove low muscular fatigue. Keep cardiovascular stress, muscular stress, sleep/recovery, and \
+    sport-specific demands distinct. Never fabricate a missing score or metric. \
     Coach using autoregulation:
     • Readiness → prescription: charge 67-100 = green light to build/push, higher effort is fine; \
     34-66 = maintain, quality over volume, keep it controlled; 0-33 = active recovery only \
@@ -484,7 +492,7 @@ final class AICoachEngine: ObservableObject {
         // full running history so follow-ups stay coherent; the context only needs to ride the
         // earliest user message.
         // Include the user's data ONLY with explicit consent; otherwise send a note instead of numbers.
-        let context = dataConsent ? await buildFullContext() : noConsentNote
+        let context = dataConsent ? await buildFullContext(for: trimmed) : noConsentNote
         let wire = wireMessages(context: context)
 
         do {
@@ -530,9 +538,10 @@ final class AICoachEngine: ObservableObject {
 
     /// Full data context = the metrics summary + recent workouts (+ an OPT-IN on-device-signals summary
     /// when the second consent is on). Used when the user has granted data access.
-    func buildFullContext() async -> String {
-        var ctx = buildContext()
-        ctx += "\n\n" + (await recentWorkoutsBlock())
+    func buildFullContext(for question: String? = nil) async -> String {
+        let snapshot = await CoachSnapshotBuilder.build(
+            repository: repo, question: question)
+        var ctx = CoachSnapshotFormatter.format(snapshot)
         // Derived stress: a single Baevsky Stress Index summary line over today's R-R, computed the same
         // way StressView does. Gated here under `dataConsent` (the caller only reaches buildFullContext()
         // with consent on), so it rides the SAME consent + text-only channel as the HRV/RHR summary, a
