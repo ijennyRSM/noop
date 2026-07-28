@@ -212,12 +212,13 @@ struct ManualWorkoutSheet: View {
 
     /// One tappable suggestion row — shared by the #297 Recent block and the full catalogue list.
     private func suggestionRow(_ name: String, isDistance: Bool) -> some View {
+        let displayName = WorkoutCatalog.localizedDisplayName(name)
         Button {
             sport = name
             sportFocused = false
         } label: {
             HStack(spacing: 6) {
-                Text(name)
+                Text(displayName)
                     .font(StrandFont.body)
                     .foregroundStyle(StrandPalette.textPrimary)
                 if isDistance {
@@ -231,7 +232,7 @@ struct ManualWorkoutSheet: View {
             .padding(.horizontal, 12).padding(.vertical, 8)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Pick \(name)")
+        .accessibilityLabel(String(localized: "Pick \(displayName)"))
     }
 
     // MARK: - Sections
@@ -471,13 +472,15 @@ struct StartWorkoutSheet: View {
             HStack(spacing: NoopMetrics.space3) {
                 NoopButton("Cancel", kind: .tertiary) { dismiss() }
                 Spacer()
-                NoopButton("\(actionVerb) \(selected)", systemImage: "figure.run", kind: .primary) {
+                NoopButton("\(actionVerb) \(WorkoutCatalog.localizedDisplayName(selected))",
+                           systemImage: "figure.run", kind: .primary) {
                     // #297: a confirmed start (or merge-name) is a real selection — fold it into the recents.
                     RecentSportsPrefs.recordSelection(selected)
                     onStart(selected)
                     dismiss()
                 }
-                .accessibilityLabel("\(actionVerb) \(selected)")
+                .accessibilityLabel(
+                    "\(actionVerb) \(WorkoutCatalog.localizedDisplayName(selected))")
             }
         }
         .padding(NoopMetrics.space6)
@@ -496,7 +499,7 @@ struct StartWorkoutSheet: View {
             selected = sp.name
         } label: {
             HStack(spacing: 6) {
-                Text(sp.name)
+                Text(sp.displayName)
                     .font(StrandFont.body)
                     .foregroundStyle(sp.name == selected
                                      ? StrandPalette.accent : StrandPalette.textPrimary)
@@ -511,7 +514,7 @@ struct StartWorkoutSheet: View {
             .padding(.horizontal, 12).padding(.vertical, 9)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Pick \(sp.name)")
+        .accessibilityLabel(String(localized: "Pick \(sp.displayName)"))
         .accessibilityAddTraits(sp.name == selected ? [.isSelected] : [])
     }
 }
