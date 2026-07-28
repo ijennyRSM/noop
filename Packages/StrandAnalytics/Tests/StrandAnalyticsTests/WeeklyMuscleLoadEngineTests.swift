@@ -13,9 +13,10 @@ final class WeeklyMuscleLoadEngineTests: XCTestCase {
         ]
         let result = WeeklyMuscleLoadEngine.aggregate(
             rows: rows, now: now, calendar: calendar)
-        XCTAssertEqual(result.first?.rawStimulus, 1_800, accuracy: 0.001)
-        XCTAssertEqual(result.first?.normalizedLoad, 50, accuracy: 0.001)
-        XCTAssertEqual(result.first?.sessionCount, 2)
+        let first = try! XCTUnwrap(result.first)
+        XCTAssertEqual(first.rawStimulus, 1_800, accuracy: 0.001)
+        XCTAssertEqual(first.normalizedLoad, 50, accuracy: 0.001)
+        XCTAssertEqual(first.sessionCount, 2)
     }
 
     func testCalendarWindowExcludesEightDayOldSession() {
@@ -28,7 +29,8 @@ final class WeeklyMuscleLoadEngineTests: XCTestCase {
         ]
         let result = WeeklyMuscleLoadEngine.aggregate(
             rows: rows, now: now, calendar: calendar)
-        XCTAssertEqual(result.first?.rawStimulus, 1_800, accuracy: 0.001)
+        let first = try! XCTUnwrap(result.first)
+        XCTAssertEqual(first.rawStimulus, 1_800, accuracy: 0.001)
     }
 
     private func row(daysBefore: Int, raw: Double, now: Date,

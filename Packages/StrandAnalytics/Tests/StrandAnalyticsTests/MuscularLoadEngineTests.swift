@@ -132,7 +132,7 @@ final class MuscularLoadEngineTests: XCTestCase {
             MuscularLoadEngine.totalTrainingLoad(
                 storedCardiovascularEffort: 10.5,
                 muscularLoad: nil
-            ),
+            )!,
             10.5,
             accuracy: 0.001
         )
