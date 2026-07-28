@@ -216,7 +216,7 @@ final class AICoachEngine: ObservableObject {
     private static let consentKey = "ai.dataConsent"
     private static let customConnectedKey = "ai.customConnected"
     private static let onDeviceSignalsKey = "ai.includeOnDeviceSignals"
-    static let defaultSystemPromptVersion = 2
+    static let defaultSystemPromptVersion = 3
     static let defaultPromptReviewedVersionKey = "ai.defaultPromptReviewedVersion"
     /// UserDefaults key holding the user's EDITED system prompt. Absent (or blank) means "use the
     /// built-in default". Small text key, never a secret, so plain UserDefaults is fine. Read FRESH
@@ -239,8 +239,12 @@ final class AICoachEngine: ObservableObject {
     cardiovascular stress, muscular stress, sleep/recovery, and sport-specific demands distinct.
 
     Never fabricate a missing score or metric. Never invent a date, workout, baseline, or symptom. \
-    Respect freshness, \
-    completeness, and confidence labels; say when evidence is stale or insufficient. Treat ACWR and \
+    Respect freshness, coverage, and confidence labels; say when evidence is stale or insufficient. \
+    Do not describe a metric marked current as stale: current means the summary's local calendar date, \
+    recent means the previous local calendar date, and stale means two or more local dates old. \
+    Historical baseline coverage is separate from current freshness; 0/30 prior baseline days can \
+    coexist with a valid current value. Do not call current-day data incomplete merely because prior \
+    baseline coverage is low. Treat ACWR and \
     monotony as load-change heuristics, never as injury predictions. Soreness may modestly inform a \
     conservative suggestion. Pain/discomfort is separate from load: recommend caution or a qualified \
     professional when appropriate, but never diagnose.
@@ -599,6 +603,14 @@ final class AICoachEngine: ObservableObject {
         guard dataConsent else { return noConsentNote }
         return await buildFullContext(for: question)
     }
+
+    #if DEBUG
+    /// DEBUG-only inspection seam for the exact summary text sent to the provider.
+    /// It contains derived summaries only and never API keys or raw sensor streams.
+    func debugContextForCurrentConsent(question: String? = nil) async -> String {
+        await contextForCurrentConsent(question: question)
+    }
+    #endif
 
     static func boundedContext(_ context: String,
                                maxCharacters: Int = 6_000) -> String {

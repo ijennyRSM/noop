@@ -15,16 +15,15 @@ struct CoachSnapshot: Equatable {
         var difference: Double?
         var percentDifference: Double?
         var trend: Trend
-        var availableCount: Int
-        var expectedCount: Int
+        var sevenDayAvailableCount: Int
+        var sevenDayExpectedCount: Int
+        var baselineAvailableCount: Int
+        var baselineExpectedCount: Int
+        var currentDayAvailable: Bool
         var source: String
         var timeRange: String
         var observedDay: String? = nil
         var freshness: Freshness = .unavailable
-
-        var completeness: Double {
-            expectedCount > 0 ? Double(availableCount) / Double(expectedCount) : 0
-        }
     }
 
     struct Recovery: Equatable {
@@ -81,7 +80,8 @@ struct CoachSnapshot: Equatable {
         var frequentActivities: [String]
         var readiness: String
         var readinessDrivers: [String]
-        var completeness: Double
+        var availableDayCount28: Int
+        var expectedDayCount28: Int
         var recentWorkouts: [RecentWorkout] = []
     }
 
@@ -127,7 +127,7 @@ enum CoachSnapshotBuilder {
         let latest = sorted.last
         let readiness = ReadinessEngine.evaluate(
             days: sorted,
-            today: Repository.localDayKey(now)
+            today: CanonicalDay.key(for: now)
         )
 
         let charge = metric(sorted.compactMap { row in
@@ -165,18 +165,17 @@ enum CoachSnapshotBuilder {
         let sleepSession = await repository.allSleepSessions(days: 14)
         let habitualMidsleep = await repository.habitualMidsleepSec()
         let groupedSleep = Dictionary(grouping: sleepSession) {
-            Repository.localDayKey(
-                Date(timeIntervalSince1970: TimeInterval($0.endTs)))
+            CanonicalDay.key(
+                for: Date(timeIntervalSince1970: TimeInterval($0.endTs)))
         }
-        let sleepDayKeys = groupedSleep.keys.sorted()
+        let sleepDayKeys = groupedSleep.keys.filter {
+            CanonicalDay.date(from: $0) != nil
+        }.sorted()
         let latestSleepDay = sleepDayKeys.last
         var latestMainSleep: [CachedSleepSession] = []
         var napCount = 0
-        let sevenDayStart = Calendar.current.date(
-            byAdding: .day, value: -6,
-            to: Calendar.current.startOfDay(for: now)
-        ) ?? now
-        let sevenDayStartKey = Repository.localDayKey(sevenDayStart)
+        let sevenDayStart = CanonicalDay.startOfWindow(
+            daysIncludingToday: 7, now: now) ?? now
         for key in sleepDayKeys {
             let sessions = groupedSleep[key] ?? []
             let classification = SleepPeriodClassifier.classify(
@@ -184,7 +183,7 @@ enum CoachSnapshotBuilder {
                 offsetSec: TimeZone.current.secondsFromGMT(for: now),
                 habitualMidsleepSec: habitualMidsleep
             )
-            if key >= sevenDayStartKey {
+            if CanonicalDay.isInWindow(key: key, from: sevenDayStart, through: now) {
                 napCount += classification.napIndices.count
             }
             if key == latestSleepDay {
@@ -215,15 +214,17 @@ enum CoachSnapshotBuilder {
             debtTrend: trend(debtSeries.map(\.value)))
 
         let workouts = await repository.workoutRows(days: 28)
-        let calendar = Calendar.current
+        let calendar = CanonicalDay.calendar()
         let todayStart = calendar.startOfDay(for: now)
         let start7 = calendar.date(byAdding: .day, value: -6, to: todayStart) ?? todayStart
         let start28 = calendar.date(byAdding: .day, value: -27, to: todayStart) ?? todayStart
         let rows7 = workouts.filter {
-            Date(timeIntervalSince1970: TimeInterval($0.startTs)) >= start7
+            let startedAt = Date(timeIntervalSince1970: TimeInterval($0.startTs))
+            return startedAt >= start7 && startedAt <= now
         }
         let rows28 = workouts.filter {
-            Date(timeIntervalSince1970: TimeInterval($0.startTs)) >= start28
+            let startedAt = Date(timeIntervalSince1970: TimeInterval($0.startTs))
+            return startedAt >= start28 && startedAt <= now
         }
         let strains7 = rows7.compactMap {
             CardiovascularEffortValue.stored($0.strain)?.normalized100
@@ -231,9 +232,14 @@ enum CoachSnapshotBuilder {
         let strains28 = rows28.compactMap {
             CardiovascularEffortValue.stored($0.strain)?.normalized100
         }
-        let daily7 = sorted.filter { dayIsInWindow($0.day, start: start7, end: now) }
+        let daily7 = sorted.filter {
+            CanonicalDay.isInWindow(key: $0.day, from: start7, through: now)
+        }
             .compactMap(\.strain)
-        let daily28 = sorted.filter { dayIsInWindow($0.day, start: start28, end: now) }
+        let daily28Rows = sorted.filter {
+            CanonicalDay.isInWindow(key: $0.day, from: start28, through: now)
+        }
+        let daily28 = daily28Rows
             .compactMap(\.strain)
         let acute = daily7.count >= 4 ? mean(daily7) : nil
         let chronic = daily28.count >= 14 ? mean(daily28) : nil
@@ -271,6 +277,15 @@ enum CoachSnapshotBuilder {
                 zoneMinutes: zoneSummary?.minutes
             )
         }
+        let trainingCoverageDays = Set(
+            daily28Rows.compactMap { row in
+                row.strain == nil ? nil : row.day
+            }
+            + rows28.map {
+                CanonicalDay.key(
+                    for: Date(timeIntervalSince1970: TimeInterval($0.startTs)))
+            }
+        )
         let training = CoachSnapshot.Training(
             workoutCount7: rows7.count,
             workoutCount28: rows28.count,
@@ -292,9 +307,8 @@ enum CoachSnapshotBuilder {
             readinessDrivers: readiness.signals.map {
                 [$0.label, $0.evidence, $0.detail].compactMap { $0 }.joined(separator: ": ")
             },
-            completeness: Double(Set(sorted.filter {
-                dayIsInWindow($0.day, start: start28, end: now)
-            }.map(\.day)).count) / 28,
+            availableDayCount28: trainingCoverageDays.count,
+            expectedDayCount28: 28,
             recentWorkouts: recentWorkouts)
 
         let strength = await buildStrength(repository: repository, question: question, now: now)
@@ -431,16 +445,34 @@ enum CoachSnapshotBuilder {
     }
 
     static func metric(_ values: [(day: String, value: Double)],
-                       now: Date) -> CoachSnapshot.Metric {
-        let valid = values.filter { $0.value.isFinite && date(fromDay: $0.day) != nil }
+                       now: Date,
+                       timeZone: TimeZone = .current) -> CoachSnapshot.Metric {
+        let byDay = Dictionary(
+            values.compactMap { item -> (String, Double)? in
+                guard item.value.isFinite,
+                      CanonicalDay.date(from: item.day, timeZone: timeZone) != nil
+                else { return nil }
+                return (item.day, item.value)
+            },
+            uniquingKeysWith: { _, latest in latest }
+        )
+        let valid = byDay.map { (day: $0.key, value: $0.value) }
             .sorted { $0.day < $1.day }
         let latest = valid.last
-        let today = Calendar.current.startOfDay(for: now)
-        let start7 = Calendar.current.date(byAdding: .day, value: -6, to: today) ?? today
-        let start30 = Calendar.current.date(byAdding: .day, value: -30, to: today) ?? today
-        let seven = valid.filter { dayIsInWindow($0.day, start: start7, end: now) }
+        let calendar = CanonicalDay.calendar(timeZone: timeZone)
+        let today = calendar.startOfDay(for: now)
+        let todayKey = CanonicalDay.key(for: now, timeZone: timeZone)
+        let start7 = calendar.date(byAdding: .day, value: -6, to: today) ?? today
+        // The baseline is the 30 completed local dates before today; the current
+        // partial day is intentionally excluded.
+        let start30 = calendar.date(byAdding: .day, value: -30, to: today) ?? today
+        let seven = valid.filter {
+            CanonicalDay.isInWindow(
+                key: $0.day, from: start7, through: now, timeZone: timeZone)
+        }
         let baseline = valid.filter {
-            guard let date = date(fromDay: $0.day) else { return false }
+            guard let date = CanonicalDay.startOfDay(
+                for: $0.day, timeZone: timeZone) else { return false }
             return date >= start30 && date < today
         }
         let current = latest?.value
@@ -452,18 +484,23 @@ enum CoachSnapshotBuilder {
         }
         let freshness: CoachSnapshot.Freshness = {
             guard let latestDay = latest?.day,
-                  let date = date(fromDay: latestDay) else { return .unavailable }
-            let distance = Calendar.current.dateComponents(
-                [.day], from: date, to: today).day ?? Int.max
-            if distance <= 0 { return .current }
-            if distance == 1 { return .recent }
-            return .stale
+                  let distance = CanonicalDay.daysBetween(
+                    latestDay, now, timeZone: timeZone)
+            else { return .unavailable }
+            switch distance {
+            case 0: return .current
+            case 1: return .recent
+            case 2...: return .stale
+            default: return .unavailable
+            }
         }()
         return .init(
             current: current, average7: avg7, baseline30: avg30,
             difference: difference, percentDifference: percent,
             trend: trend(seven.map(\.value)),
-            availableCount: baseline.count, expectedCount: 30,
+            sevenDayAvailableCount: seven.count, sevenDayExpectedCount: 7,
+            baselineAvailableCount: baseline.count, baselineExpectedCount: 30,
+            currentDayAvailable: byDay[todayKey] != nil,
             source: "on-device merged wearable data",
             timeRange: "latest / 7 calendar days / prior 30 calendar days",
             observedDay: latest?.day,
@@ -493,10 +530,11 @@ enum CoachSnapshotBuilder {
     private static func consecutiveHardDays(_ days: [DailyMetric], now: Date) -> Int {
         let byDay = Dictionary(days.map { ($0.day, $0) }, uniquingKeysWith: { _, last in last })
         var count = 0
-        let today = Calendar.current.startOfDay(for: now)
+        let calendar = CanonicalDay.calendar()
+        let today = calendar.startOfDay(for: now)
         for offset in 0..<28 {
-            guard let date = Calendar.current.date(byAdding: .day, value: -offset, to: today),
-                  let day = byDay[Repository.localDayKey(date)],
+            guard let date = calendar.date(byAdding: .day, value: -offset, to: today),
+                  let day = byDay[CanonicalDay.key(for: date)],
                   CardiovascularEffortValue.stored(day.strain)?.isHardWorkout == true
             else { break }
             count += 1
@@ -528,21 +566,6 @@ enum CoachSnapshotBuilder {
         return sqrt(sum / Double(values.count - 1))
     }
 
-    private static func date(fromDay day: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar.current
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: day)
-    }
-
-    private static func dayIsInWindow(_ day: String, start: Date, end: Date) -> Bool {
-        guard let date = date(fromDay: day) else { return false }
-        return date >= Calendar.current.startOfDay(for: start)
-            && date <= Calendar.current.startOfDay(for: end)
-    }
-
     private static func zipOptional<A, B>(_ a: A?, _ b: B?) -> (A, B)? {
         guard let a, let b else { return nil }
         return (a, b)
@@ -558,17 +581,37 @@ enum CoachSnapshotBuilder {
     }
 
     private static func dayString(_ timestamp: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: Date(timeIntervalSince1970: TimeInterval(timestamp)))
+        CanonicalDay.key(
+            for: Date(timeIntervalSince1970: TimeInterval(timestamp)))
     }
 }
 
 enum CoachSnapshotFormatter {
     static func format(_ snapshot: CoachSnapshot,
-                       maxCharacters: Int = 6_000) -> String {
-        var lines = ["USER HEALTH AND TRAINING SUMMARY (local summaries; missing values are not inferred):"]
+                       maxCharacters: Int = 6_000,
+                       timeZone: TimeZone = .current) -> String {
+        var lines = [
+            "USER HEALTH AND TRAINING SUMMARY (local summaries; missing values are not inferred):",
+            "",
+            "SUMMARY TIME",
+            "Generated local date: \(CanonicalDay.key(for: snapshot.generatedAt, timeZone: timeZone))",
+            "Generated local time: \(localTime(snapshot.generatedAt, timeZone: timeZone))",
+            "Time zone: \(timeZoneDescription(timeZone, at: snapshot.generatedAt))",
+            "Calendar used for stored day keys: Gregorian",
+            "Current-day status: \(hasCurrentDayData(snapshot, timeZone: timeZone) ? "data available" : "no current-day summary data")",
+            "",
+            "FRESHNESS SEMANTICS",
+            "- current = observed on the same local calendar day as this summary",
+            "- recent = observed on the previous local calendar day",
+            "- stale = observed two or more local calendar days ago",
+            "",
+            "INTERPRETATION RULES",
+            "- Do not describe a metric marked current as stale.",
+            "- Historical baseline coverage is prior-data availability, not current freshness.",
+            "- A 30-day baseline coverage of 0/30 can coexist with a valid current-day value.",
+            "- When historical coverage is insufficient, say the baseline or trend is not yet reliable.",
+            "- Do not call current-day data incomplete merely because prior baseline coverage is low.",
+        ]
         lines += ["", "RECOVERY"]
         lines.append(metric("Charge", snapshot.recovery.charge, unit: "/100"))
         lines.append(metric("HRV", snapshot.recovery.hrv, unit: " ms"))
@@ -582,17 +625,17 @@ enum CoachSnapshotFormatter {
 
         let sleep = snapshot.sleep
         lines += ["", "SLEEP"]
-        lines.append(metric("Sleep duration", sleep.durationMinutes, unit: " min"))
+        lines.append(durationMetric("Sleep duration", sleep.durationMinutes))
         lines.append(metric("Rest score (separate from duration)", sleep.restScore, unit: "/100"))
-        lines.append("  Need: \(number(sleep.sleepNeedMinutes, suffix: " min")); "
-                     + "versus need: \(signed(sleep.versusNeedMinutes, suffix: " min")); "
-                     + "debt: \(number(sleep.debtMinutes, suffix: " min")) (\(sleep.debtTrend.rawValue))")
+        lines.append("  Need: \(CoachDurationFormatter.format(minutes: sleep.sleepNeedMinutes)); "
+                     + "versus need: \(CoachDurationFormatter.formatSigned(minutes: sleep.versusNeedMinutes)); "
+                     + "debt: \(CoachDurationFormatter.format(minutes: sleep.debtMinutes)) (\(sleep.debtTrend.rawValue))")
         lines.append("  Efficiency: \(number(sleep.efficiencyPercent, suffix: "%")); "
                      + "consistency: \(number(sleep.consistencyPercent, suffix: "%")); "
-                     + "deep: \(number(sleep.deepMinutes, suffix: " min")); "
-                     + "REM: \(number(sleep.remMinutes, suffix: " min")); "
-                     + "light: \(number(sleep.lightMinutes, suffix: " min")); "
-                     + "restorative: \(number(sleep.restorativeMinutes, suffix: " min"))")
+                     + "deep: \(CoachDurationFormatter.format(minutes: sleep.deepMinutes)); "
+                     + "REM: \(CoachDurationFormatter.format(minutes: sleep.remMinutes)); "
+                     + "light: \(CoachDurationFormatter.format(minutes: sleep.lightMinutes)); "
+                     + "restorative: \(CoachDurationFormatter.format(minutes: sleep.restorativeMinutes))")
         lines.append("  Disturbances: \(sleep.disturbances.map(String.init) ?? "missing"); "
                      + "bedtime: \(clock(sleep.bedtime)); wake: \(clock(sleep.wakeTime)); "
                      + "naps (7d estimate): \(sleep.naps)")
@@ -600,8 +643,8 @@ enum CoachSnapshotFormatter {
         let training = snapshot.training
         lines += ["", "TRAINING LOAD"]
         lines.append("  Workouts: \(training.workoutCount7) in 7d / \(training.workoutCount28) in 28d; "
-                     + "duration: \(Int(training.durationMinutes7.rounded())) min / "
-                     + "\(Int(training.durationMinutes28.rounded())) min")
+                     + "duration: \(CoachDurationFormatter.format(minutes: training.durationMinutes7)) / "
+                     + "\(CoachDurationFormatter.format(minutes: training.durationMinutes28))")
         lines.append("  Cardiovascular Effort: total \(one(training.cardiovascularEffortTotal7)) in 7d, "
                      + "\(one(training.cardiovascularEffortTotal28)) in 28d; "
                      + "7d average \(number(training.cardiovascularEffortAverage7))")
@@ -610,27 +653,37 @@ enum CoachSnapshotFormatter {
                      + "\(number(training.acuteChronicRatio)); monotony "
                      + "\(number(training.monotony)) (training heuristics, not medical claims)")
         lines.append("  Consecutive hard days: \(training.consecutiveHardDays); "
-                     + "hours since latest hard workout: \(number(training.hoursSinceHardWorkout))")
+                     + "time since latest hard workout: "
+                     + CoachDurationFormatter.format(
+                        minutes: training.hoursSinceHardWorkout.map { $0 * 60 }))
         lines.append("  Activities: "
                      + (training.frequentActivities.isEmpty ? "missing"
                         : training.frequentActivities.joined(separator: ", ")))
         lines.append("  Readiness: \(training.readiness); drivers: "
                      + (training.readinessDrivers.isEmpty ? "missing"
                         : training.readinessDrivers.joined(separator: " | ")))
-        lines.append("  Daily-data completeness: \(Int((training.completeness * 100).rounded()))%")
+        lines.append("  28-day training coverage: \(training.availableDayCount28)/"
+                     + "\(training.expectedDayCount28) days")
         if !training.recentWorkouts.isEmpty {
             lines += ["", "RECENT WORKOUTS (newest first; summary only)"]
             for workout in training.recentWorkouts {
                 let zones = workout.zoneMinutes.map {
-                    zip(1...5, $0).map { "Z\($0.0) \(one($0.1)) min" }
+                    zip(1...5, $0).map {
+                        "Z\($0.0) \(CoachDurationFormatter.format(minutes: $0.1))"
+                    }
                         .joined(separator: ", ")
                 } ?? "zones unavailable"
-                lines.append(
-                    "  \(dayClock(workout.startedAt)) \(workout.activity); "
-                    + "duration \(number(workout.durationMinutes, suffix: " min")); "
-                    + "Effort \(number(workout.cardiovascularEffort, suffix: "/100")); "
-                    + zones
-                )
+                let workoutDay = CanonicalDay.key(
+                    for: workout.startedAt, timeZone: timeZone)
+                let relative = relativeDayLabel(
+                    workoutDay, now: snapshot.generatedAt, timeZone: timeZone)
+                lines.append("  \(workoutDay)\(relative) — "
+                             + WorkoutSource.displaySport(workout.activity))
+                lines.append("    Duration: "
+                             + CoachDurationFormatter.format(minutes: workout.durationMinutes))
+                lines.append("    Cardiovascular Effort: "
+                             + number(workout.cardiovascularEffort, suffix: "/100"))
+                lines.append("    HR zones: \(zones)")
             }
         }
 
@@ -677,7 +730,7 @@ enum CoachSnapshotFormatter {
         if let strength = snapshot.strength {
             lines += ["", "STRENGTH TRAINING SUMMARY"]
             lines.append("  Last session: \(strength.latestSessionTitle ?? "missing"); "
-                         + "duration \(number(strength.durationMinutes, suffix: " min")); "
+                         + "duration \(CoachDurationFormatter.format(minutes: strength.durationMinutes)); "
                          + "working sets \(strength.workingSets); session RPE "
                          + "\(number(strength.sessionRPE, suffix: "/10"))")
             lines.append("  Cardiovascular Effort \(number(strength.cardiovascularEffort)); "
@@ -709,19 +762,86 @@ enum CoachSnapshotFormatter {
     }
 
     private static func metric(_ title: String, _ value: CoachSnapshot.Metric,
-                               unit: String) -> String {
+                                unit: String) -> String {
         "  \(title): latest \(number(value.current, suffix: unit))"
-            + " [\(value.observedDay ?? "no date"), \(value.freshness.rawValue)]; "
+            + " [observed day \(value.observedDay ?? "no date"); freshness "
+            + "\(value.freshness.rawValue); current-day value "
+            + "\(value.currentDayAvailable ? "available" : "unavailable")]; "
             + "7d avg \(number(value.average7, suffix: unit)); "
+            + "7-day coverage \(value.sevenDayAvailableCount)/"
+            + "\(value.sevenDayExpectedCount) days; "
             + "30d baseline \(number(value.baseline30, suffix: unit)); "
+            + "30-day baseline coverage \(value.baselineAvailableCount)/"
+            + "\(value.baselineExpectedCount) prior days; "
             + "difference \(signed(value.difference, suffix: unit)) "
             + "(\(signed(value.percentDifference, suffix: "%"))); "
-            + "trend \(value.trend.rawValue); completeness "
-            + "\(value.availableCount)/\(value.expectedCount); source \(value.source)"
+            + "trend \(value.trend.rawValue); source \(value.source)"
     }
 
-    private static func dayClock(_ date: Date) -> String {
-        date.formatted(.dateTime.year().month().day().hour().minute())
+    private static func durationMetric(_ title: String,
+                                       _ value: CoachSnapshot.Metric) -> String {
+        "  \(title): latest \(CoachDurationFormatter.format(minutes: value.current))"
+            + " [observed day \(value.observedDay ?? "no date"); freshness "
+            + "\(value.freshness.rawValue); current-day value "
+            + "\(value.currentDayAvailable ? "available" : "unavailable")]; "
+            + "7d avg \(CoachDurationFormatter.format(minutes: value.average7)); "
+            + "7-day coverage \(value.sevenDayAvailableCount)/"
+            + "\(value.sevenDayExpectedCount) days; "
+            + "30d baseline \(CoachDurationFormatter.format(minutes: value.baseline30)); "
+            + "30-day baseline coverage \(value.baselineAvailableCount)/"
+            + "\(value.baselineExpectedCount) prior days; "
+            + "difference \(CoachDurationFormatter.formatSigned(minutes: value.difference)); "
+            + "trend \(value.trend.rawValue); source \(value.source)"
+    }
+
+    private static func hasCurrentDayData(_ snapshot: CoachSnapshot,
+                                          timeZone: TimeZone) -> Bool {
+        let metrics = [
+            snapshot.recovery.charge, snapshot.recovery.hrv,
+            snapshot.recovery.restingHR, snapshot.recovery.respiratoryRate,
+            snapshot.recovery.skinTemperatureDeviation, snapshot.recovery.spo2,
+            snapshot.sleep.durationMinutes, snapshot.sleep.restScore,
+        ]
+        if metrics.contains(where: \.currentDayAvailable) { return true }
+        let today = CanonicalDay.key(for: snapshot.generatedAt, timeZone: timeZone)
+        if snapshot.training.recentWorkouts.contains(where: {
+            CanonicalDay.key(for: $0.startedAt, timeZone: timeZone) == today
+        }) { return true }
+        if let date = snapshot.strength?.latestSessionDate,
+           CanonicalDay.key(for: date, timeZone: timeZone) == today {
+            return true
+        }
+        return false
+    }
+
+    private static func relativeDayLabel(_ day: String,
+                                         now: Date,
+                                         timeZone: TimeZone) -> String {
+        switch CanonicalDay.daysBetween(day, now, timeZone: timeZone) {
+        case 0: return " (today)"
+        case 1: return " (yesterday)"
+        default: return ""
+        }
+    }
+
+    private static func localTime(_ date: Date, timeZone: TimeZone) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = CanonicalDay.calendar(timeZone: timeZone)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = timeZone
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
+
+    private static func timeZoneDescription(_ timeZone: TimeZone,
+                                            at date: Date) -> String {
+        let seconds = timeZone.secondsFromGMT(for: date)
+        let sign = seconds >= 0 ? "+" : "-"
+        let absolute = abs(seconds)
+        let hours = absolute / 3_600
+        let minutes = (absolute % 3_600) / 60
+        return "\(timeZone.identifier) (UTC\(sign)"
+            + String(format: "%02d:%02d", hours, minutes) + ")"
     }
 
     private static func list(_ values: [String]) -> String {
