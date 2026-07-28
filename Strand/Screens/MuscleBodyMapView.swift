@@ -103,10 +103,11 @@ private final class MuscleBodyMapModel: ObservableObject {
 struct MuscleBodyMapCard: View {
     @EnvironmentObject private var repository: Repository
     @StateObject private var model = MuscleBodyMapModel()
+    @State private var bodySide: AnatomicalMuscleMap.Side = .front
 
     var body: some View {
         NoopCard(padding: NoopMetrics.space4, tint: StrandPalette.metricCyan) {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 16) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("MUSCLE MAP")
@@ -127,15 +128,72 @@ struct MuscleBodyMapCard: View {
                 }
                 .pickerStyle(.segmented)
 
-                HStack(alignment: .top, spacing: 16) {
-                    MuscleFigure(side: .front, summaries: model.summaries, mode: model.mode) {
-                        model.selected = $0
-                    }
-                    MuscleFigure(side: .back, summaries: model.summaries, mode: model.mode) {
-                        model.selected = $0
+                HStack(spacing: 8) {
+                    ForEach(AnatomicalMuscleMap.Side.allCases) { side in
+                        Button {
+                            withAnimation(.snappy(duration: 0.24)) { bodySide = side }
+                        } label: {
+                            Text(side.title)
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundStyle(
+                                    bodySide == side ? Color.black : StrandPalette.textSecondary
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule(style: .continuous)
+                                        .fill(
+                                            bodySide == side
+                                                ? Color.white
+                                                : Color.white.opacity(0.055)
+                                        )
+                                )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .frame(height: 290)
+                .padding(3)
+                .background(Capsule(style: .continuous).fill(Color.black.opacity(0.28)))
+
+                HStack(alignment: .center, spacing: 14) {
+                    AnatomicalMuscleMap(
+                        side: bodySide,
+                        values: muscleValues,
+                        onSelect: select
+                    )
+                    .frame(maxWidth: 174)
+
+                    VStack(alignment: .leading, spacing: 13) {
+                        Text("HIGHEST LOAD")
+                            .font(StrandFont.overline)
+                            .tracking(StrandFont.overlineTracking)
+                            .foregroundStyle(StrandPalette.textTertiary)
+
+                        if strongestMuscles.isEmpty {
+                            Text("No training load yet")
+                                .font(StrandFont.footnote)
+                                .foregroundStyle(StrandPalette.textTertiary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else {
+                            ForEach(strongestMuscles) { summary in
+                                muscleLoadRow(summary)
+                            }
+                        }
+                        Spacer(minLength: 0)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 14)
+                .frame(maxWidth: .infinity, minHeight: 350, maxHeight: 390)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Color.black.opacity(0.24))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.055), lineWidth: 1)
+                        )
+                )
+
                 legend
                 Text("Estimated from logged training. Colors are not direct measurements of muscle activation, damage, inflammation, or injury risk.")
                     .font(StrandFont.footnote)
@@ -152,13 +210,69 @@ struct MuscleBodyMapCard: View {
         }
     }
 
+    private var muscleValues: [NOOPMuscle: Double] {
+        Dictionary(uniqueKeysWithValues: model.summaries.values.map {
+            ($0.muscle, $0.value(for: model.mode))
+        })
+    }
+
+    private var strongestMuscles: [MuscleBodyMapModel.MuscleSummary] {
+        Array(
+            model.summaries.values
+                .filter { $0.value(for: model.mode) > 0 }
+                .sorted { $0.value(for: model.mode) > $1.value(for: model.mode) }
+                .prefix(5)
+        )
+    }
+
+    private func select(_ muscle: NOOPMuscle) {
+        model.selected = model.summaries[muscle.rawValue]
+            ?? .init(muscle: muscle)
+    }
+
+    private func muscleLoadRow(
+        _ summary: MuscleBodyMapModel.MuscleSummary
+    ) -> some View {
+        let value = summary.value(for: model.mode)
+        return Button {
+            model.selected = summary
+        } label: {
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(summary.muscle.localizedName)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StrandPalette.textSecondary)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.75)
+                    Spacer(minLength: 2)
+                    Text("\(Int(value.rounded()))")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(MuscleLoadColorScale.color(value))
+                }
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Color.white.opacity(0.08))
+                        Capsule()
+                            .fill(MuscleLoadColorScale.color(value))
+                            .frame(width: geometry.size.width * min(1, value / 100))
+                    }
+                }
+                .frame(height: 4)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(verbatim: summary.muscle.localizedName))
+        .accessibilityValue(Text(verbatim: String(Int(value.rounded()))))
+    }
+
     private var legend: some View {
-        HStack(spacing: 10) {
-            legendItem(String(localized: "No data"), color: StrandPalette.textTertiary.opacity(0.35))
-            legendItem(String(localized: "Low"), color: StrandPalette.accent)
-            legendItem(String(localized: "Moderate"), color: StrandPalette.sleepLight)
-            legendItem(String(localized: "High"), color: StrandPalette.statusWarning)
-            legendItem(String(localized: "Very high"), color: StrandPalette.metricRose)
+        HStack(spacing: 8) {
+            legendItem(String(localized: "No data"), color: MuscleLoadColorScale.color(0))
+            legendItem(String(localized: "Low"), color: MuscleLoadColorScale.color(10))
+            legendItem(String(localized: "Moderate"), color: MuscleLoadColorScale.color(35))
+            legendItem(String(localized: "High"), color: MuscleLoadColorScale.color(60))
+            legendItem(String(localized: "Very high"), color: MuscleLoadColorScale.color(85))
         }
         .font(StrandFont.footnote)
         .accessibilityElement(children: .combine)
@@ -213,7 +327,7 @@ private struct MuscleFigure: View {
                     .position(x: region.x * geometry.size.width,
                               y: region.y * geometry.size.height)
                     .accessibilityLabel(
-                        "\(region.muscle.englishName), \(level(summary.value(for: mode))) estimated load")
+                        "\(region.muscle.localizedName), \(level(summary.value(for: mode))) estimated load")
                     .accessibilityHint("Opens muscle load details")
                 }
             }
@@ -317,7 +431,7 @@ private struct MuscleLoadDetail: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(summary.muscle.englishName)
+                Text(summary.muscle.localizedName)
                     .font(StrandFont.title1)
                     .foregroundStyle(StrandPalette.textPrimary)
                 metric("Today's estimated load", summary.today)
