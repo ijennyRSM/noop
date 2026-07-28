@@ -1353,6 +1353,7 @@ struct TodayView: View {
                 // #627: the persistent journal widget (last-7-days strip + tap-through to the journal).
                 // Today only; self-hides when the reminder toggle is off. Twin of Android JournalReminderCard.
                 if selectedDayOffset == 0 { JournalReminderCard() }
+                if selectedDayOffset == 0 { MuscleBodyMapCard() }
                 sourcesSection
             }
             #if os(iOS)

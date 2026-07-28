@@ -270,6 +270,11 @@ struct LiquidTodayView: View {
                         case .journal: if selectedDayOffset == 0 { JournalReminderCard() }
                         }
                     }
+                    // Original local vector map for Strength Training. It remains independent of
+                    // cardiovascular Effort and defaults to the conservative residual-load estimate.
+                    if selectedDayOffset == 0 {
+                        MuscleBodyMapCard()
+                    }
                     dataSourcesSection
                     Color.clear.frame(height: 90) // floating tab-bar clearance
                 }
