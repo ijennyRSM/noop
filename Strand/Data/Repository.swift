@@ -483,10 +483,9 @@ final class Repository: ObservableObject {
     static let wearableImportSources = ["oura-import", "fitbit-import", "garmin-import", "oura-api", healthConnectSource]
 
     /// `yyyy-MM-dd` in the device's local zone, matching how `DailyMetric.day` is stored.
-    private static let dayKeyFormatter: DateFormatter = {
-        let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd"; f.locale = Locale(identifier: "en_US_POSIX"); return f
-    }()
-    static func localDayKey(_ date: Date) -> String { dayKeyFormatter.string(from: date) }
+    static func localDayKey(_ date: Date) -> String {
+        CanonicalDay.key(for: date)
+    }
 
     /// The hour the LOGICAL day rolls (04:00 local). Between midnight and this hour, "Today" stays put.
     nonisolated static let logicalDayRolloverHour = 4
@@ -2759,16 +2758,7 @@ final class Repository: ObservableObject {
         return snapshot
     }
 
-    /// Shared formatter , created once. Hot read path (called per series window / refresh);
-    /// allocating a DateFormatter per call was a measurable waste. Read-only use is thread-safe.
-    private static let dayFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        return f
-    }()
-
-    static func dayString(_ d: Date) -> String { dayFormatter.string(from: d) }
+    static func dayString(_ d: Date) -> String { CanonicalDay.key(for: d) }
 
     /// The "yyyy-MM-dd" day one calendar day AFTER `day`, or `day` verbatim when it isn't a parseable
     /// ISO date (e.g. a wide-open sentinel already past every real day, so no buffer is needed). Backs the
@@ -2776,10 +2766,11 @@ final class Repository: ObservableObject {
     /// requested upper bound still resolves the selected day (#614). Mirrors Android
     /// WhoopRepository.bufferDayAfter.
     static func dayAfter(_ day: String) -> String {
-        guard let d = dayFormatter.date(from: day),
-              let next = Calendar(identifier: .gregorian).date(byAdding: .day, value: 1, to: d)
+        let calendar = CanonicalDay.calendar()
+        guard let d = CanonicalDay.date(from: day),
+              let next = calendar.date(byAdding: .day, value: 1, to: d)
         else { return day }
-        return dayFormatter.string(from: next)
+        return CanonicalDay.key(for: next)
     }
 }
 
