@@ -29,6 +29,8 @@ struct CoachView: View {
     /// Working copy of the system prompt while editing, committed to the engine on change so an edit
     /// takes effect on the next send. Seeded from the engine when the editor opens.
     @State private var promptDraft: String = ""
+    @State private var showingCoachProfile = false
+    @State private var showingPromptReview = false
     @FocusState private var composerFocused: Bool
 
     /// Sentinel tag for the "Custom…" entry in the model Picker.
@@ -54,6 +56,8 @@ struct CoachView: View {
                 // v5: a SECOND opt-in, only meaningful once data access is on, folds a summary of the
                 // new on-device signals (your strongest patterns + Lab Book) into the coach context.
                 if coach.dataConsent { onDeviceSignalsBar }
+                coachProfileBar
+                if coach.hasPendingDefaultPromptReview { promptUpgradeBar }
                 systemPromptBar
                 transcript
                 if let error = coach.errorText, !error.isEmpty {
@@ -81,6 +85,14 @@ struct CoachView: View {
             }
         }
         .task(id: coach.dataConsent) { await coach.startBriefIfNeeded() }
+        .sheet(isPresented: $showingCoachProfile) {
+            CoachProfileSheet(coach: coach)
+                .strengthSheetPresentation(largeFirst: true)
+        }
+        .sheet(isPresented: $showingPromptReview) {
+            DefaultCoachPromptReviewSheet(coach: coach)
+                .strengthSheetPresentation(largeFirst: true)
+        }
     }
 
     /// Explicit, revocable permission for the coach to read & send the user's data. Off by default.
@@ -129,6 +141,55 @@ struct CoachView: View {
                 Toggle("", isOn: $coach.includeOnDeviceSignals)
                     .labelsHidden().toggleStyle(.switch).tint(StrandPalette.accent)
                     .accessibilityLabel("Also share my patterns and Lab Book with the coach")
+            }
+        }
+    }
+
+    private var coachProfileBar: some View {
+        Button {
+            showingCoachProfile = true
+        } label: {
+            NoopCard(padding: 14, tint: StrandPalette.chargeColor) {
+                HStack(spacing: 10) {
+                    Image(systemName: "person.crop.circle.badge.checkmark")
+                        .foregroundStyle(StrandPalette.accent)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Coach profile & check-in")
+                            .font(StrandFont.subhead)
+                            .foregroundStyle(StrandPalette.textPrimary)
+                        Text(coach.sorenessCheckIn == nil
+                             ? "Add local goals, schedule, equipment and an optional soreness check-in."
+                             : "Profile saved locally · check-in available")
+                            .font(StrandFont.footnote)
+                            .foregroundStyle(StrandPalette.textTertiary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var promptUpgradeBar: some View {
+        NoopCard(padding: 14, tint: StrandPalette.metricCyan) {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(StrandPalette.metricCyan)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("New default coach instructions")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                    Text("Your custom instructions are untouched. Review the safer, freshness-aware default.")
+                        .font(StrandFont.footnote)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+                Spacer()
+                Button("Review") { showingPromptReview = true }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(StrandPalette.accent)
             }
         }
     }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add the English/Thai UI strings introduced by local Strength Training."""
+"""Add the English/Thai UI strings introduced by Strength Training and Coach v2."""
 
 from __future__ import annotations
 
@@ -8,6 +8,12 @@ from pathlib import Path
 
 CATALOG = Path(__file__).parents[1] / "Strand" / "Resources" / "Localizable.xcstrings"
 FALLBACK_LOCALES = ("de", "es", "fr", "it", "pt-PT", "ru", "zh-Hans", "zh-Hant")
+ENGLISH = {
+    "strength.intensity.light": "Light",
+    "strength.intensity.moderate": "Moderate",
+    "strength.intensity.hard": "Hard",
+    "strength.intensity.veryHard": "Very Hard",
+}
 
 THAI = {
     "%@, %lld items, %@": "%@, %lld รายการ, %@",
@@ -32,7 +38,11 @@ THAI = {
     "High": "สูง",
     "Intensity": "ระดับความหนัก",
     "Keep the detected heart-rate workout and add either a complete exercise log or a faster estimated muscle summary.": "เก็บข้อมูลการออกกำลังกายที่ตรวจจับจากอัตราการเต้นหัวใจไว้ แล้วเพิ่มรายละเอียดท่าครบถ้วนหรือสรุปภาระกล้ามเนื้อแบบรวดเร็ว",
-    "Light": "เบา",
+    "Light": "หลับตื้น",
+    "strength.intensity.light": "เบา",
+    "strength.intensity.moderate": "ปานกลาง",
+    "strength.intensity.hard": "หนัก",
+    "strength.intensity.veryHard": "หนักมาก",
     "Loading offline exercise library…": "กำลังโหลดคลังท่าออฟไลน์…",
     "Loading strength workout…": "กำลังโหลดการฝึกเวท…",
     "Low": "ต่ำ",
@@ -150,6 +160,48 @@ THAI = {
     "History": "ประวัติ",
     "No previous sessions": "ยังไม่มีการฝึกครั้งก่อน",
     "Personal best": "สถิติส่วนตัว",
+    "Everything on this screen stays in this app. It is included in Coach context only when “Let the coach use my data” is on.": "ข้อมูลทั้งหมดในหน้านี้จะอยู่ภายในแอป และจะรวมในบริบทของโค้ชเมื่อเปิด “อนุญาตให้โค้ชใช้ข้อมูลของฉัน” เท่านั้น",
+    "Coach profile": "โปรไฟล์โค้ช",
+    "LOCAL COACH PROFILE": "โปรไฟล์โค้ชในอุปกรณ์",
+    "Primary goals": "เป้าหมายหลัก",
+    "Strength, endurance, sleep": "เวท ความอึด การนอน",
+    "Sports and activities": "กีฬาและกิจกรรม",
+    "Football, running, lifting": "ฟุตบอล วิ่ง เวท",
+    "Experience": "ประสบการณ์",
+    "Beginner": "เริ่มต้น",
+    "Intermediate": "ปานกลาง",
+    "Preferred training days": "วันที่สะดวกฝึก",
+    "Monday, Wednesday, Saturday": "จันทร์ พุธ เสาร์",
+    "Available time": "เวลาที่มี",
+    "%lld min": "%lld นาที",
+    "Available equipment": "อุปกรณ์ที่มี",
+    "Barbell, dumbbells, bodyweight": "บาร์เบล ดัมเบล น้ำหนักตัว",
+    "Current training limitations": "ข้อจำกัดในการฝึกตอนนี้",
+    "Preferred coaching language": "ภาษาที่ต้องการให้โค้ชใช้",
+    "Thai": "ภาษาไทย",
+    "OPTIONAL CHECK-IN": "เช็กอิน (ไม่บังคับ)",
+    "Soreness can modestly adjust estimated residual load.": "ความล้ากล้ามเนื้ออาจปรับค่าภาระคงค้างโดยประมาณเล็กน้อย",
+    "Overall soreness": "ความล้ากล้ามเนื้อโดยรวม",
+    "Muscle": "กล้ามเนื้อ",
+    "Soreness": "ระดับความล้า",
+    "%lld/10": "%lld/10",
+    "How you feel": "อาการที่รู้สึก",
+    "Pain or discomfort": "อาการเจ็บหรือไม่สบาย",
+    "Not reported": "ไม่ได้ระบุ",
+    "Pain/discomfort note": "รายละเอียดอาการเจ็บหรือไม่สบาย",
+    "Coach will not diagnose this": "โค้ชจะไม่วินิจฉัยอาการนี้",
+    "Delete check-in": "ลบเช็กอิน",
+    "New default instructions": "คำแนะนำเริ่มต้นชุดใหม่",
+    "Keep custom": "ใช้คำสั่งที่กำหนดเองต่อ",
+    "Use new default": "ใช้ค่าเริ่มต้นใหม่",
+    "Coach profile & check-in": "โปรไฟล์โค้ชและเช็กอิน",
+    "Add local goals, schedule, equipment and an optional soreness check-in.": "เพิ่มเป้าหมาย ตาราง อุปกรณ์ และเช็กอินความล้ากล้ามเนื้อแบบไม่บังคับ",
+    "Profile saved locally · check-in available": "บันทึกโปรไฟล์ในอุปกรณ์แล้ว · มีข้อมูลเช็กอิน",
+    "New default coach instructions": "คำแนะนำเริ่มต้นใหม่สำหรับโค้ช",
+    "Your custom instructions are untouched. Review the safer, freshness-aware default.": "คำสั่งที่คุณกำหนดเองยังคงเดิม ตรวจสอบค่าเริ่มต้นใหม่ที่คำนึงถึงความสดของข้อมูลและความปลอดภัยมากขึ้น",
+    "Duration: %lld min": "ระยะเวลา: %lld นาที",
+    "Could not save strength details": "บันทึกรายละเอียดการฝึกเวทไม่สำเร็จ",
+    "Could not save strength workout": "บันทึกการฝึกเวทไม่สำเร็จ",
 }
 
 
@@ -163,12 +215,13 @@ def main() -> None:
     for english, thai in THAI.items():
         entry = strings.setdefault(english, {})
         localizations = entry.setdefault("localizations", {})
-        localizations.setdefault("en", unit(english))
+        english_value = ENGLISH.get(english, english)
+        localizations.setdefault("en", unit(english_value))
         # Keep the project's strict all-locale CI gate green. These locales
         # intentionally use the English source until their maintainers provide
         # reviewed translations; Thai remains the complete localized target.
         for locale in FALLBACK_LOCALES:
-            localizations.setdefault(locale, unit(english))
+            localizations.setdefault(locale, unit(english_value))
         localizations["th"] = unit(thai)
     CATALOG.write_text(
         json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -43,11 +43,16 @@ Removing a custom exercise is a soft delete, so old sessions remain readable. A
 whole-session transactional save prevents partial child rows and rejects negative
 weight, invalid timestamps, duplicate set indexes, and invalid RPE/RIR values.
 
+`StrengthDerivedCommit` writes the session, exercises and sets, session muscle
+loads, rebuilt daily aggregate, residual cache, and any detected-workout relabel in
+one transaction. Editing or deleting a session rebuilds its affected days. A failed
+derived write rolls back every part instead of leaving stale or partial rows.
+
 The standard `.noopbak` process checkpoints and copies the whole database, so custom
 exercises, sessions, sets, templates, and derived loads are included automatically.
 Bundled exercise facts can be reseeded by stable ID after restore.
 
-## Estimated Muscular Load V1
+## Estimated Muscular Load
 
 This is an original, transparent heuristic—not a direct physiological measurement.
 For every completed set:
@@ -94,9 +99,27 @@ Repeated sessions accumulate before clamping. Sleep duration and Charge may adju
 the estimate only modestly. It never claims muscle damage, inflammation, injury
 probability, or an exact recovery time.
 
+`CurrentMuscleResidualService` recalculates decay against the current clock from
+session-level muscle loads. Its 15-minute memory cache and database snapshot are
+performance fallbacks, not the source of truth. Completing, editing, deleting, or
+relabeling a workout, changing recovery/check-in inputs, and returning to the
+foreground invalidate the cache.
+
+An optional local soreness check-in can add at most 15% to an individual muscle's
+estimated residual. It has full influence for 24 hours and tapers linearly to zero
+at 72 hours. Missing soreness remains unavailable, not zero. Pain is stored and
+described separately; it is never converted into load or used as a diagnosis.
+
 ### Total Training Load
 
-Cardiovascular Effort is not changed or overwritten. It is normalized to 0–100 and
+Cardiovascular Effort is not changed or overwritten.
+`CardiovascularEffortValue` carries an explicit `.noop100` or `.whoop21` scale and
+source, so a stored NOOP value such as 10.5/100 cannot be normalized a second time.
+Existing database values are always NOOP 0–100; WHOOP 0–21 conversion occurs only
+at import/export boundaries. Hard-workout classification uses normalized Effort
+`>= 70`.
+
+The explicitly normalized value is
 combined with Estimated Muscular Load using a weighted RMS plus a small peak guard:
 
 ```text
@@ -113,6 +136,12 @@ Today includes original SwiftUI front/back vector regions with modes for **Resid
 have text labels and VoiceOver descriptions. Tapping a region shows load, working
 sets, last trained time, contributing exercises, residual load, and confidence.
 
+The 7-day view sums raw stimulus across seven local calendar days before
+normalizing. Its personal reference is the median of four non-overlapping weeks in
+the preceding 28 days; fewer than three usable weeks falls back to a documented
+cold-start reference and low confidence. Training frequency is shown separately,
+so normalized daily scores are never added until they saturate at 100.
+
 The colors are estimates from logged training. They are not measurements of muscle
 activation, tissue damage, inflammation, recovery percentage, or injury risk and are
 not medical advice.
@@ -120,10 +149,17 @@ not medical advice.
 ## AI Coach and privacy
 
 `CoachSnapshot` separates local calculation from text formatting. With the existing
-data-consent switch enabled, Coach receives compact recovery, sleep, training-load,
-and muscular-load summaries. Detailed exercise progression is selected locally and
-deterministically only for questions about strength, weight, sets, reps, RPE/RIR,
-progression, records, named exercises, or muscles.
+data-consent switch enabled, Coach receives compact recovery, shared main-sleep/nap
+classification, calendar-based training load, up to six recent workouts with
+available HR-zone summaries, latest-session muscle load, current residual, and
+today/7-day muscle summaries. Current, recent, stale, and unavailable freshness is
+explicit. The formatted context is capped at roughly 6,000 characters by removing
+whole optional lines.
+
+The optional Coach profile and soreness check-in are JSON stored in the app's local
+settings. They add no account, telemetry, or upload path. Custom system prompts are
+preserved; users can review and opt into the version-2 default, while users who
+never customized the prompt migrate automatically.
 
 Raw R-R, PPG red/IR, accelerometer, gyroscope, GPS, and stage-epoch streams are never
 included. SpO₂ is included only when the database carries a calibrated percentage,

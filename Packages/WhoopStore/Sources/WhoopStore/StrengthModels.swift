@@ -293,6 +293,47 @@ public struct MuscleTrainingLoadRecord: Codable, Equatable, Sendable {
     }
 }
 
+public struct DetectedWorkoutRelabel: Codable, Equatable, Sendable {
+    public var sourceDeviceId: String
+    public var targetDeviceId: String
+    public var workout: WorkoutRow
+    public var targetSport: String
+
+    public init(sourceDeviceId: String, targetDeviceId: String,
+                workout: WorkoutRow, targetSport: String) {
+        self.sourceDeviceId = sourceDeviceId
+        self.targetDeviceId = targetDeviceId
+        self.workout = workout
+        self.targetSport = targetSport
+    }
+}
+
+/// Complete strength write unit. Session detail, per-session muscle loads,
+/// rebuilt daily rows, optional residual cache, and a detected-workout relabel
+/// are committed or rolled back together.
+public struct StrengthDerivedCommit: Codable, Equatable, Sendable {
+    public var session: StrengthSessionRecord
+    public var day: String
+    public var muscleLoads: [DailyMuscleLoadRecord]
+    public var residualSnapshot: [MuscleResidualRecord]
+    public var residualCapturedAt: Int?
+    public var detectedWorkoutRelabel: DetectedWorkoutRelabel?
+
+    public init(session: StrengthSessionRecord,
+                day: String,
+                muscleLoads: [DailyMuscleLoadRecord],
+                residualSnapshot: [MuscleResidualRecord] = [],
+                residualCapturedAt: Int? = nil,
+                detectedWorkoutRelabel: DetectedWorkoutRelabel? = nil) {
+        self.session = session
+        self.day = day
+        self.muscleLoads = muscleLoads
+        self.residualSnapshot = residualSnapshot
+        self.residualCapturedAt = residualCapturedAt
+        self.detectedWorkoutRelabel = detectedWorkoutRelabel
+    }
+}
+
 public struct ExercisePerformanceRecord: Codable, Equatable, Identifiable, Sendable {
     public var id: String { sessionId }
     public var sessionId: String

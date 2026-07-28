@@ -359,9 +359,10 @@ final class StrengthTrainingViewModel: ObservableObject {
         } catch { errorMessage = error.localizedDescription }
     }
 
-    func finish(cardiovascularEffort: Double?) async {
+    @discardableResult
+    func finish(cardiovascularEffort: Double?) async -> Bool {
         saveTask?.cancel()
-        guard var session, let store else { return }
+        guard var session, let store else { return false }
         await recalculate()
         session = self.session ?? session
         session.status = StrengthSessionStatus.completed.rawValue
@@ -369,32 +370,38 @@ final class StrengthTrainingViewModel: ObservableObject {
         session.cardiovascularEffort = cardiovascularEffort
         session.muscularLoad = loadOutput?.muscularLoad
         session.totalTrainingLoad = MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: cardiovascularEffort, muscularLoad: loadOutput?.muscularLoad)
-        session.confidence = loadOutput?.confidence.rawValue ?? StrengthConfidence.low.rawValue
-        self.session = session
-        do {
-            try await store.saveStrengthSession(session)
-            try await writeDailyLoads(for: session)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-
-    func saveCompletedEdits() async {
-        saveTask?.cancel()
-        guard var session, let store else { return }
-        await recalculate()
-        session = self.session ?? session
-        session.muscularLoad = loadOutput?.muscularLoad
-        session.totalTrainingLoad = MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: session.cardiovascularEffort,
+            storedCardiovascularEffort: cardiovascularEffort,
             muscularLoad: loadOutput?.muscularLoad)
         session.confidence = loadOutput?.confidence.rawValue ?? StrengthConfidence.low.rawValue
         self.session = session
         do {
-            try await store.saveStrengthSession(session)
-            try await writeDailyLoads(for: session)
-        } catch { errorMessage = error.localizedDescription }
+            try await writeDerivedCommit(for: session)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    @discardableResult
+    func saveCompletedEdits() async -> Bool {
+        saveTask?.cancel()
+        guard var session, store != nil else { return false }
+        await recalculate()
+        session = self.session ?? session
+        session.muscularLoad = loadOutput?.muscularLoad
+        session.totalTrainingLoad = MuscularLoadEngine.totalTrainingLoad(
+            storedCardiovascularEffort: session.cardiovascularEffort,
+            muscularLoad: loadOutput?.muscularLoad)
+        session.confidence = loadOutput?.confidence.rawValue ?? StrengthConfidence.low.rawValue
+        self.session = session
+        do {
+            try await writeDerivedCommit(for: session)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 
     private func previousSets(for exerciseId: String) -> [StrengthSetRecord] {
@@ -481,44 +488,20 @@ final class StrengthTrainingViewModel: ObservableObject {
         }.max()
     }
 
-    private func writeDailyLoads(for session: StrengthSessionRecord) async throws {
+    private func writeDerivedCommit(for session: StrengthSessionRecord) async throws {
         guard let store, let output = loadOutput else { return }
-        let date = Date(timeIntervalSince1970: TimeInterval(session.startedAt))
-        let day = Repository.localDayKey(date)
-        let rows = output.muscles.map {
-            DailyMuscleLoadRecord(
-                day: day, muscleId: $0.muscleId, side: $0.side,
-                rawStimulus: $0.rawStimulus, normalizedLoad: $0.normalizedLoad,
-                workingSets: $0.workingSets, confidence: output.confidence.rawValue)
-        }
-        try await store.replaceSessionMuscleLoads(
-            sessionId: session.id, deviceId: session.deviceId, day: day,
-            trainedAt: session.startedAt, rows: rows)
-        let now = Date()
-        let historyRows = try await store.historicalMuscleLoads(
-            deviceId: session.deviceId,
-            from: Int(now.addingTimeInterval(-30 * 86_400).timeIntervalSince1970))
-        let history = historyRows.map {
-            MuscularLoadEngine.HistoricalMuscleLoad(
-                muscleId: $0.muscleId, side: $0.side, load: $0.normalizedLoad,
-                trainedAt: Date(timeIntervalSince1970: TimeInterval($0.trainedAt)),
-                confidence: StrengthConfidence(rawValue: $0.confidence) ?? .low)
-        }
         let latestDay = repository?.today
         let recovery = MuscularLoadEngine.RecoveryModifiers(
             sleepHours: latestDay?.totalSleepMin.map { $0 / 60 },
             charge: latestDay?.recovery)
-        let residual = MuscularLoadEngine.residualLoads(
-            history: history, at: now, recovery: recovery)
-        let captured = Int(now.timeIntervalSince1970)
-        try await store.replaceResidualSnapshot(
-            residual.map {
-                MuscleResidualRecord(
-                    capturedAt: captured, muscleId: $0.muscleId, side: $0.side,
-                    residualLoad: $0.residualLoad, confidence: $0.confidence.rawValue,
-                    lastTrainedAt: $0.lastTrainedAt.map { Int($0.timeIntervalSince1970) })
-            },
-            deviceId: session.deviceId, capturedAt: captured)
+        let commit = try await StrengthDerivedBuilder.makeCommit(
+            session: session,
+            output: output,
+            store: store,
+            recovery: recovery
+        )
+        try await store.commitStrengthDerived(commit)
+        await CurrentMuscleResidualService.shared.invalidate(deviceId: session.deviceId)
     }
 }
 
@@ -1292,9 +1275,9 @@ struct StrengthCompletedEditor: View {
                     Button(saving ? "Saving…" : "Save") {
                         saving = true
                         Task {
-                            await viewModel.saveCompletedEdits()
+                            let saved = await viewModel.saveCompletedEdits()
                             saving = false
-                            onDone()
+                            if saved { onDone() }
                         }
                     }
                     .disabled(saving)
@@ -1304,6 +1287,14 @@ struct StrengthCompletedEditor: View {
                 await viewModel.loadCompleted(
                     repository: repository, sessionId: sessionId,
                     bodyweightKg: model.profile.weightKg)
+            }
+            .alert("Could not save strength workout", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
             }
             .sheet(isPresented: $viewModel.showingPicker) {
                 ExercisePicker(viewModel: viewModel)

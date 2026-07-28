@@ -1,5 +1,6 @@
 import XCTest
 @testable import Strand
+import WhoopStore
 
 @MainActor
 final class CoachSnapshotTests: XCTestCase {
@@ -40,9 +41,9 @@ final class CoachSnapshotTests: XCTestCase {
                 readinessDrivers: [], completeness: 0.9),
             strength: nil)
         let output = CoachSnapshotFormatter.format(snapshot)
-        XCTAssertTrue(output.contains("Sleep duration: current 288.0 min"))
-        XCTAssertTrue(output.contains("Rest score (separate from duration): current 78.0/100"))
-        XCTAssertFalse(output.contains("Rest score (separate from duration): current 288"))
+        XCTAssertTrue(output.contains("Sleep duration: latest 288.0 min"))
+        XCTAssertTrue(output.contains("Rest score (separate from duration): latest 78.0/100"))
+        XCTAssertFalse(output.contains("Rest score (separate from duration): latest 288"))
     }
 
     func testFormatterNeverIncludesRawSensorChannels() {
@@ -93,6 +94,80 @@ final class CoachSnapshotTests: XCTestCase {
         XCTAssertTrue(prompt.contains(
             "Low cardiovascular Effort during strength training does not prove low muscular fatigue."))
         XCTAssertTrue(prompt.contains("Never fabricate a missing score or metric."))
+    }
+
+    func testMetricUsesCalendarWindowsAndReportsStaleFreshness() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let now = calendar.date(from: DateComponents(
+            year: 2026, month: 7, day: 28, hour: 12))!
+        let value = CoachSnapshotBuilder.metric([
+            ("2026-06-20", 999),
+            ("2026-07-20", 20),
+            ("2026-07-26", 40),
+        ], now: now)
+        XCTAssertEqual(value.current, 40)
+        XCTAssertEqual(value.average7, 40)
+        XCTAssertEqual(value.baseline30, 30)
+        XCTAssertEqual(value.availableCount, 2)
+        XCTAssertEqual(value.freshness, .stale)
+    }
+
+    func testLatestStrengthMusclesComeOnlyFromRequestedSessionLoads() {
+        let morning: [DailyMuscleLoadRecord] = [
+            .init(day: "2026-07-28", muscleId: "quadriceps",
+                  rawStimulus: 1_000, normalizedLoad: 80,
+                  workingSets: 5, confidence: "high"),
+        ]
+        let evening: [DailyMuscleLoadRecord] = [
+            .init(day: "2026-07-28", muscleId: "chest",
+                  rawStimulus: 900, normalizedLoad: 70,
+                  workingSets: 4, confidence: "high"),
+        ]
+        let latest = CoachSnapshotBuilder.sessionMuscles(
+            sessionLoads: evening,
+            residualByMuscle: ["chest": 55, "quadriceps": 60]
+        )
+        XCTAssertEqual(latest.map(\.id), ["chest"])
+        XCTAssertFalse(latest.contains { $0.id == morning[0].muscleId })
+    }
+
+    func testRecentWorkoutFormattingIncludesZonesButNoRawStreamsAndIsBounded() {
+        var snapshot = CoachSnapshot(
+            recovery: .init(
+                charge: metric(), hrv: metric(), restingHR: metric(),
+                respiratoryRate: metric(), skinTemperatureDeviation: metric(),
+                spo2: metric(), consecutiveMeaningfulDeviationDays: 0),
+            sleep: .init(
+                durationMinutes: metric(), restScore: metric(),
+                sleepNeedMinutes: nil, versusNeedMinutes: nil, debtMinutes: nil,
+                efficiencyPercent: nil, consistencyPercent: nil,
+                deepMinutes: nil, remMinutes: nil, lightMinutes: nil,
+                restorativeMinutes: nil, disturbances: nil,
+                bedtime: nil, wakeTime: nil, naps: 0, debtTrend: .insufficient),
+            training: .init(
+                workoutCount7: 1, workoutCount28: 1,
+                durationMinutes7: 60, durationMinutes28: 60,
+                cardiovascularEffortTotal7: 75,
+                cardiovascularEffortTotal28: 75,
+                cardiovascularEffortAverage7: 75,
+                acuteLoad: nil, chronicLoad: nil, acuteChronicRatio: nil,
+                monotony: nil, consecutiveHardDays: 1,
+                hoursSinceHardWorkout: 1,
+                frequentActivities: ["Running"],
+                readiness: "balanced", readinessDrivers: [],
+                completeness: 0.5),
+            strength: nil)
+        snapshot.training.recentWorkouts = [
+            .init(activity: "Running", startedAt: Date(timeIntervalSince1970: 100),
+                  durationMinutes: 60, cardiovascularEffort: 75,
+                  zoneMinutes: [5, 10, 20, 15, 5]),
+        ]
+        let output = CoachSnapshotFormatter.format(snapshot, maxCharacters: 1_200)
+        XCTAssertLessThanOrEqual(output.count, 1_200)
+        XCTAssertTrue(output.contains("Z3 20.0 min"))
+        XCTAssertFalse(output.lowercased().contains("rrinterval"))
+        XCTAssertFalse(output.lowercased().contains("gps points"))
     }
 
     private func zip(_ a: Double?, _ b: Double?) -> (Double, Double)? {

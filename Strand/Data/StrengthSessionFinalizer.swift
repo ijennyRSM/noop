@@ -51,49 +51,16 @@ enum StrengthSessionFinalizer {
         session.cardiovascularEffort = cardiovascularEffort
         session.muscularLoad = output.muscularLoad
         session.totalTrainingLoad = MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: cardiovascularEffort,
+            storedCardiovascularEffort: cardiovascularEffort,
             muscularLoad: output.muscularLoad)
         session.confidence = output.confidence.rawValue
-        try await store.saveStrengthSession(session)
-
-        let day = Repository.localDayKey(
-            Date(timeIntervalSince1970: TimeInterval(session.startedAt)))
-        let rows = output.muscles.map {
-            DailyMuscleLoadRecord(
-                day: day, muscleId: $0.muscleId, side: $0.side,
-                rawStimulus: $0.rawStimulus, normalizedLoad: $0.normalizedLoad,
-                workingSets: $0.workingSets, confidence: output.confidence.rawValue)
-        }
-        try await store.replaceSessionMuscleLoads(
-            sessionId: session.id, deviceId: deviceId, day: day,
-            trainedAt: session.startedAt, rows: rows)
-
-        let residualRows = try await store.historicalMuscleLoads(
-            deviceId: deviceId,
-            from: endedAt - 30 * 86_400)
-        let residualHistory = residualRows.map {
-            MuscularLoadEngine.HistoricalMuscleLoad(
-                muscleId: $0.muscleId, side: $0.side,
-                load: $0.normalizedLoad,
-                trainedAt: Date(timeIntervalSince1970: TimeInterval($0.trainedAt)),
-                confidence: StrengthConfidence(rawValue: $0.confidence) ?? .low)
-        }
-        let capturedAt = Int(Date().timeIntervalSince1970)
-        let residual = MuscularLoadEngine.residualLoads(
-            history: residualHistory,
-            at: Date(timeIntervalSince1970: TimeInterval(capturedAt)),
-            recovery: .init(sleepHours: sleepHours, charge: charge))
-        try await store.replaceResidualSnapshot(
-            residual.map {
-                MuscleResidualRecord(
-                    capturedAt: capturedAt, muscleId: $0.muscleId, side: $0.side,
-                    residualLoad: $0.residualLoad,
-                    confidence: $0.confidence.rawValue,
-                    lastTrainedAt: $0.lastTrainedAt.map {
-                        Int($0.timeIntervalSince1970)
-                    })
-            },
-            deviceId: deviceId,
-            capturedAt: capturedAt)
+        let commit = try await StrengthDerivedBuilder.makeCommit(
+            session: session,
+            output: output,
+            store: store,
+            recovery: .init(sleepHours: sleepHours, charge: charge)
+        )
+        try await store.commitStrengthDerived(commit)
+        await CurrentMuscleResidualService.shared.invalidate(deviceId: deviceId)
     }
 }

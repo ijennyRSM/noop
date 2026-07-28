@@ -124,6 +124,35 @@ class ReadinessEngineTest {
     }
 
     @Test
+    fun acwrRequiresFourObservedAcuteDaysWithoutFillingMissingWithZero() {
+        val days = mutableListOf<DailyMetric>()
+        for (i in 1..20) days.add(d(i, hrv = 60.0, rhr = 52, strain = 10.0))
+        days.add(d(29, hrv = 60.0, rhr = 52, strain = 20.0))
+        val result = ReadinessEngine.evaluate(days, today = "2024-03-29")
+        assertNull(result.acwr)
+        assertNull(result.monotony)
+    }
+
+    @Test
+    fun oldRowsOutsideCalendarWindowDoNotSatisfyChronicMinimum() {
+        val days = mutableListOf<DailyMetric>()
+        for (i in 1..14) {
+            days.add(
+                DailyMetric(
+                    deviceId = "test",
+                    day = "2023-01-%02d".format(i),
+                    restingHr = 52,
+                    avgHrv = 60.0,
+                    strain = 10.0,
+                )
+            )
+        }
+        for (i in 23..29) days.add(d(i, hrv = 60.0, rhr = 52, strain = 10.0))
+        val result = ReadinessEngine.evaluate(days, today = "2024-03-29")
+        assertNull(result.acwr)
+    }
+
+    @Test
     fun statsHelpers() {
         assertEquals(4.0, ReadinessEngine.mean(listOf(2.0, 4.0, 6.0))!!, 1e-12)
         assertEquals(2.0, ReadinessEngine.sampleSD(listOf(2.0, 4.0, 6.0))!!, 0.0001)

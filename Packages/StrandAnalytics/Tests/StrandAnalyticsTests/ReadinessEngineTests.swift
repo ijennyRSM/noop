@@ -83,4 +83,33 @@ final class ReadinessEngineTests: XCTestCase {
         XCTAssertNil(ReadinessEngine.sampleSD([5]))
         XCTAssertNil(ReadinessEngine.mean([]))
     }
+
+    func testAcwrRequiresFourObservedAcuteDaysWithoutFillingMissingWithZero() {
+        var days: [DailyMetric] = []
+        for i in 1...20 {
+            days.append(d(i, hrv: 60, rhr: 52, strain: 10))
+        }
+        days.append(d(29, hrv: 60, rhr: 52, strain: 20))
+        let result = ReadinessEngine.evaluate(days: days, today: "2024-03-29")
+        XCTAssertNil(result.acwr)
+        XCTAssertNil(result.monotony)
+    }
+
+    func testOldRowsOutsideCalendarWindowDoNotSatisfyChronicMinimum() {
+        var days: [DailyMetric] = []
+        for i in 1...14 {
+            days.append(DailyMetric(
+                day: String(format: "2023-01-%02d", i),
+                totalSleepMin: nil, efficiency: nil,
+                deepMin: nil, remMin: nil, lightMin: nil,
+                disturbances: nil, restingHr: 52, avgHrv: 60,
+                recovery: nil, strain: 10, exerciseCount: nil,
+                spo2Pct: nil, skinTempDevC: nil, respRateBpm: nil))
+        }
+        for i in 23...29 {
+            days.append(d(i, hrv: 60, rhr: 52, strain: 10))
+        }
+        let result = ReadinessEngine.evaluate(days: days, today: "2024-03-29")
+        XCTAssertNil(result.acwr)
+    }
 }

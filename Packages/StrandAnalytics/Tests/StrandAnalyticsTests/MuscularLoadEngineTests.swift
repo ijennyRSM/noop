@@ -86,17 +86,56 @@ final class MuscularLoadEngineTests: XCTestCase {
         XCTAssertLessThan(one.residualLoad, recent.load)
     }
 
+    func testResidualHalfLifeAtTwelveTwentyFourThirtyAndFortyEightHours() {
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        func residual(hours: Double) -> Double {
+            MuscularLoadEngine.residualLoads(
+                history: [
+                    .init(muscleId: "quadriceps", load: 80,
+                          trainedAt: now.addingTimeInterval(-hours * 3_600),
+                          confidence: .high),
+                ],
+                at: now,
+                halfLifeHours: ["quadriceps": 30]
+            )[0].residualLoad
+        }
+        let h12 = residual(hours: 12)
+        let h24 = residual(hours: 24)
+        let h30 = residual(hours: 30)
+        let h48 = residual(hours: 48)
+        XCTAssertGreaterThan(h12, h24)
+        XCTAssertGreaterThan(h24, h30)
+        XCTAssertGreaterThan(h30, h48)
+        XCTAssertEqual(h30, 40, accuracy: 0.001)
+    }
+
     func testTotalTrainingLoadCasesAndBounds() {
         XCTAssertEqual(MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: 10.5, muscularLoad: nil)!, 50, accuracy: 0.001)
+            cardiovascularEffort: .init(rawValue: 10.5, scale: .noop100, source: .stored),
+            muscularLoad: nil)!, 10.5, accuracy: 0.001)
+        XCTAssertEqual(MuscularLoadEngine.totalTrainingLoad(
+            cardiovascularEffort: .init(rawValue: 10.5, scale: .whoop21, source: .whoopCSVImport),
+            muscularLoad: nil)!, 50, accuracy: 0.001)
         XCTAssertEqual(MuscularLoadEngine.totalTrainingLoad(
             cardiovascularEffort: nil, muscularLoad: 75)!, 75, accuracy: 0.001)
         XCTAssertNil(MuscularLoadEngine.totalTrainingLoad(
             cardiovascularEffort: nil, muscularLoad: nil))
         let mixed = MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: 2, muscularLoad: 95)!
+            cardiovascularEffort: .init(rawValue: 2, scale: .noop100, source: .stored),
+            muscularLoad: 95)!
         XCTAssertGreaterThan(mixed, 60)
         XCTAssertTrue((0...100).contains(mixed))
+    }
+
+    func testStoredCompatibilityNeverInfersWhoopScaleFromMagnitude() {
+        XCTAssertEqual(
+            MuscularLoadEngine.totalTrainingLoad(
+                storedCardiovascularEffort: 10.5,
+                muscularLoad: nil
+            ),
+            10.5,
+            accuracy: 0.001
+        )
     }
 
     func testEpleyGuardrails() {

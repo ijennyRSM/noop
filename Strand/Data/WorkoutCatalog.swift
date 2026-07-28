@@ -19,7 +19,8 @@ enum WorkoutCatalog {
         let name: String
         /// Types where a route makes sense → GPS hint / default on.
         let isDistanceSport: Bool
-        var id: String { name }
+        var activityID: String { ActivityID.slug(forCanonicalName: name) }
+        var id: String { activityID }
     }
 
     /// Ordered to match Android `WorkoutSport.all`: common / distance first, the rest, the EXTRA
