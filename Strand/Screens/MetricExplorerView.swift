@@ -30,12 +30,20 @@ private let strandDayParser: DateFormatter = {
 
 private func parseDay(_ day: String) -> Date? { strandDayParser.date(from: day) }
 
-/// "9 Jun 2026" — long, locale-stable date for the hero "as of" line.
+/// The app-language locale used for display-only dates. Keep the Gregorian calendar because metric
+/// day keys and the rest of NOOP's health history use Gregorian years.
+private var metricDisplayLocale: Locale {
+    let language = Bundle.main.preferredLocalizations.first ?? Locale.current.identifier
+    return Locale(identifier: language)
+}
+
+/// "9 Jun 2026" / "9 มิ.ย. 2026" — localized for the selected app language.
 private func longDate(_ d: Date) -> String {
     let f = DateFormatter()
-    f.locale = Locale(identifier: "en_US_POSIX")
+    f.locale = metricDisplayLocale
+    f.calendar = Calendar(identifier: .gregorian)
     f.timeZone = TimeZone(identifier: "UTC")
-    f.dateFormat = "d MMM yyyy"
+    f.setLocalizedDateFormatFromTemplate("d MMM yyyy")
     return f.string(from: d)
 }
 
@@ -176,25 +184,26 @@ struct VitalReadingRow: Equatable {
 /// the "N readings" caption shows, guaranteeing the two never drift. Each row pairs the reading's DAY
 /// (these vital series carry one aggregated reading per night, so a row's "time" is its localized calendar
 /// date; the date always shows since a charted window spans 2+ days) with the model's own `format`ted
-/// value + `unit` and the source label from `TodayView.provenanceDisplayLabel` (a strap id → "Whoop", its
+/// complete formatted value and the source label from `TodayView.provenanceDisplayLabel` (a strap id → "Whoop", its
 /// "-noop" sibling → "On-device", "apple-health" → "Apple Health", "health-connect" → "Health Connect").
 /// `strapDeviceId` is the active strap id the resolver needs. Byte-identical projection to Android's
 /// `vitalReadingRows`.
-func vitalReadingRows(readings: [VitalReading], unit: String, strapDeviceId: String,
+func vitalReadingRows(readings: [VitalReading], strapDeviceId: String,
                       now: Date = Date(), format: (Double) -> String) -> [VitalReadingRow] {
     readings.reversed().map { reading in
-        let value = format(reading.value)
         return VitalReadingRow(
             time: vitalReadingDateLabel(reading.day, now: now),
-            value: unit.isEmpty ? value : "\(value) \(unit)",
+            // MetricDescriptor.format already includes the active unit (including converted units).
+            // Appending metric.unit here produced values such as "1.2 °C °C".
+            value: format(reading.value),
             source: TodayView.provenanceDisplayLabel(rawSource: reading.source, deviceId: strapDeviceId)
         )
     }
 }
 
 /// "9 Jun" for a "YYYY-MM-DD" reading day (today / yesterday read as words to match the hero "as of"
-/// line); the verbatim string if it doesn't parse. UTC-fixed en_US_POSIX, matching this file's other date
-/// labels. Swift twin of Android's `vitalReadingDateLabel`.
+/// line); the verbatim string if it doesn't parse. UTC-fixed and localized, matching this file's other
+/// display-date labels. Swift twin of Android's `vitalReadingDateLabel`.
 func vitalReadingDateLabel(_ day: String, now: Date = Date()) -> String {
     guard let date = parseDay(day) else { return day }
     var cal = Calendar(identifier: .gregorian)
@@ -205,12 +214,13 @@ func vitalReadingDateLabel(_ day: String, now: Date = Date()) -> String {
     return readingShortDateFormatter.string(from: date)
 }
 
-/// "d MMM" (e.g. "9 Jun"), UTC / en_US_POSIX so the label is locale-stable, matching `longDate`.
+/// "d MMM" (e.g. "9 Jun" / "9 มิ.ย."), UTC and localized, matching `longDate`.
 private let readingShortDateFormatter: DateFormatter = {
     let f = DateFormatter()
-    f.locale = Locale(identifier: "en_US_POSIX")
+    f.locale = metricDisplayLocale
+    f.calendar = Calendar(identifier: .gregorian)
     f.timeZone = TimeZone(identifier: "UTC")
-    f.dateFormat = "d MMM"
+    f.setLocalizedDateFormatFromTemplate("d MMM")
     return f
 }()
 
@@ -1045,7 +1055,7 @@ struct MetricDetailView: View {
         let readings = windowed.map {
             VitalReading(day: $0.day, value: $0.value, source: sourceByDay[$0.day] ?? metric.source)
         }
-        let rows = vitalReadingRows(readings: readings, unit: metric.unit,
+        let rows = vitalReadingRows(readings: readings,
                                     strapDeviceId: repo.deviceId, format: fmt)
         if !rows.isEmpty {
             NoopCard {

@@ -433,7 +433,7 @@ def scan_android() -> list[tuple[str, int, str]]:
                         continue
                     seen.add(offset)
                     line_no = text.count("\n", 0, offset) + 1
-                    findings.append((str(path.relative_to(ROOT)), line_no, literal))
+                    findings.append((path.relative_to(ROOT).as_posix(), line_no, literal))
 
             # The call's own first (content) argument only — catches
             # `Text(if (x) "a" else "b")` — never the whole call span, which
@@ -825,11 +825,15 @@ def apple_format_gaps(cat: dict, lang: str) -> list[str]:
     for key, entry in cat.get("strings", {}).items():
         if entry.get("shouldTranslate") is False:
             continue
-        # Compare EVERY form independently against the key, never a folded concatenation: folding would
-        # make the signature depend on how many plural categories the language HAS (ru/pl carry four,
-        # zh one), so a correct translation would read as a format mismatch purely for having more forms.
+        # Semantic catalog keys keep their source text in the English localization rather than in `key`.
+        # Prefer those English units when present, while retaining the key fallback for source-text keys.
+        # Compare EVERY form independently against a compatible source signature, never a folded
+        # concatenation: folding would make the signature depend on how many plural categories the
+        # language HAS (ru/pl carry four, zh one).
+        source_values = [u.get("value", "") for u in _string_units(entry, "en")] or [key]
+        source_signatures = {tuple(signature(value)) for value in source_values}
         values = [u.get("value", "") for u in _string_units(entry, lang)] or [""]
-        if any(signature(key) != signature(v) for v in values):
+        if any(tuple(signature(value)) not in source_signatures for value in values):
             mismatched.append(key)
     return mismatched
 
@@ -858,7 +862,7 @@ def scan_ios() -> tuple[list[tuple[str, int, str]], dict[str, list[str]]]:
                         continue
                     entry = swift_catalog_lookup(cat, literal)
                     line_no = text.count("\n", 0, offset) + 1
-                    rel = str(path.relative_to(ROOT))
+                    rel = path.relative_to(ROOT).as_posix()
                     if entry is None:
                         hardcoded.append((rel, line_no, literal))
                         continue

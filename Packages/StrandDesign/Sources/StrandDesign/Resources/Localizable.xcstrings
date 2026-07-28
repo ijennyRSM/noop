@@ -244,7 +244,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การอ่านค่า %lld"
+            "value": "ค่าที่วัดได้ %lld ค่า"
           }
         }
       }
@@ -920,7 +920,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ลึก"
+            "value": "หลับลึก"
           }
         }
       }
@@ -1094,7 +1094,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "หลับตื้น"
           }
         }
       }
@@ -1222,7 +1222,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "แสงสว่าง"
+            "value": "สว่าง"
           }
         }
       }
@@ -1984,7 +1984,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "สลีป %@"
+            "value": "หลับ %@"
           }
         }
       }
@@ -2798,7 +2798,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "เลื่อนสายรัด: ชื่อบนเวที เวลาเริ่มต้น-สิ้นสุด และระยะเวลา"
+            "value": "เลื่อนดูแถบเพื่อดูชื่อระยะ เวลาเริ่ม–สิ้นสุด และระยะเวลา"
           }
         }
       }
@@ -3206,7 +3206,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ภาพรวมทรัพยากรบุคคล"
+            "value": "ภาพรวมHR"
           }
         }
       }
@@ -3972,7 +3972,7 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "โห่ 4.0"
+            "value": "WHOOP 4.0"
           }
         }
       }
@@ -4007,6 +4007,275 @@
           "stringUnit": {
             "state": "translated",
             "value": "ชั่วโมง %lld"
+          }
+        }
+      }
+    },
+    "%@ · recovery %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Wiederherstellung %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recovery %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · recuperación %lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · récupération %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · การฟื้นตัว %lld"
+          }
+        }
+      }
+    },
+    "chart.tooltip.value_label": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Next day": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Am nächsten Tag"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dia siguiente"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lendemain"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันถัดไป"
+          }
+        }
+      }
+    },
+    "Pick a date": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählen Sie ein Datum"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a date"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige una fecha"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez une date"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลือกวันที่"
+          }
+        }
+      }
+    },
+    "Previous day": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriger Tag"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dia anterior"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jour précédent"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันก่อนหน้า"
+          }
+        }
+      }
+    },
+    "Trend": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tendencia"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S'orienter"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แนวโน้ม"
+          }
+        }
+      }
+    },
+    "sleep.stage.light": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leichtschlaf"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sueño ligero"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sommeil léger"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sono leve"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Легкий сон"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับตื้น"
           }
         }
       }
