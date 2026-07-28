@@ -156,9 +156,42 @@ today/7-day muscle summaries. Current, recent, stale, and unavailable freshness 
 explicit. The formatted context is capped at roughly 6,000 characters by removing
 whole optional lines.
 
+### Canonical days, freshness, and coverage
+
+Internal daily rows use Gregorian `yyyy-MM-dd` keys in the device's local time
+zone. `CanonicalDay` is the only parser/formatter for these identifiers: it fixes
+the calendar to Gregorian, the locale to `en_US_POSIX`, and parsing to non-lenient.
+Never parse a stored day key with `Calendar.current`; a Thai device may use the
+Buddhist calendar and would otherwise interpret `2026` as a Buddhist year. The
+user-facing UI may still use the user's localized display calendar.
+
+Daily freshness compares local Gregorian dates rather than elapsed hours:
+
+- the same local date is **current**;
+- the previous local date is **recent**;
+- two or more local dates old is **stale**;
+- a missing, invalid, or future day is **unavailable**.
+
+Coverage is deliberately separate from freshness. Each metric reports unique-day
+coverage for the seven dates including today and for the 30 completed dates before
+today. Training reports unique-day coverage for the 28 dates including today.
+Consequently, a valid current value can correctly appear beside `0/30 prior days`
+of baseline coverage. That means the trend baseline is not yet reliable; it does
+not mean today's value is stale or missing.
+
+The Coach context starts with its generated local date, 24-hour time, timezone
+identifier/UTC offset, and the freshness rules. Sleep, workout, strength, and
+HR-zone durations are rounded to whole minutes and rendered naturally (`45 min`,
+`1 h`, `1 h 4 min`). Raw model/database units remain unchanged.
+
+The upstream implementation mostly passed stored day strings through to the
+provider. This fork needs to parse them for structured freshness and calendar
+windows, which is why the fixed Gregorian codec and Buddhist-calendar regression
+tests are required here.
+
 The optional Coach profile and soreness check-in are JSON stored in the app's local
 settings. They add no account, telemetry, or upload path. Custom system prompts are
-preserved; users can review and opt into the version-2 default, while users who
+preserved; users can review and opt into the version-3 default, while users who
 never customized the prompt migrate automatically.
 
 Raw R-R, PPG red/IR, accelerometer, gyroscope, GPS, and stage-epoch streams are never
@@ -179,6 +212,13 @@ xcodebuild -scheme NOOPiOS -configuration Release \
   -destination 'generic/platform=iOS' \
   CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
 ```
+
+`CanonicalDayTests`, `CoachSnapshotTests`, and
+`CoachDurationFormatterTests` cover Thai/Buddhist-calendar parsing, freshness,
+calendar boundaries, unique-day coverage, prompt semantics, and human-readable
+durations. In DEBUG builds,
+`AICoachEngine.debugContextForCurrentConsent(question:)` exposes the exact
+summary-only context for inspection; it includes no API key or raw sensor stream.
 
 The Windows development host cannot execute Xcode or Swift package tests; the GitHub
 Actions workflows run the Apple builds.
