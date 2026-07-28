@@ -573,6 +573,13 @@ final class Repository: ObservableObject {
                 return nil
             }
             try? await s.upsertDevice(id: deviceId, mac: nil, name: "WHOOP")
+            // The strength library is a versioned package resource and is always usable offline.
+            // Seed/update by stable ID after the store opens; failures do not block health data.
+            do {
+                try await s.ensureExerciseLibrarySeeded()
+            } catch {
+                NSLog("WhoopStore: exercise-library seed FAILED: \(error.localizedDescription)")
+            }
             return s
         }
         storeOpenTask = task

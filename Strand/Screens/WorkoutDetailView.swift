@@ -30,6 +30,7 @@ struct WorkoutDetailView: View {
     let row: WorkoutRow
 
     @EnvironmentObject private var repo: Repository
+    @EnvironmentObject private var model: AppModel
     @StateObject private var profile = ProfileStore()
     @Environment(\.dismiss) private var dismiss
 
@@ -60,6 +61,7 @@ struct WorkoutDetailView: View {
     /// import). nil = not an on-foot sport, or no step source had data for the window.
     private struct StepReadout { let count: Int; let fromStrap: Bool }
     @State private var steps: StepReadout?
+    @State private var showStrengthDetails = false
 
     var body: some View {
         ScreenScaffold(title: "\(WorkoutSource.displaySport(row.sport))",
@@ -75,6 +77,10 @@ struct WorkoutDetailView: View {
                        // needs no extra macOS NavigationStack of its own.
                        topBackground: liquidScaffoldSky()) {
             headerCard
+            if WorkoutSource.classify(row.source) == .detected
+                || row.sport.localizedCaseInsensitiveContains("strength") {
+                strengthDetailsCard
+            }
             statStrip
             routeCard
             hrCurveCard
@@ -91,6 +97,30 @@ struct WorkoutDetailView: View {
             }
         }
         .task { await load() }
+        .sheet(isPresented: $showStrengthDetails) {
+            DetectedStrengthDetailsSheet(workout: row)
+                .environmentObject(repo)
+                .environmentObject(model)
+                .noopSheetPresentation(largeFirst: true)
+        }
+    }
+
+    private var strengthDetailsCard: some View {
+        NoopCard(tint: StrandPalette.metricCyan) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("STRENGTH DETAILS")
+                    .font(StrandFont.overline)
+                    .tracking(StrandFont.overlineTracking)
+                    .foregroundStyle(StrandPalette.metricCyan)
+                Text("Add exercises and sets, or save a quick muscle and intensity summary.")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textSecondary)
+                NoopButton("Add strength details", systemImage: "dumbbell",
+                           kind: .secondary, fullWidth: true) {
+                    showStrengthDetails = true
+                }
+            }
+        }
     }
 
     // MARK: - Load

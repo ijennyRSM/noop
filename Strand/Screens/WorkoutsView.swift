@@ -32,6 +32,7 @@ struct WorkoutsView: View {
     @EnvironmentObject var model: AppModel
     @State private var showLiveWorkout = false
     @State private var showStartSport = false
+    @State private var showStrengthHistory = false
 
     // Imperial/Metric display preference (D#103). Workout distances are stored in metres; the toggle
     // re-labels them to miles/yards. Display-only — nothing on disk changes.
@@ -157,7 +158,11 @@ struct WorkoutsView: View {
                         ? "No workouts yet. They come from your WHOOP and Apple Health history. Import in Data Sources to bring them in, or add one you tracked elsewhere."
                         : "Loading your sessions…")
                     if loaded {
-                        HStack(spacing: NoopMetrics.rowSpacing) { startLiveWorkoutButton; addWorkoutButton }
+                        HStack(spacing: NoopMetrics.rowSpacing) {
+                            startLiveWorkoutButton
+                            strengthHistoryButton
+                            addWorkoutButton
+                        }
                     }
                 }
             } else {
@@ -172,7 +177,11 @@ struct WorkoutsView: View {
                 let groups = sportGroups(from: windowRows)
                 let zonesSummary = WorkoutZones.summary(from: windowRows)
 
-                HStack { startLiveWorkoutButton; Spacer() }
+                HStack {
+                    startLiveWorkoutButton
+                    strengthHistoryButton
+                    Spacer()
+                }
                 rangeBar(rows: windowRows, effectiveRange: resolved)
                 if let postLogNote { postLogBanner(postLogNote) }
                 effortHero(rows: windowRows, effectiveRange: resolved, groups: groups)
@@ -241,6 +250,7 @@ struct WorkoutsView: View {
             NavigationStack {
                 WorkoutDetailView(row: target.row)
                     .environmentObject(repo)
+                    .environmentObject(model)
             }
             #if os(iOS)
             .noopSheetPresentation(largeFirst: true)
@@ -263,6 +273,12 @@ struct WorkoutsView: View {
                 model.startWorkout(sport: name)
                 showLiveWorkout = true
             }
+        }
+        .sheet(isPresented: $showStrengthHistory) {
+            StrengthHistoryView()
+                .environmentObject(repo)
+                .environmentObject(model)
+                .noopSheetPresentation(largeFirst: true)
         }
         // #64: name the merged session when every selected row is a bare detected bout (there's no sport
         // to inherit). Reuses the "Start a workout" named-sport picker.
@@ -608,6 +624,13 @@ struct WorkoutsView: View {
             else { showLiveWorkout = true }
         }
         .accessibilityLabel(model.activeWorkout == nil ? "Start a workout" : "View the active workout")
+    }
+
+    private var strengthHistoryButton: some View {
+        NoopButton("Strength history", systemImage: "dumbbell", kind: .secondary) {
+            showStrengthHistory = true
+        }
+        .accessibilityLabel("Open strength training history")
     }
 
     /// The latest session start (anchors every window — windows are relative to the

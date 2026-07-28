@@ -754,10 +754,25 @@ final class AppModel: ObservableObject {
             durationSec: Int(end.timeIntervalSince(w.start)),
             gpsPoints: wasGps ? gpsRecorder.pointCount : nil))
         buzz(loops: 2)
+        let bodyweightKg = profile.weightKg
+        let sleepHours = repo.today?.totalSleepMin.map { $0 / 60 }
+        let charge = repo.today?.recovery
+        let strengthDeviceId = repo.deviceId
         Task { [weak self] in
             guard let self else { return }
             if let store = await self.repo.storeHandle() {
                 _ = try? await store.upsertWorkouts([row], deviceId: self.deviceId)
+                if w.sport.localizedCaseInsensitiveContains("strength") {
+                    try? await StrengthSessionFinalizer.finalizeMatchingDraft(
+                        store: store,
+                        deviceId: strengthDeviceId,
+                        workoutStartTs: startTs,
+                        endedAt: row.endTs,
+                        cardiovascularEffort: strain,
+                        bodyweightKg: bodyweightKg,
+                        sleepHours: sleepHours,
+                        charge: charge)
+                }
                 await self.repo.refresh()
             }
         }

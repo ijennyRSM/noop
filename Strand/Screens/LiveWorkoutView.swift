@@ -13,6 +13,7 @@ import WhoopStore
 /// effort is the running `ActiveWorkout.liveStrain` (StrainScorer over the captured window).
 struct LiveWorkoutView: View {
     @EnvironmentObject private var model: AppModel
+    @StateObject private var strength = StrengthTrainingViewModel()
     // PERF (scroll/recompose): this screen deliberately does NOT observe `LiveState` directly. A connected
     // strap publishes `LiveState` ~1 Hz (HR + each R-R packet, plus sensor frames), and an
     // `@EnvironmentObject live` here would invalidate the WHOLE body on every tick — the HR hero, effort
@@ -53,6 +54,10 @@ struct LiveWorkoutView: View {
                 ]
                 ForEach(Array(cards.enumerated()), id: \.offset) { index, card in
                     card.staggeredAppear(index: index)
+                }
+                if isStrengthTraining {
+                    StrengthWorkoutLogger(viewModel: strength)
+                        .staggeredAppear(index: 5)
                 }
                 // Live-observing leaf: renders the sensor row (and its entrance stagger) only when a
                 // standard fitness sensor is feeding metrics, refreshing on its own packets without
@@ -97,8 +102,7 @@ struct LiveWorkoutView: View {
                isPresented: $showEndConfirm) {
             Button("Cancel", role: .cancel) { }
             Button("End workout", role: .destructive) {
-                model.endWorkout()
-                onClose()
+                finishWorkout()
             }
         } message: {
             Text("This stops recording and saves what's captured so far. It can't be resumed.")
@@ -111,7 +115,7 @@ struct LiveWorkoutView: View {
                 Text("RECORDING WORKOUT")
                     .font(StrandFont.overline).tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.metricRose)
-                Text("Workout")
+                Text(model.activeWorkout?.sport ?? String(localized: "Workout"))
                     .font(StrandFont.title1).foregroundStyle(StrandPalette.textPrimary)
             }
             Spacer()
@@ -238,6 +242,25 @@ struct LiveWorkoutView: View {
     private var endButton: some View {
         NoopButton("End workout", systemImage: "stop.fill", kind: .destructive, fullWidth: true) {
             showEndConfirm = true
+        }
+    }
+
+    private var isStrengthTraining: Bool {
+        guard let sport = model.activeWorkout?.sport.lowercased() else { return false }
+        return sport == "strength training" || sport == "strength"
+    }
+
+    private func finishWorkout() {
+        let effort = model.activeWorkout?.liveStrain
+        if isStrengthTraining {
+            Task { @MainActor in
+                await strength.finish(cardiovascularEffort: effort)
+                model.endWorkout()
+                onClose()
+            }
+        } else {
+            model.endWorkout()
+            onClose()
         }
     }
 
