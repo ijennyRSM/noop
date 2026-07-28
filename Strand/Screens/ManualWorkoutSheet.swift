@@ -213,7 +213,7 @@ struct ManualWorkoutSheet: View {
     /// One tappable suggestion row — shared by the #297 Recent block and the full catalogue list.
     private func suggestionRow(_ name: String, isDistance: Bool) -> some View {
         let displayName = WorkoutCatalog.localizedDisplayName(name)
-        Button {
+        return Button {
             sport = name
             sportFocused = false
         } label: {
