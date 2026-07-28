@@ -1,5 +1,6 @@
 import Foundation
 import ZIPFoundation
+import WhoopStore
 
 /// Parses a Whoop data export (CSV bundle) into normalized Swift models.
 ///
@@ -35,7 +36,11 @@ public struct WhoopExportImporter {
     /// Rescale an imported WHOOP Day Strain (0–21) onto NOOP's 0–100 Effort axis. `nil` passes through.
     public static func effortFromImportedDayStrain(_ dayStrain: Double?) -> Double? {
         guard let dayStrain else { return nil }
-        return dayStrain * dayStrainToEffortScale
+        return CardiovascularEffortValue(
+            rawValue: dayStrain,
+            scale: .whoop21,
+            source: .whoopCSVImport
+        ).normalized100
     }
 
     /// Inverse: convert NOOP's internal 0–100 Effort back onto WHOOP's 0–21 Day Strain scale for a
@@ -43,7 +48,11 @@ public struct WhoopExportImporter {
     /// NOOP import round-trip lossless (export ÷scale, then import ×scale restores the value).
     public static func whoopDayStrainFromEffort(_ effort: Double?) -> Double? {
         guard let effort else { return nil }
-        return effort / dayStrainToEffortScale
+        return CardiovascularEffortValue(
+            rawValue: effort,
+            scale: .noop100,
+            source: .stored
+        ).value(on: .whoop21)
     }
 
     /// WHOOP CSVs carry "Sleep efficiency %" on a 0–100 scale; NOOP's `efficiency` columns store the

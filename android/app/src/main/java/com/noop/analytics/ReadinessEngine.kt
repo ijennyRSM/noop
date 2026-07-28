@@ -1,6 +1,8 @@
 package com.noop.analytics
 
 import com.noop.data.DailyMetric
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.sqrt
 
@@ -22,7 +24,7 @@ import kotlin.math.sqrt
  *   signal (Lamberts et al. 2004).
  * - **Respiratory-rate drift** — a rise in sleeping respiratory rate is an early illness signal.
  * - **Training Stress Balance (ACWR)** — acute (7-day) vs chronic (28-day) strain. The 0.8–1.3
- *   band is the "sweet spot"; >1.5 is associated with higher injury risk (Gabbett 2016).
+ *   band is a load-change heuristic; it is not an injury prediction.
  * - **Training monotony** — mean/SD of daily strain over a week; high monotony (low variety) is
  *   associated with higher strain and illness (Foster 1998).
  *
@@ -70,6 +72,7 @@ object ReadinessEngine {
     private const val minBaseline = 7       // need at least this many baseline nights
     private const val acuteWindow = 7
     private const val chronicWindow = 28
+    private const val minAcute = 4
     private const val minChronic = 14       // need at least this much strain history for ACWR
 
     // Resp-rate signal is sourced from either clean cloud RR or a higher-variance on-device RSA
@@ -157,7 +160,11 @@ object ReadinessEngine {
                 signals = emptyList(), acwr = null, monotony = null,
             )
         }
-        val history = sorted.filter { it.day < latest.day }   // everything before today
+        val history = sorted.filter {
+            it.day < latest.day && calendarDayDistance(it.day, latest.day)?.let { distance ->
+                distance in 1..baselineWindow
+            } == true
+        }
 
         val signals = mutableListOf<Signal>()
 
@@ -224,19 +231,25 @@ object ReadinessEngine {
         }
 
         // Training Stress Balance (ACWR) + monotony --------------------------
-        val strainSeries = sorted.mapNotNull { it.strain }
+        val datedStrain = sorted.mapNotNull { row ->
+            val value = row.strain ?: return@mapNotNull null
+            val distance = calendarDayDistance(row.day, latest.day) ?: return@mapNotNull null
+            if (distance < 0) null else distance to value
+        }
+        val acuteSeries = datedStrain.filter { it.first < acuteWindow }.map { it.second }
+        val chronicSeries = datedStrain.filter { it.first < chronicWindow }.map { it.second }
         var acwr: Double? = null
         var monotony: Double? = null
-        if (strainSeries.size >= minChronic) {
-            val acute = mean(strainSeries.takeLast(acuteWindow))!!
-            val chronic = mean(strainSeries.takeLast(chronicWindow))!!
+        if (acuteSeries.size >= minAcute && chronicSeries.size >= minChronic) {
+            val acute = mean(acuteSeries)!!
+            val chronic = mean(chronicSeries)!!
             if (chronic > 0) {
                 val ratio = acute / chronic
                 acwr = ratio
                 signals.add(acwrSignal(ratio, acute = acute, chronic = chronic))
             }
             // Foster monotony over the last week of strain.
-            val week = strainSeries.takeLast(acuteWindow)
+            val week = acuteSeries
             val sd = sampleSD(week)
             val m = mean(week)
             if (week.size >= 4 && sd != null && sd > 0 && m != null) {
@@ -246,7 +259,8 @@ object ReadinessEngine {
                     signals.add(
                         Signal(
                             key = "monotony", label = "Training variety",
-                            detail = "low - similar strain every day raises strain/illness risk", flag = Flag.WATCH,
+                            detail = "low - recent training load has had little day-to-day variation",
+                            flag = Flag.WATCH,
                             evidence = "monotony ${fmt(mono, 1)}",
                         )
                     )
@@ -303,6 +317,13 @@ object ReadinessEngine {
         if (decimals == 0) Math.round(x).toString()
         else String.format(Locale.US, "%.${decimals}f", x)
 
+    private fun calendarDayDistance(start: String, end: String): Int? =
+        try {
+            ChronoUnit.DAYS.between(LocalDate.parse(start), LocalDate.parse(end)).toInt()
+        } catch (_: RuntimeException) {
+            null
+        }
+
     private fun acwrSignal(ratio: Double, acute: Double, chronic: Double): Signal {
         // #1033 (ryanbr): route the acute:chronic ratio through the Locale.US-pinned [fmt] helper (matching
         // the evidence line below) so a comma-decimal device locale can't render "1,15" — iOS's
@@ -328,7 +349,7 @@ object ReadinessEngine {
             )
             else -> Signal(
                 key = "acwr", label = "Training load",
-                detail = "spiking (acute:chronic $pct) - higher injury risk", flag = Flag.BAD,
+                detail = "spiking (acute:chronic $pct) - consider a controlled day", flag = Flag.BAD,
                 evidence = evidence,
             )
         }

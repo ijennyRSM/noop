@@ -246,17 +246,21 @@ struct LiveWorkoutView: View {
     }
 
     private var isStrengthTraining: Bool {
-        guard let sport = model.activeWorkout?.sport.lowercased() else { return false }
-        return sport == "strength training" || sport == "strength"
+        guard let sport = model.activeWorkout?.sport else { return false }
+        return ActivityID.isStrength(
+            activityID: WorkoutCatalog.sport(named: sport)?.activityID,
+            canonicalSport: sport
+        )
     }
 
     private func finishWorkout() {
         let effort = model.activeWorkout?.liveStrain
         if isStrengthTraining {
             Task { @MainActor in
-                await strength.finish(cardiovascularEffort: effort)
-                model.endWorkout()
-                onClose()
+                if await strength.finish(cardiovascularEffort: effort) {
+                    model.endWorkout()
+                    onClose()
+                }
             }
         } else {
             model.endWorkout()

@@ -132,4 +132,133 @@ final class StrengthStoreTests: XCTestCase {
         let residual = try await store.latestResidualLoads(deviceId: "test")
         XCTAssertEqual(residual.first?.residualLoad, 44)
     }
+
+    func testDerivedCommitRollsBackAllRowsOnInjectedFailure() async throws {
+        let store = try await WhoopStore.inMemory()
+        let session = StrengthSessionRecord(
+            deviceId: "test", startedAt: 1_700_000_000,
+            status: StrengthSessionStatus.completed.rawValue)
+        let commit = StrengthDerivedCommit(
+            session: session,
+            day: "2023-11-14",
+            muscleLoads: [
+                .init(day: "2023-11-14", muscleId: "quadriceps",
+                      rawStimulus: 1_000, normalizedLoad: 60,
+                      workingSets: 4, confidence: "medium"),
+            ]
+        )
+
+        do {
+            try await store.commitStrengthDerived(commit, failAt: .afterMuscleLoads)
+            XCTFail("injected transaction failure must throw")
+        } catch { }
+
+        let rolledBackSession = try await store.strengthSession(id: session.id)
+        let rolledBackLoads = try await store.strengthSessionMuscleLoads(
+            sessionId: session.id)
+        let rolledBackDaily = try await store.dailyMuscleLoads(
+            deviceId: "test", from: "2023-11-14", to: "2023-11-14")
+        XCTAssertNil(rolledBackSession)
+        XCTAssertTrue(rolledBackLoads.isEmpty)
+        XCTAssertTrue(rolledBackDaily.isEmpty)
+    }
+
+    func testDerivedCommitKeepsSessionsSeparateAndRebuildsDailyRawLoad() async throws {
+        let store = try await WhoopStore.inMemory()
+        let day = "2023-11-14"
+        let first = StrengthSessionRecord(
+            deviceId: "test", startedAt: 1_700_000_000,
+            status: StrengthSessionStatus.completed.rawValue)
+        let second = StrengthSessionRecord(
+            deviceId: "test", startedAt: 1_700_003_600,
+            status: StrengthSessionStatus.completed.rawValue)
+        for (session, raw, normalized) in [(first, 800.0, 55.0), (second, 1_100.0, 70.0)] {
+            try await store.commitStrengthDerived(.init(
+                session: session,
+                day: day,
+                muscleLoads: [
+                    .init(day: day, muscleId: "quadriceps",
+                          rawStimulus: raw, normalizedLoad: normalized,
+                          workingSets: 3, confidence: "high"),
+                ]
+            ))
+        }
+
+        let firstLoads = try await store.strengthSessionMuscleLoads(sessionId: first.id)
+        let secondLoads = try await store.strengthSessionMuscleLoads(sessionId: second.id)
+        XCTAssertEqual(firstLoads.first?.rawStimulus, 800)
+        XCTAssertEqual(secondLoads.first?.rawStimulus, 1_100)
+        let daily = try await store.dailyMuscleLoads(
+            deviceId: "test", from: day, to: day)
+        XCTAssertEqual(daily.first?.rawStimulus, 1_900)
+        XCTAssertEqual(daily.first?.normalizedLoad, 70,
+                       "daily rows must not sum bounded normalized scores")
+
+        try await store.deleteStrengthSession(id: second.id)
+        let rebuilt = try await store.dailyMuscleLoads(
+            deviceId: "test", from: day, to: day)
+        XCTAssertEqual(rebuilt.first?.rawStimulus, 800)
+        XCTAssertEqual(rebuilt.first?.normalizedLoad, 55)
+    }
+
+    func testDerivedCommitRelabelsDetectedWorkoutAtomically() async throws {
+        let store = try await WhoopStore.inMemory()
+        let workout = WorkoutRow(
+            startTs: 1_000, endTs: 2_000, sport: "detected",
+            source: "detected", durationS: 1_000, energyKcal: 100,
+            avgHr: 120, maxHr: 160, strain: 48,
+            distanceM: nil, zonesJSON: #"{"z2":50}"#, notes: nil)
+        try await store.upsertWorkouts([workout], deviceId: "computed")
+        let session = StrengthSessionRecord(
+            deviceId: "strap", workoutStartTs: 1_000, startedAt: 1_000,
+            endedAt: 2_000, status: StrengthSessionStatus.completed.rawValue)
+        try await store.commitStrengthDerived(.init(
+            session: session,
+            day: "1970-01-01",
+            muscleLoads: [],
+            detectedWorkoutRelabel: .init(
+                sourceDeviceId: "computed",
+                targetDeviceId: "strap",
+                workout: workout,
+                targetSport: "Strength Training"
+            )
+        ))
+
+        let detected = try await store.workouts(
+            deviceId: "computed", from: 0, to: 3_000, limit: 10)
+        XCTAssertTrue(detected.isEmpty)
+        let manual = try await store.workouts(
+            deviceId: "strap", from: 0, to: 3_000, limit: 10)
+        XCTAssertEqual(manual.first?.sport, "Strength Training")
+        XCTAssertEqual(manual.first?.source, "manual")
+    }
+
+    func testRelabelOnSameNaturalKeyUpdatesInsteadOfDeletingWorkout() async throws {
+        let store = try await WhoopStore.inMemory()
+        let workout = WorkoutRow(
+            startTs: 1_000, endTs: 2_000, sport: "Strength Training",
+            source: "detected", durationS: 1_000, energyKcal: nil,
+            avgHr: 120, maxHr: 160, strain: 48,
+            distanceM: nil, zonesJSON: nil, notes: nil)
+        try await store.upsertWorkouts([workout], deviceId: "strap")
+        let session = StrengthSessionRecord(
+            deviceId: "strap", workoutStartTs: 1_000, startedAt: 1_000,
+            endedAt: 2_000, status: StrengthSessionStatus.completed.rawValue)
+        try await store.commitStrengthDerived(.init(
+            session: session,
+            day: "1970-01-01",
+            muscleLoads: [],
+            detectedWorkoutRelabel: .init(
+                sourceDeviceId: "strap",
+                targetDeviceId: "strap",
+                workout: workout,
+                targetSport: "Strength Training"
+            )
+        ))
+
+        let rows = try await store.workouts(
+            deviceId: "strap", from: 0, to: 3_000, limit: 10)
+        XCTAssertEqual(rows.count, 1)
+        XCTAssertEqual(rows.first?.source, "manual")
+    }
 }

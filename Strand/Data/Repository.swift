@@ -2501,6 +2501,16 @@ final class Repository: ObservableObject {
                                             from: row.startTs, to: row.startTs)
     }
 
+    func detectedWorkoutRelabel(_ row: WorkoutRow,
+                                targetSport: String) -> DetectedWorkoutRelabel {
+        DetectedWorkoutRelabel(
+            sourceDeviceId: computedDeviceId,
+            targetDeviceId: deviceId,
+            workout: row,
+            targetSport: targetSport
+        )
+    }
+
     /// Dismiss a DETECTED bout the user says isn't a workout. Records its span in the durable dismissed
     /// list (so a re-detect that recreates the same span stays hidden) AND deletes the current row so it
     /// disappears immediately. Idempotent: a span already present isn't duplicated. (#107)

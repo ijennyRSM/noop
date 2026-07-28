@@ -283,3 +283,29 @@ private struct AnatomicalSilhouette: Shape {
         SmoothMuscleShape(points: outline).path(in: rect)
     }
 }
+
+#if DEBUG
+#Preview("Anatomical body map regression") {
+    HStack(spacing: 24) {
+        AnatomicalMuscleMap(
+            side: .front,
+            values: [
+                .chest: 72, .frontDelts: 54, .biceps: 31,
+                .abdominals: 46, .quadriceps: 83, .tibialis: 22
+            ],
+            onSelect: { _ in }
+        )
+        AnatomicalMuscleMap(
+            side: .back,
+            values: [
+                .lats: 68, .upperBack: 51, .triceps: 29,
+                .glutes: 76, .hamstrings: 61, .calves: 38
+            ],
+            onSelect: { _ in }
+        )
+    }
+    .padding(24)
+    .background(StrandPalette.surfaceBase)
+    .preferredColorScheme(.dark)
+}
+#endif

@@ -7,6 +7,11 @@ private struct BundledExerciseLibrary: Decodable {
     let exercises: [ExerciseDefinition]
 }
 
+enum StrengthCommitFailurePoint {
+    case afterSession
+    case afterMuscleLoads
+}
+
 extension WhoopStore {
     private static func normalizedExerciseSearch(_ value: String) -> String {
         value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
@@ -259,52 +264,58 @@ extension WhoopStore {
         try Self.validateSession(session)
         let now = Int(Date().timeIntervalSince1970)
         try syncWrite { db in
+            try Self.writeStrengthSession(session, db: db, now: now)
+        }
+    }
+
+    private static func writeStrengthSession(_ session: StrengthSessionRecord,
+                                             db: Database,
+                                             now: Int) throws {
+        try db.execute(sql: """
+            INSERT INTO strengthSession
+              (id, deviceId, workoutStartTs, startedAt, endedAt, title, status, source,
+               sessionRPE, notes, quickRegion, quickIntensity, confidence,
+               cardiovascularEffort, muscularLoad, totalTrainingLoad, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+              deviceId = excluded.deviceId, workoutStartTs = excluded.workoutStartTs,
+              startedAt = excluded.startedAt, endedAt = excluded.endedAt,
+              title = excluded.title, status = excluded.status, source = excluded.source,
+              sessionRPE = excluded.sessionRPE, notes = excluded.notes,
+              quickRegion = excluded.quickRegion, quickIntensity = excluded.quickIntensity,
+              confidence = excluded.confidence,
+              cardiovascularEffort = excluded.cardiovascularEffort,
+              muscularLoad = excluded.muscularLoad,
+              totalTrainingLoad = excluded.totalTrainingLoad, updatedAt = excluded.updatedAt
+            """, arguments: [
+                session.id, session.deviceId, session.workoutStartTs, session.startedAt,
+                session.endedAt, session.title, session.status, session.source,
+                session.sessionRPE, session.notes, session.quickRegion, session.quickIntensity,
+                session.confidence, session.cardiovascularEffort, session.muscularLoad,
+                session.totalTrainingLoad, now, now,
+            ])
+        try db.execute(sql: "DELETE FROM strengthSessionExercise WHERE sessionId = ?",
+                       arguments: [session.id])
+        for exercise in session.exercises.sorted(by: { $0.orderIndex < $1.orderIndex }) {
             try db.execute(sql: """
-                INSERT INTO strengthSession
-                  (id, deviceId, workoutStartTs, startedAt, endedAt, title, status, source,
-                   sessionRPE, notes, quickRegion, quickIntensity, confidence,
-                   cardiovascularEffort, muscularLoad, totalTrainingLoad, createdAt, updatedAt)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                  deviceId = excluded.deviceId, workoutStartTs = excluded.workoutStartTs,
-                  startedAt = excluded.startedAt, endedAt = excluded.endedAt,
-                  title = excluded.title, status = excluded.status, source = excluded.source,
-                  sessionRPE = excluded.sessionRPE, notes = excluded.notes,
-                  quickRegion = excluded.quickRegion, quickIntensity = excluded.quickIntensity,
-                  confidence = excluded.confidence,
-                  cardiovascularEffort = excluded.cardiovascularEffort,
-                  muscularLoad = excluded.muscularLoad,
-                  totalTrainingLoad = excluded.totalTrainingLoad, updatedAt = excluded.updatedAt
+                INSERT INTO strengthSessionExercise
+                  (id, sessionId, exerciseId, snapshotName, orderIndex, notes, createdAt, updatedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, arguments: [
-                    session.id, session.deviceId, session.workoutStartTs, session.startedAt,
-                    session.endedAt, session.title, session.status, session.source,
-                    session.sessionRPE, session.notes, session.quickRegion, session.quickIntensity,
-                    session.confidence, session.cardiovascularEffort, session.muscularLoad,
-                    session.totalTrainingLoad, now, now,
+                    exercise.id, session.id, exercise.exerciseId, exercise.snapshotName,
+                    exercise.orderIndex, exercise.notes, now, now,
                 ])
-            try db.execute(sql: "DELETE FROM strengthSessionExercise WHERE sessionId = ?",
-                           arguments: [session.id])
-            for exercise in session.exercises.sorted(by: { $0.orderIndex < $1.orderIndex }) {
+            for set in exercise.sets.sorted(by: { $0.setIndex < $1.setIndex }) {
                 try db.execute(sql: """
-                    INSERT INTO strengthSessionExercise
-                      (id, sessionId, exerciseId, snapshotName, orderIndex, notes, createdAt, updatedAt)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO strengthSet
+                      (id, sessionExerciseId, setIndex, setType, weightKg, reps, rpe, rir,
+                       side, completed, reachedFailure, notes, createdAt, updatedAt)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, arguments: [
-                        exercise.id, session.id, exercise.exerciseId, exercise.snapshotName,
-                        exercise.orderIndex, exercise.notes, now, now,
+                        set.id, exercise.id, set.setIndex, set.setType, set.weightKg, set.reps,
+                        set.rpe, set.rir, set.side, set.completed, set.reachedFailure,
+                        set.notes, now, now,
                     ])
-                for set in exercise.sets.sorted(by: { $0.setIndex < $1.setIndex }) {
-                    try db.execute(sql: """
-                        INSERT INTO strengthSet
-                          (id, sessionExerciseId, setIndex, setType, weightKg, reps, rpe, rir,
-                           side, completed, reachedFailure, notes, createdAt, updatedAt)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, arguments: [
-                            set.id, exercise.id, set.setIndex, set.setType, set.weightKg, set.reps,
-                            set.rpe, set.rir, set.side, set.completed, set.reachedFailure,
-                            set.notes, now, now,
-                        ])
-                }
             }
         }
     }
@@ -329,6 +340,148 @@ extension WhoopStore {
                               userInfo: [NSLocalizedDescriptionKey:
                                 "Invalid or duplicate strength set"])
             }
+        }
+    }
+
+    public func commitStrengthDerived(_ commit: StrengthDerivedCommit) async throws {
+        try await commitStrengthDerived(commit, failAt: nil)
+    }
+
+    /// Internal failure seam used only by package tests to prove the transaction
+    /// rolls back session and derived rows together.
+    func commitStrengthDerived(_ commit: StrengthDerivedCommit,
+                               failAt: StrengthCommitFailurePoint?) async throws {
+        try Self.validateSession(commit.session)
+        let now = Int(Date().timeIntervalSince1970)
+        try syncWrite { db in
+            var affectedDays = Set(try String.fetchAll(db, sql: """
+                SELECT DISTINCT day FROM strengthSessionMuscleLoad WHERE sessionId = ?
+                """, arguments: [commit.session.id]))
+            affectedDays.insert(commit.day)
+
+            try Self.writeStrengthSession(commit.session, db: db, now: now)
+            if failAt == .afterSession {
+                throw NSError(domain: "WhoopStore.Strength.TransactionTest", code: 1)
+            }
+
+            try db.execute(sql: "DELETE FROM strengthSessionMuscleLoad WHERE sessionId = ?",
+                           arguments: [commit.session.id])
+            for row in commit.muscleLoads {
+                try db.execute(sql: """
+                    INSERT INTO strengthSessionMuscleLoad
+                      (sessionId, deviceId, day, trainedAt, muscleId, side, rawStimulus,
+                       normalizedLoad, workingSets, confidence)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, arguments: [
+                        commit.session.id, commit.session.deviceId, commit.day,
+                        commit.session.startedAt, row.muscleId, row.side,
+                        row.rawStimulus, row.normalizedLoad, row.workingSets,
+                        row.confidence,
+                    ])
+            }
+            if failAt == .afterMuscleLoads {
+                throw NSError(domain: "WhoopStore.Strength.TransactionTest", code: 2)
+            }
+            for day in affectedDays {
+                try Self.rebuildDailyMuscleLoads(
+                    db: db, deviceId: commit.session.deviceId, day: day, now: now)
+            }
+
+            if let capturedAt = commit.residualCapturedAt {
+                try Self.writeResidualSnapshot(
+                    commit.residualSnapshot,
+                    db: db,
+                    deviceId: commit.session.deviceId,
+                    capturedAt: capturedAt
+                )
+            }
+            if let relabel = commit.detectedWorkoutRelabel {
+                try Self.relabelDetectedWorkout(relabel, db: db)
+            }
+        }
+    }
+
+    private static func rebuildDailyMuscleLoads(db: Database,
+                                                deviceId: String,
+                                                day: String,
+                                                now: Int) throws {
+        try db.execute(sql: """
+            DELETE FROM dailyMuscleLoad WHERE deviceId = ? AND day = ?
+            """, arguments: [deviceId, day])
+        try db.execute(sql: """
+            INSERT INTO dailyMuscleLoad
+              (deviceId, day, muscleId, side, rawStimulus, normalizedLoad,
+               workingSets, confidence, updatedAt)
+            SELECT deviceId, day, muscleId, side, SUM(rawStimulus),
+                   MAX(normalizedLoad), SUM(workingSets),
+                   CASE
+                     WHEN SUM(CASE WHEN confidence = 'low' THEN 1 ELSE 0 END) > 0 THEN 'low'
+                     WHEN SUM(CASE WHEN confidence = 'medium' THEN 1 ELSE 0 END) > 0 THEN 'medium'
+                     ELSE 'high'
+                   END,
+                   ?
+            FROM strengthSessionMuscleLoad
+            WHERE deviceId = ? AND day = ?
+            GROUP BY deviceId, day, muscleId, side
+            """, arguments: [now, deviceId, day])
+    }
+
+    private static func writeResidualSnapshot(_ rows: [MuscleResidualRecord],
+                                              db: Database,
+                                              deviceId: String,
+                                              capturedAt: Int) throws {
+        // This table is a fallback cache, not an immutable physiological history.
+        // Keep one complete snapshot per device so stale captures cannot accumulate.
+        try db.execute(sql: """
+            DELETE FROM muscleResidualSnapshot WHERE deviceId = ?
+            """, arguments: [deviceId])
+        for row in rows {
+            try db.execute(sql: """
+                INSERT INTO muscleResidualSnapshot
+                  (deviceId, capturedAt, muscleId, side, residualLoad, confidence, lastTrainedAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, arguments: [
+                    deviceId, capturedAt, row.muscleId, row.side,
+                    row.residualLoad, row.confidence, row.lastTrainedAt,
+                ])
+        }
+    }
+
+    private static func relabelDetectedWorkout(_ relabel: DetectedWorkoutRelabel,
+                                               db: Database) throws {
+        let sport = relabel.targetSport.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !sport.isEmpty else {
+            throw NSError(domain: "WhoopStore.Strength", code: 12,
+                          userInfo: [NSLocalizedDescriptionKey:
+                            "A canonical strength activity is required"])
+        }
+        let row = relabel.workout
+        try db.execute(sql: """
+            INSERT INTO workout
+              (deviceId, startTs, endTs, sport, source, durationS, energyKcal,
+               avgHr, maxHr, strain, distanceM, zonesJSON, notes)
+            VALUES (?, ?, ?, ?, 'manual', ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(deviceId, startTs, sport) DO UPDATE SET
+              endTs = excluded.endTs, source = excluded.source,
+              durationS = excluded.durationS, energyKcal = excluded.energyKcal,
+              avgHr = excluded.avgHr, maxHr = excluded.maxHr,
+              strain = excluded.strain, distanceM = excluded.distanceM,
+              zonesJSON = excluded.zonesJSON, notes = excluded.notes
+            """, arguments: [
+                relabel.targetDeviceId, row.startTs, row.endTs, sport,
+                row.durationS, row.energyKcal, row.avgHr, row.maxHr,
+                row.strain, row.distanceM, row.zonesJSON, row.notes,
+            ])
+        let rewroteSameNaturalKey =
+            relabel.sourceDeviceId == relabel.targetDeviceId
+            && row.sport.caseInsensitiveCompare(sport) == .orderedSame
+        if !rewroteSameNaturalKey {
+            try db.execute(sql: """
+                DELETE FROM workout
+                WHERE deviceId = ? AND startTs = ? AND sport = ?
+                """, arguments: [
+                    relabel.sourceDeviceId, row.startTs, row.sport,
+                ])
         }
     }
 
@@ -482,7 +635,7 @@ extension WhoopStore {
                   (deviceId, day, muscleId, side, rawStimulus, normalizedLoad,
                    workingSets, confidence, updatedAt)
                 SELECT deviceId, day, muscleId, side, SUM(rawStimulus),
-                       MIN(100.0, SUM(normalizedLoad)), SUM(workingSets),
+                       MAX(normalizedLoad), SUM(workingSets),
                        CASE
                          WHEN SUM(CASE WHEN confidence = 'low' THEN 1 ELSE 0 END) > 0 THEN 'low'
                          WHEN SUM(CASE WHEN confidence = 'medium' THEN 1 ELSE 0 END) > 0 THEN 'medium'
@@ -552,9 +705,11 @@ extension WhoopStore {
     public func replaceResidualSnapshot(_ rows: [MuscleResidualRecord],
                                         deviceId: String, capturedAt: Int) async throws {
         try syncWrite { db in
+            // Snapshot rows are a replaceable cache. Session-level muscle loads
+            // remain the source of truth for current decay.
             try db.execute(sql: """
-                DELETE FROM muscleResidualSnapshot WHERE deviceId = ? AND capturedAt = ?
-                """, arguments: [deviceId, capturedAt])
+                DELETE FROM muscleResidualSnapshot WHERE deviceId = ?
+                """, arguments: [deviceId])
             for row in rows {
                 try db.execute(sql: """
                     INSERT INTO muscleResidualSnapshot
@@ -706,7 +861,18 @@ extension WhoopStore {
 
     public func deleteStrengthSession(id: String) async throws {
         try syncWrite { db in
+            let rows = try Row.fetchAll(db, sql: """
+                SELECT DISTINCT deviceId, day
+                FROM strengthSessionMuscleLoad WHERE sessionId = ?
+                """, arguments: [id])
             try db.execute(sql: "DELETE FROM strengthSession WHERE id = ?", arguments: [id])
+            let now = Int(Date().timeIntervalSince1970)
+            for row in rows {
+                let deviceId: String = row["deviceId"]
+                let day: String = row["day"]
+                try Self.rebuildDailyMuscleLoads(
+                    db: db, deviceId: deviceId, day: day, now: now)
+            }
         }
     }
 }

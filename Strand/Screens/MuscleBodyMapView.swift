@@ -1,4 +1,5 @@
 import SwiftUI
+import StrandAnalytics
 import StrandDesign
 import WhoopStore
 
@@ -43,11 +44,28 @@ private final class MuscleBodyMapModel: ObservableObject {
         guard let store = await repository.storeHandle() else { return }
         let now = Date()
         let todayKey = Repository.localDayKey(now)
-        let weekStart = Repository.localDayKey(
-            Calendar.current.date(byAdding: .day, value: -6, to: now) ?? now)
         let daily = (try? await store.dailyMuscleLoads(
-            deviceId: repository.deviceId, from: weekStart, to: todayKey)) ?? []
-        let residual = (try? await store.latestResidualLoads(deviceId: repository.deviceId)) ?? []
+            deviceId: repository.deviceId, from: todayKey, to: todayKey)) ?? []
+        let historyStart = Calendar.current.date(
+            byAdding: .day, value: -35,
+            to: Calendar.current.startOfDay(for: now)
+        ) ?? now.addingTimeInterval(-35 * 86_400)
+        let history = (try? await store.historicalMuscleLoads(
+            deviceId: repository.deviceId,
+            from: Int(historyStart.timeIntervalSince1970)
+        )) ?? []
+        let weekly = WeeklyMuscleLoadEngine.aggregate(rows: history, now: now)
+        let residual = await CurrentMuscleResidualService.shared.currentLoads(
+            store: store,
+            deviceId: repository.deviceId,
+            now: now,
+            refreshToken: repository.refreshSeq,
+            recovery: .init(
+                sleepHours: repository.today?.totalSleepMin.map { $0 / 60 },
+                charge: repository.today?.recovery
+            ),
+            checkIn: LocalCoachPreferences.loadCheckIn()
+        )
         let sessions = (try? await store.strengthSessions(deviceId: repository.deviceId, limit: 30)) ?? []
 
         var output = Dictionary(uniqueKeysWithValues: NOOPMuscle.allCases.map {
@@ -55,12 +73,15 @@ private final class MuscleBodyMapModel: ObservableObject {
         })
         for row in daily {
             guard var summary = output[row.muscleId] else { continue }
-            summary.week = min(100, summary.week + row.normalizedLoad)
-            if row.day == todayKey {
-                summary.today = max(summary.today, row.normalizedLoad)
-                summary.workingSets += row.workingSets
-            }
+            summary.today = max(summary.today, row.normalizedLoad)
+            summary.workingSets += row.workingSets
             summary.confidence = confidence(row.confidence)
+            output[row.muscleId] = summary
+        }
+        for row in weekly {
+            guard var summary = output[row.muscleId] else { continue }
+            summary.week = max(summary.week, row.normalizedLoad)
+            summary.confidence = row.confidence
             output[row.muscleId] = summary
         }
         for row in residual {

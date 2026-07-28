@@ -8,14 +8,12 @@ struct DetectedStrengthDetailsSheet: View {
     @EnvironmentObject private var repository: Repository
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
-    @State private var region = "Full Body"
-    @State private var intensity = "Moderate"
+    @State private var region: StrengthSummaryEstimator.Region = .fullBody
+    @State private var intensity: StrengthSummaryEstimator.Intensity = .moderate
     @State private var rpe = 0
     @State private var saving = false
     @State private var detailedSessionId: String?
-
-    private let regions = ["Upper Body", "Lower Body", "Full Body", "Core"]
-    private let intensities = ["Light", "Moderate", "Hard", "Very Hard"]
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -39,17 +37,26 @@ struct DetectedStrengthDetailsSheet: View {
                             Text("Quick muscle and intensity summary")
                                 .font(StrandFont.headline)
                             Picker("Body region", selection: $region) {
-                                ForEach(regions, id: \.self) { Text($0).tag($0) }
+                                ForEach(StrengthSummaryEstimator.Region.allCases,
+                                        id: \.self) {
+                                    Text(regionTitle($0)).tag($0)
+                                }
                             }
                             .pickerStyle(.segmented)
                             Picker("Intensity", selection: $intensity) {
-                                ForEach(intensities, id: \.self) { Text($0).tag($0) }
+                                ForEach(StrengthSummaryEstimator.Intensity.allCases,
+                                        id: \.self) {
+                                    Text(intensityTitle($0)).tag($0)
+                                }
                             }
                             .pickerStyle(.segmented)
                             Picker("Session RPE", selection: $rpe) {
                                 Text("RPE optional").tag(0)
                                 ForEach(1...10, id: \.self) { Text("\($0)").tag($0) }
                             }
+                            Text("Duration: \(Int(workoutDurationMinutes.rounded())) min")
+                                .font(StrandFont.footnote)
+                                .foregroundStyle(StrandPalette.textTertiary)
                             NoopButton(saving ? "Saving…" : "Save quick summary",
                                        systemImage: "checkmark.circle",
                                        kind: .secondary, fullWidth: true) {
@@ -72,6 +79,14 @@ struct DetectedStrengthDetailsSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+            }
+            .alert("Could not save strength details", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
             }
             .sheet(isPresented: Binding(
                 get: { detailedSessionId != nil },
@@ -104,69 +119,119 @@ struct DetectedStrengthDetailsSheet: View {
 
     private func createDetailedSession() async {
         guard var session = await existingOrNew(source: "detected-details"),
-              let store = await repository.storeHandle() else { return }
+              let store = await repository.storeHandle() else {
+            errorMessage = String(localized: "The local database could not be opened.")
+            return
+        }
         session.source = "detected-details"
         session.status = StrengthSessionStatus.completed.rawValue
         do {
-            try await store.saveStrengthSession(session)
-            if WorkoutSource.classify(workout.source) == .detected {
-                await repository.relabelDetected(workout, sport: "Strength Training")
-            }
+            let output = MuscularLoadEngine.SessionOutput(
+                muscularLoad: 0,
+                muscles: [],
+                confidence: .low,
+                assumptions: ["Exercise details not entered yet"]
+            )
+            let commit = try await StrengthDerivedBuilder.makeCommit(
+                session: session,
+                output: output,
+                store: store,
+                recovery: recoveryModifiers,
+                relabel: detectedRelabel
+            )
+            try await store.commitStrengthDerived(commit)
+            await CurrentMuscleResidualService.shared.invalidate(
+                deviceId: session.deviceId)
             detailedSessionId = session.id
-        } catch { }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     private func saveQuickSummary() async {
         saving = true
         defer { saving = false }
-        guard var session = await existingOrNew(source: "detected-summary"),
-              let store = await repository.storeHandle() else { return }
-        let score: Double
-        switch intensity {
-        case "Light": score = 25
-        case "Hard": score = 70
-        case "Very Hard": score = 90
-        default: score = 45
+        guard var session = await existingOrNew(
+            source: StrengthSummaryEstimator.sourceVersion),
+              let store = await repository.storeHandle() else {
+            errorMessage = String(localized: "The local database could not be opened.")
+            return
         }
-        session.quickRegion = region
-        session.quickIntensity = intensity
+        let estimate = StrengthSummaryEstimator.estimate(
+            region: region,
+            intensity: intensity,
+            rpe: rpe > 0 ? Double(rpe) : nil,
+            durationMinutes: workoutDurationMinutes
+        )
+        session.quickRegion = region.rawValue
+        session.quickIntensity = intensity.rawValue
         session.sessionRPE = rpe > 0 ? Double(rpe) : nil
         session.confidence = StrengthConfidence.medium.rawValue
-        session.muscularLoad = score
+        session.muscularLoad = estimate.score
         session.totalTrainingLoad = MuscularLoadEngine.totalTrainingLoad(
-            cardiovascularEffort: workout.strain, muscularLoad: score)
-        session.source = "detected-summary"
+            storedCardiovascularEffort: workout.strain,
+            muscularLoad: estimate.score)
+        session.source = estimate.source
         do {
-            try await store.saveStrengthSession(session)
-            let day = Repository.localDayKey(
-                Date(timeIntervalSince1970: TimeInterval(workout.startTs)))
-            let muscles = muscleIds(for: region)
-            let rows = muscles.map {
-                DailyMuscleLoadRecord(
-                    day: day, muscleId: $0, rawStimulus: score,
-                    normalizedLoad: score, workingSets: 0,
-                    confidence: StrengthConfidence.medium.rawValue)
-            }
-            try await store.replaceSessionMuscleLoads(
-                sessionId: session.id, deviceId: session.deviceId, day: day,
-                trainedAt: session.startedAt, rows: rows)
-            if WorkoutSource.classify(workout.source) == .detected {
-                await repository.relabelDetected(workout, sport: "Strength Training")
-            }
+            let output = MuscularLoadEngine.SessionOutput(
+                muscularLoad: estimate.score,
+                muscles: estimate.muscles,
+                confidence: .medium,
+                assumptions: estimate.assumptions
+            )
+            let commit = try await StrengthDerivedBuilder.makeCommit(
+                session: session,
+                output: output,
+                store: store,
+                recovery: recoveryModifiers,
+                relabel: detectedRelabel
+            )
+            try await store.commitStrengthDerived(commit)
+            await CurrentMuscleResidualService.shared.invalidate(
+                deviceId: session.deviceId)
             dismiss()
-        } catch { }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
-    private func muscleIds(for region: String) -> [String] {
-        switch region {
-        case "Upper Body":
-            ["chest", "lats", "upper_back", "front_delts", "biceps", "triceps"]
-        case "Lower Body":
-            ["glutes", "quadriceps", "hamstrings", "calves"]
-        case "Core":
-            ["abdominals", "obliques", "erector_spinae"]
-        default:
-            ["chest", "lats", "glutes", "quadriceps", "hamstrings", "abdominals"]
+    private var workoutDurationMinutes: Double {
+        max(0, workout.durationS ?? Double(workout.endTs - workout.startTs)) / 60
+    }
+
+    private var recoveryModifiers: MuscularLoadEngine.RecoveryModifiers {
+        .init(
+            sleepHours: repository.today?.totalSleepMin.map { $0 / 60 },
+            charge: repository.today?.recovery
+        )
+    }
+
+    private var detectedRelabel: DetectedWorkoutRelabel? {
+        WorkoutSource.classify(workout.source) == .detected
+            ? repository.detectedWorkoutRelabel(
+                workout, targetSport: "Strength Training")
+            : nil
+    }
+
+    private func regionTitle(_ value: StrengthSummaryEstimator.Region) -> String {
+        switch value {
+        case .upperBody: String(localized: "Upper Body")
+        case .lowerBody: String(localized: "Lower Body")
+        case .fullBody: String(localized: "Full Body")
+        case .core: String(localized: "Core")
+        }
+    }
+
+    private func intensityTitle(_ value: StrengthSummaryEstimator.Intensity) -> String {
+        switch value {
+        case .light:
+            String(localized: "strength.intensity.light", defaultValue: "Light")
+        case .moderate:
+            String(localized: "strength.intensity.moderate", defaultValue: "Moderate")
+        case .hard:
+            String(localized: "strength.intensity.hard", defaultValue: "Hard")
+        case .veryHard:
+            String(localized: "strength.intensity.veryHard", defaultValue: "Very Hard")
         }
     }
 }

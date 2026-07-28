@@ -1917,9 +1917,13 @@ struct SleepView: View {
     /// the analytics rollup; nil keeps the cold-start overnight-band bonus. (#525 / #547 / #561)
     static func mainNightSession(_ sessions: [CachedSleepSession],
                                  habitualMidsleepSec: Int? = nil) -> CachedSleepSession? {
-        SleepStageTotals.mainNightIndex(
-            sessions.map { SleepStageTotals.NightBlock(start: $0.effectiveStartTs, end: $0.endTs) },
-            offsetSec: tzOffsetSec, habitualMidsleepSec: habitualMidsleepSec).map { sessions[$0] }
+        let result = SleepPeriodClassifier.classify(
+            sessions.map { .init(start: $0.effectiveStartTs, end: $0.endTs) },
+            offsetSec: tzOffsetSec,
+            habitualMidsleepSec: habitualMidsleepSec
+        )
+        guard let index = result.winningIndex else { return nil }
+        return sessions[index]
     }
 
     /// The day's MAIN-night GROUP — the winning block PLUS any adjacent fragments bridged into it (a wake
@@ -1931,10 +1935,12 @@ struct SleepView: View {
     /// identical. Returns ascending by effective onset. (#561 / #555)
     static func mainNightGroup(_ sessions: [CachedSleepSession],
                                habitualMidsleepSec: Int? = nil) -> [CachedSleepSession] {
-        guard let idx = SleepStageTotals.mainNightGroupIndices(
-            sessions.map { SleepStageTotals.NightBlock(start: $0.effectiveStartTs, end: $0.endTs) },
-            offsetSec: tzOffsetSec, habitualMidsleepSec: habitualMidsleepSec) else { return [] }
-        return idx.map { sessions[$0] }.sorted { $0.effectiveStartTs < $1.effectiveStartTs }
+        let result = SleepPeriodClassifier.classify(
+            sessions.map { .init(start: $0.effectiveStartTs, end: $0.endTs) },
+            offsetSec: tzOffsetSec,
+            habitualMidsleepSec: habitualMidsleepSec
+        )
+        return result.mainIndices.map { sessions[$0] }
     }
 
     /// The day's main-night bridged SPAN (onset → wake), the same window `mainNightGroup` bridges into

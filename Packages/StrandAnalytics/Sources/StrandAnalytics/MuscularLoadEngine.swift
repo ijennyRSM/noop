@@ -12,7 +12,6 @@ public enum MuscularLoadEngine {
         public var defaultEffortFactor: Double = 0.82
         public var bodyweightFallbackKg: Double = 55
         public var coldStartReference: Double = 1_800
-        public var cardioEffortMaximum: Double = 21
         public var cardioWeight: Double = 0.50
         public var muscularWeight: Double = 0.50
         public var defaultHalfLifeHours: Double = 30
@@ -268,12 +267,11 @@ public enum MuscularLoadEngine {
 
     /// Combined score without overwriting cardiovascular Effort. A weighted RMS preserves a high
     /// component; `max` contributes a small guard so strength-only/cardio-only sessions remain visible.
-    public static func totalTrainingLoad(cardiovascularEffort: Double?, muscularLoad: Double?,
+    public static func totalTrainingLoad(
+        cardiovascularEffort: CardiovascularEffortValue?,
+        muscularLoad: Double?,
                                          configuration: Configuration = .init()) -> Double? {
-        let cardio = cardiovascularEffort.map {
-            clamp($0 <= configuration.cardioEffortMaximum
-                  ? $0 / configuration.cardioEffortMaximum * 100 : $0)
-        }
+        let cardio = cardiovascularEffort.map { clamp($0.normalized100) }
         let muscle = muscularLoad.map(clamp)
         switch (cardio, muscle) {
         case (nil, nil): return nil
@@ -285,6 +283,20 @@ public enum MuscularLoadEngine {
             let rms = sqrt((cw * cardio * cardio + mw * muscle * muscle) / denominator)
             return clamp(0.90 * rms + 0.10 * max(cardio, muscle))
         }
+    }
+
+    /// Compatibility entry point for values already read from NOOP storage.
+    /// It deliberately treats every numeric value as 0...100 and never infers a scale.
+    public static func totalTrainingLoad(
+        storedCardiovascularEffort: Double?,
+        muscularLoad: Double?,
+        configuration: Configuration = .init()
+    ) -> Double? {
+        totalTrainingLoad(
+            cardiovascularEffort: CardiovascularEffortValue.stored(storedCardiovascularEffort),
+            muscularLoad: muscularLoad,
+            configuration: configuration
+        )
     }
 
     private static func effortFactor(rpe: Double?, rir: Double?, fallback: Double) -> Double {
@@ -321,6 +333,14 @@ public enum MuscularLoadEngine {
         }
         guard raw > 0, reference > 0 else { return 0 }
         // 50 means the user's recent median. Each doubling adds 22 points; each halving removes 22.
+        return clamp(50 + 22 * log2(raw / reference))
+    }
+
+    /// Public normalization primitive for aggregate views. The caller supplies an
+    /// already-computed personal reference so raw stimuli are combined before the
+    /// bounded 0...100 display score is produced.
+    public static func normalizedLoad(raw: Double, reference: Double) -> Double {
+        guard raw > 0, raw.isFinite, reference > 0, reference.isFinite else { return 0 }
         return clamp(50 + 22 * log2(raw / reference))
     }
 
