@@ -1441,6 +1441,7 @@ struct TodayView: View {
                 // it's an ambient reminder, not a demand for the top of the screen. It draws attention on
                 // its own terms as its time nears (colour + breathe, see PlanTodayCard).
                 PlanTodayCard(showPlan: $showPlan)
+                if selectedDayOffset == 0 { MuscleBodyMapCard() }
             }
             #if os(iOS)
             // #817 - horizontal swipe to change day. A right-swipe (positive X) steps to the NEWER day

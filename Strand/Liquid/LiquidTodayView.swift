@@ -432,6 +432,12 @@ struct LiquidTodayView: View {
                     // accepted it's an ambient reminder, not a demand for the top of the screen. It draws
                     // attention on its own terms as its time nears (colour + breathe, see PlanTodayCard).
                     PlanTodayCard(showPlan: $showPlan)
+                    // Strength status is additive to the DX Today stack. It
+                    // remains independent of cardiovascular Effort and uses
+                    // the authoritative residual service.
+                    if selectedDayOffset == 0 {
+                        MuscleBodyMapCard()
+                    }
                     Color.clear.frame(height: 90) // floating tab-bar clearance
                 }
                 .padding(.horizontal, 16)
