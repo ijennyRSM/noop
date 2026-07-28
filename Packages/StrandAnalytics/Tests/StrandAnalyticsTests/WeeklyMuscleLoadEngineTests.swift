@@ -6,7 +6,7 @@ final class WeeklyMuscleLoadEngineTests: XCTestCase {
     func testSumsRawStimulusBeforeNormalizing() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let now = Date(timeIntervalSince1970: 1_704_132_000) // 2024-01-01 18:00 UTC
+        let now = Date(timeIntervalSince1970: 1_704_207_600) // 2024-01-02 15:00 UTC
         let rows = [
             row(daysBefore: 0, raw: 900, now: now, calendar: calendar),
             row(daysBefore: 1, raw: 900, now: now, calendar: calendar),
@@ -22,7 +22,7 @@ final class WeeklyMuscleLoadEngineTests: XCTestCase {
     func testCalendarWindowExcludesEightDayOldSession() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Bangkok")!
-        let now = Date(timeIntervalSince1970: 1_704_132_000)
+        let now = Date(timeIntervalSince1970: 1_704_207_600)
         let rows = [
             row(daysBefore: 0, raw: 1_800, now: now, calendar: calendar),
             row(daysBefore: 8, raw: 9_000, now: now, calendar: calendar),
