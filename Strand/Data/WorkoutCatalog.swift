@@ -17,10 +17,17 @@ enum WorkoutCatalog {
     /// One selectable activity. `name` is the verbatim stored/display label.
     struct Sport: Identifiable, Hashable {
         let name: String
-        /// Types where a route makes sense → GPS hint / default on.
         let isDistanceSport: Bool
         var activityID: String { ActivityID.slug(forCanonicalName: name) }
+        var displayName: String { WorkoutCatalog.localizedDisplayName(name) }
         var id: String { activityID }
+    }
+
+    /// Localize a stored/canonical sport only at the presentation boundary. The database,
+    /// imports, exports, dedup keys, and HealthKit mapping continue to use the unchanged
+    /// English name. Unknown free-text activities intentionally fall back to themselves.
+    static func localizedDisplayName(_ name: String) -> String {
+        String(localized: String.LocalizationValue(name))
     }
 
     /// Ordered to match Android `WorkoutSport.all`: common / distance first, the rest, the EXTRA
@@ -93,7 +100,10 @@ enum WorkoutCatalog {
     static func matching(_ query: String) -> [Sport] {
         let q = query.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return all }
-        return all.filter { $0.name.range(of: q, options: .caseInsensitive) != nil }
+        return all.filter {
+            $0.name.range(of: q, options: .caseInsensitive) != nil
+                || $0.displayName.range(of: q, options: .caseInsensitive) != nil
+        }
     }
 
     /// Sports where a step count is meaningful , feet on the ground , so the workout summary can show
