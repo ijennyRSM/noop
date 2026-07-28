@@ -1488,6 +1488,54 @@
       "builtIn": true
     },
     {
+      "id": "barbell_squat",
+      "canonicalName": "Barbell Back Squat",
+      "aliases": [
+        "Back Squat",
+        "Barbell Squat"
+      ],
+      "equipment": [
+        "barbell"
+      ],
+      "movementPattern": "squat",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "quadriceps",
+          "role": "primary",
+          "weight": 0.35714
+        },
+        {
+          "muscleId": "calves",
+          "role": "secondary",
+          "weight": 0.16071
+        },
+        {
+          "muscleId": "glutes",
+          "role": "secondary",
+          "weight": 0.16071
+        },
+        {
+          "muscleId": "hamstrings",
+          "role": "secondary",
+          "weight": 0.16071
+        },
+        {
+          "muscleId": "lower_back",
+          "role": "secondary",
+          "weight": 0.16071
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
       "id": "barbell_bench_press_medium_grip",
       "canonicalName": "Barbell Bench Press - Medium Grip",
       "aliases": [
@@ -4356,36 +4404,6 @@
       "builtIn": true
     },
     {
-      "id": "car_drivers",
-      "canonicalName": "Car Drivers",
-      "aliases": [],
-      "equipment": [
-        "barbell"
-      ],
-      "movementPattern": "isolation",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "front_delts",
-          "role": "primary",
-          "weight": 0.68966
-        },
-        {
-          "muscleId": "forearms",
-          "role": "secondary",
-          "weight": 0.31034
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
       "id": "carioca_quick_step",
       "canonicalName": "Carioca Quick Step",
       "aliases": [],
@@ -5604,36 +5622,6 @@
       "builtIn": true
     },
     {
-      "id": "crucifix",
-      "canonicalName": "Crucifix",
-      "aliases": [],
-      "equipment": [
-        "other"
-      ],
-      "movementPattern": "isolation",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "front_delts",
-          "role": "primary",
-          "weight": 0.68966
-        },
-        {
-          "muscleId": "forearms",
-          "role": "secondary",
-          "weight": 0.31034
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
       "id": "cuban_press",
       "canonicalName": "Cuban Press",
       "aliases": [],
@@ -6546,6 +6534,41 @@
       "builtIn": true
     },
     {
+      "id": "dumbbell_bench_press_with_neutral_grip",
+      "canonicalName": "Dumbbell Bench Press with Neutral Grip",
+      "aliases": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "movementPattern": "horizontal_push",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "chest",
+          "role": "primary",
+          "weight": 0.52632
+        },
+        {
+          "muscleId": "front_delts",
+          "role": "secondary",
+          "weight": 0.23684
+        },
+        {
+          "muscleId": "triceps",
+          "role": "secondary",
+          "weight": 0.23684
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
       "id": "dumbbell_clean",
       "canonicalName": "Dumbbell Clean",
       "aliases": [],
@@ -6850,36 +6873,6 @@
           "muscleId": "forearms",
           "role": "primary",
           "weight": 1.0
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
-      "id": "dumbbell_one_arm_shoulder_press",
-      "canonicalName": "Dumbbell One-Arm Shoulder Press",
-      "aliases": [],
-      "equipment": [
-        "dumbbell"
-      ],
-      "movementPattern": "vertical_push",
-      "laterality": "unilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "front_delts",
-          "role": "primary",
-          "weight": 0.68966
-        },
-        {
-          "muscleId": "triceps",
-          "role": "secondary",
-          "weight": 0.31034
         }
       ],
       "effectiveBodyweightCoefficient": null,
@@ -7620,31 +7613,6 @@
         }
       ],
       "effectiveBodyweightCoefficient": 0.5,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
-      "id": "front_cable_raise",
-      "canonicalName": "Front Cable Raise",
-      "aliases": [],
-      "equipment": [
-        "cable"
-      ],
-      "movementPattern": "isolation",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "front_delts",
-          "role": "primary",
-          "weight": 1.0
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
       "source": "free-exercise-db",
       "sourceURL": "https://github.com/yuhonas/free-exercise-db",
       "license": "The Unlicense (public domain dedication)",
@@ -8903,36 +8871,6 @@
       "builtIn": true
     },
     {
-      "id": "kettlebell_arnold_press",
-      "canonicalName": "Kettlebell Arnold Press",
-      "aliases": [],
-      "equipment": [
-        "kettlebell"
-      ],
-      "movementPattern": "push",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "front_delts",
-          "role": "primary",
-          "weight": 0.68966
-        },
-        {
-          "muscleId": "triceps",
-          "role": "secondary",
-          "weight": 0.31034
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
       "id": "kettlebell_dead_clean",
       "canonicalName": "Kettlebell Dead Clean",
       "aliases": [],
@@ -9895,6 +9833,41 @@
         },
         {
           "muscleId": "triceps",
+          "role": "secondary",
+          "weight": 0.23684
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
+      "id": "leverage_deadlift",
+      "canonicalName": "Leverage Deadlift",
+      "aliases": [],
+      "equipment": [
+        "machine"
+      ],
+      "movementPattern": "hinge",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "quadriceps",
+          "role": "primary",
+          "weight": 0.52632
+        },
+        {
+          "muscleId": "glutes",
+          "role": "secondary",
+          "weight": 0.23684
+        },
+        {
+          "muscleId": "hamstrings",
           "role": "secondary",
           "weight": 0.23684
         }
@@ -11751,6 +11724,56 @@
       "builtIn": true
     },
     {
+      "id": "rack_pull_with_bands",
+      "canonicalName": "Rack Pull with Bands",
+      "aliases": [],
+      "equipment": [
+        "barbell"
+      ],
+      "movementPattern": "pull",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "lower_back",
+          "role": "primary",
+          "weight": 0.30769
+        },
+        {
+          "muscleId": "forearms",
+          "role": "secondary",
+          "weight": 0.13846
+        },
+        {
+          "muscleId": "glutes",
+          "role": "secondary",
+          "weight": 0.13846
+        },
+        {
+          "muscleId": "hamstrings",
+          "role": "secondary",
+          "weight": 0.13846
+        },
+        {
+          "muscleId": "quadriceps",
+          "role": "secondary",
+          "weight": 0.13846
+        },
+        {
+          "muscleId": "traps",
+          "role": "secondary",
+          "weight": 0.13846
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
       "id": "rear_leg_raises",
       "canonicalName": "Rear Leg Raises",
       "aliases": [],
@@ -12081,6 +12104,49 @@
       "builtIn": true
     },
     {
+      "id": "romanian_deadlift",
+      "canonicalName": "Romanian Deadlift",
+      "aliases": [
+        "RDL",
+        "Romanian DL"
+      ],
+      "equipment": [
+        "barbell"
+      ],
+      "movementPattern": "hinge",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "hamstrings",
+          "role": "primary",
+          "weight": 0.42553
+        },
+        {
+          "muscleId": "calves",
+          "role": "secondary",
+          "weight": 0.19149
+        },
+        {
+          "muscleId": "glutes",
+          "role": "secondary",
+          "weight": 0.19149
+        },
+        {
+          "muscleId": "lower_back",
+          "role": "secondary",
+          "weight": 0.19149
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
       "id": "russian_twist",
       "canonicalName": "Russian Twist",
       "aliases": [],
@@ -12147,7 +12213,7 @@
     },
     {
       "id": "seated_cable_rows",
-      "canonicalName": "Seated Cable Rows",
+      "canonicalName": "Seated Cable Row",
       "aliases": [
         "Seated Cable Row",
         "Cable Row"
@@ -12201,31 +12267,6 @@
       "muscles": [
         {
           "muscleId": "calves",
-          "role": "primary",
-          "weight": 1.0
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
-      "id": "seated_dumbbell_palms_down_wrist_curl",
-      "canonicalName": "Seated Dumbbell Palms-Down Wrist Curl",
-      "aliases": [],
-      "equipment": [
-        "dumbbell"
-      ],
-      "movementPattern": "arm_flexion",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "forearms",
           "role": "primary",
           "weight": 1.0
         }
@@ -12389,31 +12430,6 @@
       "builtIn": true
     },
     {
-      "id": "seated_palms_down_barbell_wrist_curl",
-      "canonicalName": "Seated Palms-Down Barbell Wrist Curl",
-      "aliases": [],
-      "equipment": [
-        "barbell"
-      ],
-      "movementPattern": "arm_flexion",
-      "laterality": "bilateral",
-      "loadType": "external",
-      "muscles": [
-        {
-          "muscleId": "forearms",
-          "role": "primary",
-          "weight": 1.0
-        }
-      ],
-      "effectiveBodyweightCoefficient": null,
-      "source": "free-exercise-db",
-      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
-      "license": "The Unlicense (public domain dedication)",
-      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
-      "libraryVersion": 1,
-      "builtIn": true
-    },
-    {
       "id": "seated_two_arm_palms_up_low_pulley_wrist_curl",
       "canonicalName": "Seated Two-Arm Palms-Up Low-Pulley Wrist Curl",
       "aliases": [],
@@ -12439,25 +12455,23 @@
       "builtIn": true
     },
     {
-      "id": "shoulder_press_with_bands",
-      "canonicalName": "Shoulder Press - With Bands",
-      "aliases": [],
-      "equipment": [
-        "bands"
+      "id": "side_lateral_raise",
+      "canonicalName": "Side Lateral Raise",
+      "aliases": [
+        "Lateral Raise",
+        "Side Raise"
       ],
-      "movementPattern": "vertical_push",
+      "equipment": [
+        "dumbbell"
+      ],
+      "movementPattern": "isolation",
       "laterality": "bilateral",
       "loadType": "external",
       "muscles": [
         {
-          "muscleId": "front_delts",
+          "muscleId": "side_delts",
           "role": "primary",
-          "weight": 0.68966
-        },
-        {
-          "muscleId": "triceps",
-          "role": "secondary",
-          "weight": 0.31034
+          "weight": 1.0
         }
       ],
       "effectiveBodyweightCoefficient": null,
@@ -13054,6 +13068,31 @@
       "builtIn": true
     },
     {
+      "id": "standing_calf_raises",
+      "canonicalName": "Standing Calf Raise",
+      "aliases": [],
+      "equipment": [
+        "machine"
+      ],
+      "movementPattern": "calf_raise",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "calves",
+          "role": "primary",
+          "weight": 1.0
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
       "id": "standing_dumbbell_calf_raise",
       "canonicalName": "Standing Dumbbell Calf Raise",
       "aliases": [],
@@ -13169,23 +13208,26 @@
       "builtIn": true
     },
     {
-      "id": "standing_olympic_plate_hand_squeeze",
-      "canonicalName": "Standing Olympic Plate Hand Squeeze",
-      "aliases": [],
-      "equipment": [
-        "other"
+      "id": "standing_military_press",
+      "canonicalName": "Standing Military Press",
+      "aliases": [
+        "Overhead Press",
+        "Military Press"
       ],
-      "movementPattern": "isolation",
+      "equipment": [
+        "barbell"
+      ],
+      "movementPattern": "vertical_push",
       "laterality": "bilateral",
       "loadType": "external",
       "muscles": [
         {
-          "muscleId": "forearms",
+          "muscleId": "front_delts",
           "role": "primary",
           "weight": 0.68966
         },
         {
-          "muscleId": "biceps",
+          "muscleId": "triceps",
           "role": "secondary",
           "weight": 0.31034
         }
@@ -13798,6 +13840,48 @@
           "muscleId": "abdominals",
           "role": "primary",
           "weight": 1.0
+        }
+      ],
+      "effectiveBodyweightCoefficient": null,
+      "source": "free-exercise-db",
+      "sourceURL": "https://github.com/yuhonas/free-exercise-db",
+      "license": "The Unlicense (public domain dedication)",
+      "licenseURL": "https://github.com/yuhonas/free-exercise-db/blob/main/LICENSE",
+      "libraryVersion": 1,
+      "builtIn": true
+    },
+    {
+      "id": "wide_grip_lat_pulldown",
+      "canonicalName": "Wide-Grip Lat Pulldown",
+      "aliases": [
+        "Lat Pulldown"
+      ],
+      "equipment": [
+        "cable"
+      ],
+      "movementPattern": "vertical_pull",
+      "laterality": "bilateral",
+      "loadType": "external",
+      "muscles": [
+        {
+          "muscleId": "lats",
+          "role": "primary",
+          "weight": 0.42553
+        },
+        {
+          "muscleId": "biceps",
+          "role": "secondary",
+          "weight": 0.19149
+        },
+        {
+          "muscleId": "upper_back",
+          "role": "secondary",
+          "weight": 0.19149
+        },
+        {
+          "muscleId": "front_delts",
+          "role": "secondary",
+          "weight": 0.19149
         }
       ],
       "effectiveBodyweightCoefficient": null,
