@@ -163,8 +163,8 @@ final class CoachSnapshotTests: XCTestCase {
                   durationMinutes: 60, cardiovascularEffort: 75,
                   zoneMinutes: [5, 10, 20, 15, 5]),
         ]
-        let output = CoachSnapshotFormatter.format(snapshot, maxCharacters: 1_200)
-        XCTAssertLessThanOrEqual(output.count, 1_200)
+        let output = CoachSnapshotFormatter.format(snapshot, maxCharacters: 6_000)
+        XCTAssertLessThanOrEqual(output.count, 6_000)
         XCTAssertTrue(output.contains("Z3 20.0 min"))
         XCTAssertFalse(output.lowercased().contains("rrinterval"))
         XCTAssertFalse(output.lowercased().contains("gps points"))

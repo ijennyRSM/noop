@@ -3,33 +3,33 @@ import WhoopStore
 @testable import StrandAnalytics
 
 final class WeeklyMuscleLoadEngineTests: XCTestCase {
-    func testSumsRawStimulusBeforeNormalizing() {
+    func testSumsRawStimulusBeforeNormalizing() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let now = Date(timeIntervalSince1970: 1_704_067_200) // 2024-01-01 UTC
+        let now = Date(timeIntervalSince1970: 1_704_132_000) // 2024-01-01 18:00 UTC
         let rows = [
             row(daysBefore: 0, raw: 900, now: now, calendar: calendar),
             row(daysBefore: 1, raw: 900, now: now, calendar: calendar),
         ]
         let result = WeeklyMuscleLoadEngine.aggregate(
             rows: rows, now: now, calendar: calendar)
-        let first = try! XCTUnwrap(result.first)
+        let first = try XCTUnwrap(result.first)
         XCTAssertEqual(first.rawStimulus, 1_800, accuracy: 0.001)
         XCTAssertEqual(first.normalizedLoad, 50, accuracy: 0.001)
         XCTAssertEqual(first.sessionCount, 2)
     }
 
-    func testCalendarWindowExcludesEightDayOldSession() {
+    func testCalendarWindowExcludesEightDayOldSession() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Bangkok")!
-        let now = Date(timeIntervalSince1970: 1_704_067_200)
+        let now = Date(timeIntervalSince1970: 1_704_132_000)
         let rows = [
             row(daysBefore: 0, raw: 1_800, now: now, calendar: calendar),
             row(daysBefore: 8, raw: 9_000, now: now, calendar: calendar),
         ]
         let result = WeeklyMuscleLoadEngine.aggregate(
             rows: rows, now: now, calendar: calendar)
-        let first = try! XCTUnwrap(result.first)
+        let first = try XCTUnwrap(result.first)
         XCTAssertEqual(first.rawStimulus, 1_800, accuracy: 0.001)
     }
 
