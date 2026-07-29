@@ -211,7 +211,7 @@ struct LabBookView: View {
                     Button {
                         presentCsvImporter()
                     } label: {
-                        Label(csvImporting ? "Importing…" : "Choose CSV…", systemImage: "tray.and.arrow.down")
+                        Label(csvImporting ? String(localized: "Importing…") : String(localized: "Choose CSV…"), systemImage: "tray.and.arrow.down")
                     }
                     .buttonStyle(.noopPrimary)
                     .disabled(csvImporting)
@@ -873,7 +873,7 @@ private struct MarkerDetailView: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: "plus.circle.fill")
-                Text(signal?.title ?? "Choose a signal")
+                Text(signal?.title ?? String(localized: "Choose a signal"))
                     .font(StrandFont.subhead)
             }
             .foregroundStyle(StrandPalette.accent)
@@ -931,7 +931,7 @@ private struct MarkerDetailView: View {
                     .foregroundStyle(tint)
             }
             Text(LabBookSignals.insightSentence(markerName: displayName,
-                                                 signalName: signal?.title ?? "the signal",
+                                                 signalName: signal?.title ?? String(localized: "the signal"),
                                                  r: c.r))
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)

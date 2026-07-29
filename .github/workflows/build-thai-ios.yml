@@ -1,0 +1,144 @@
+name: Build Thai iOS Unsigned IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    name: Build unsigned Thai IPA
+    runs-on: macos-26
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate Thai localization
+        run: |
+          set -euo pipefail
+          python3 Tools/validate-thai-localization.py
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          brew install xcodegen
+
+      - name: Generate Xcode project
+        run: |
+          set -euo pipefail
+          xcodegen generate
+
+      - name: Build NOOPiOS for a real iPhone device (unsigned Release)
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          xcodebuild \
+            -scheme NOOPiOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build 2>&1 | tee build/xcodebuild.log
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-Thai-iOS-Build-Logs
+          path: |
+            build/xcodebuild.log
+            build/dd/Logs/Build/**/*.xcactivitylog
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Package unsigned IPA
+        id: package
+        run: |
+          set -euo pipefail
+
+          PRODUCT_DIR="build/dd/Build/Products/Release-iphoneos"
+          if [[ ! -d "$PRODUCT_DIR" ]]; then
+            echo "::error::Device build product directory not found: $PRODUCT_DIR"
+            exit 1
+          fi
+
+          APPS=()
+          while IFS= read -r -d '' candidate; do
+            APPS+=("$candidate")
+          done < <(find "$PRODUCT_DIR" -maxdepth 1 -type d -name '*.app' -print0)
+
+          if [[ ${#APPS[@]} -ne 1 ]]; then
+            echo "::error::Expected exactly one main iOS .app in $PRODUCT_DIR; found ${#APPS[@]}"
+            printf 'Candidate: %s\n' "${APPS[@]:-<none>}"
+            exit 1
+          fi
+
+          APP="${APPS[0]}"
+          if [[ ! -f "$APP/Info.plist" ]]; then
+            echo "::error::Invalid application bundle (Info.plist missing): $APP"
+            exit 1
+          fi
+          if [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundlePackageType' "$APP/Info.plist")" != "APPL" ]]; then
+            echo "::error::Build product is not an iOS application bundle: $APP"
+            exit 1
+          fi
+
+          # Free-account sideloaders commonly cannot provision the embedded Watch app,
+          # widget, or Live Activity extension. The core iPhone app remains intact.
+          rm -rf "$APP/Watch"
+          rm -rf "$APP/PlugIns"
+
+          VERSION="$(sed -nE 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*"([^"]+)".*/\1/p' project.yml | head -n 1)"
+          if [[ -z "$VERSION" ]]; then
+            echo "::error::Could not read MARKETING_VERSION from project.yml"
+            exit 1
+          fi
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          IPA_NAME="NOOP-Thai-ios-unsigned-v${VERSION}-${SHORT_SHA}.ipa"
+          IPA_ROOT="build/ipa"
+
+          rm -rf "$IPA_ROOT"
+          mkdir -p "$IPA_ROOT/Payload"
+          ditto "$APP" "$IPA_ROOT/Payload/NOOP.app"
+
+          APP_COUNT="$(find "$IPA_ROOT/Payload" -maxdepth 1 -type d -name '*.app' | wc -l | tr -d ' ')"
+          if [[ "$APP_COUNT" != "1" || ! -d "$IPA_ROOT/Payload/NOOP.app" ]]; then
+            echo "::error::Payload must contain exactly one main app at Payload/NOOP.app"
+            exit 1
+          fi
+
+          (cd "$IPA_ROOT" && /usr/bin/zip -qry "$GITHUB_WORKSPACE/$IPA_NAME" Payload)
+          /usr/bin/unzip -t "$IPA_NAME"
+          ZIP_LIST="$(/usr/bin/unzip -Z1 "$IPA_NAME")"
+          grep -q '^Payload/' <<< "$ZIP_LIST"
+
+          IPA_SIZE="$(du -h "$IPA_NAME" | awk '{print $1}')"
+          echo "ipa_path=$IPA_NAME" >> "$GITHUB_OUTPUT"
+          echo "ipa_name=$IPA_NAME" >> "$GITHUB_OUTPUT"
+          echo "ipa_size=$IPA_SIZE" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## NOOP Thai unsigned IPA"
+            echo ""
+            echo "- File: \`$IPA_NAME\`"
+            echo "- Size: $IPA_SIZE"
+            echo "- Configuration: Release"
+            echo "- Destination: generic iOS device"
+            echo "- Signing: disabled"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-Thai-Unsigned-IPA
+          path: ${{ steps.package.outputs.ipa_path }}
+          if-no-files-found: error
+          retention-days: 14

@@ -582,8 +582,12 @@ CATALOGS = [
         ROOT / "NOOPWatchComplications/Localizable.xcstrings",
     ),
     (
-        [ROOT / "Strand", ROOT / "StrandiOS", ROOT / "StrandiOSShared", ROOT / "StrandiOSWidgets"],
+        [ROOT / "Strand", ROOT / "StrandiOS", ROOT / "StrandiOSShared"],
         ROOT / "Strand/Resources/Localizable.xcstrings",
+    ),
+    (
+        [ROOT / "StrandiOSWidgets"],
+        ROOT / "StrandiOSWidgets/Localizable.xcstrings",
     ),
 ]
 

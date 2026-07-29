@@ -322,7 +322,9 @@ struct FullDayChartView: View {
             #else
             // #979 spin-off: name the hold-to-scrub affordance — a hidden gesture nobody tries is a
             // feature that doesn't exist. (On the Mac the pointer hover is self-discovering.)
-            Text(zoomDomain == nil ? "Pinch to zoom · drag to pan · hold to read" : "Zoomed in. Drag to pan · hold to read")
+            Text(zoomDomain == nil
+                 ? String(localized: "Pinch to zoom · drag to pan · hold to read")
+                 : String(localized: "Zoomed in. Drag to pan · hold to read"))
             #endif
             Spacer()
             if zoomDomain != nil {

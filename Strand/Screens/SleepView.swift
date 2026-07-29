@@ -3143,8 +3143,8 @@ private struct SleepTimeEditor: View {
             // A detected night is tombstoned so it won't re-detect; a userEdited/nap row writes no
             // tombstone, so its copy drops that (false) promise. Mirrors the undo banner. (#65)
             Text(suppressesReDetection
-                 ? "Removes this recorded sleep and recomputes the day without it. NOOP won't re-detect sleep in this window. You can undo for a few seconds after."
-                 : "Removes this sleep and recomputes the day without it. You can undo for a few seconds after.")
+                 ? String(localized: "Removes this recorded sleep and recomputes the day without it. NOOP won't re-detect sleep in this window. You can undo for a few seconds after.")
+                 : String(localized: "Removes this sleep and recomputes the day without it. You can undo for a few seconds after."))
         }
     }
 }

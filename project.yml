@@ -366,6 +366,8 @@ targets:
     platform: iOS
     deploymentTarget: "17.0"
     sources:
+      # Includes StrandiOSWidgets/Localizable.xcstrings. Widget and Live Activity extensions are
+      # separate bundles and cannot read the phone app's Strand/Resources catalog.
       - path: StrandiOSWidgets
         excludes:
           - "Info.plist"
