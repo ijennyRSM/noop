@@ -905,7 +905,7 @@ private struct StrengthSetRow: View {
     }
 }
 
-private struct ExercisePicker: View {
+struct ExercisePicker: View {
     @ObservedObject var viewModel: StrengthTrainingViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -918,7 +918,23 @@ private struct ExercisePicker: View {
         NavigationStack {
             VStack(spacing: 12) {
                 TextField("Search exercises or aliases", text: $viewModel.query)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
+                    .padding(.horizontal, 14)
+                    .frame(minHeight: PerformanceTheme.Metrics.minimumTapTarget)
+                    .background(
+                        PerformanceTheme.secondarySurface,
+                        in: RoundedRectangle(
+                            cornerRadius: PerformanceTheme.Radius.medium,
+                            style: .continuous
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(
+                            cornerRadius: PerformanceTheme.Radius.medium,
+                            style: .continuous
+                        )
+                        .strokeBorder(PerformanceTheme.subtleDivider, lineWidth: 0.75)
+                    )
                     .onChangeCompat(of: viewModel.query) { _ in Task { await viewModel.search() } }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -984,8 +1000,10 @@ private struct ExercisePicker: View {
                     .buttonStyle(.plain)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
             .padding()
+            .background(PerformanceTheme.appBackground.ignoresSafeArea())
             .navigationTitle("Add exercise")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

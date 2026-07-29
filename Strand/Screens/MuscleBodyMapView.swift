@@ -156,7 +156,9 @@ struct MuscleBodyMapCard: View {
                             Text(side.title)
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .foregroundStyle(
-                                    bodySide == side ? Color.black : StrandPalette.textSecondary
+                                    bodySide == side
+                                        ? PerformanceTheme.primaryText
+                                        : PerformanceTheme.secondaryText
                                 )
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
@@ -164,8 +166,8 @@ struct MuscleBodyMapCard: View {
                                     Capsule(style: .continuous)
                                         .fill(
                                             bodySide == side
-                                                ? Color.white
-                                                : Color.white.opacity(0.055)
+                                                ? PerformanceTheme.raisedSurface
+                                                : Color.clear
                                         )
                                 )
                         }
@@ -173,7 +175,14 @@ struct MuscleBodyMapCard: View {
                     }
                 }
                 .padding(3)
-                .background(Capsule(style: .continuous).fill(Color.black.opacity(0.28)))
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(PerformanceTheme.secondarySurface)
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .strokeBorder(PerformanceTheme.subtleDivider, lineWidth: 0.75)
+                        )
+                )
 
                 HStack(alignment: .center, spacing: 14) {
                     AnatomicalMuscleMap(
@@ -207,10 +216,10 @@ struct MuscleBodyMapCard: View {
                 .frame(maxWidth: .infinity, minHeight: 350, maxHeight: 390)
                 .background(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.black.opacity(0.24))
+                        .fill(PerformanceTheme.secondarySurface)
                         .overlay(
                             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.055), lineWidth: 1)
+                                .strokeBorder(PerformanceTheme.subtleDivider, lineWidth: 0.75)
                         )
                 )
 

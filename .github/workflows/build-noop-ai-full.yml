@@ -1,4 +1,4 @@
-name: Build NOOP AI Full Thai Strength
+name: Build NOOP AI Full Performance UI
 
 on:
   workflow_dispatch:
@@ -109,6 +109,11 @@ jobs:
           ! codesign -dvv "$app" >/dev/null 2>&1 || {
             echo "::error::Developer signature unexpectedly present" >&2; exit 1;
           }
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          [[ "$bundle_id" == *.noopfull ]] || {
+            echo "::error::Expected Full Beta .noopfull bundle identifier, found $bundle_id" >&2
+            exit 1
+          }
 
           find "$app" -name '*.gguf' -type f -print -quit | grep -q . || {
             echo "::error::Nomic GGUF is missing from the app bundle" >&2; exit 1;
@@ -128,7 +133,7 @@ jobs:
           version="$(sed -nE 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*"([^"]+)".*/\1/p' project.yml | head -1)"
           [[ -n "$version" ]] || { echo "::error::MARKETING_VERSION missing" >&2; exit 1; }
           short_sha="${GITHUB_SHA:0:7}"
-          ipa="NOOP-AI-Full-Thai-Strength-v${version}-${short_sha}-unsigned.ipa"
+          ipa="NOOP-AI-Full-Thai-Strength-PerformanceUI-v${version}-${short_sha}-unsigned.ipa"
           rm -rf build/ipa
           mkdir -p build/ipa/Payload
           ditto "$app" build/ipa/Payload/NOOP.app
@@ -154,7 +159,7 @@ jobs:
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: NOOP-AI-Full-Thai-Strength-Unsigned-IPA
+          name: NOOP-AI-Full-Thai-Strength-PerformanceUI-Unsigned-IPA
           path: ${{ steps.package.outputs.ipa }}
           if-no-files-found: error
           retention-days: 14
@@ -198,6 +203,20 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             build 2>&1 | tee build/preview-xcodebuild.log
 
+      - name: Test performance root navigation
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$UDID" \
+            -derivedDataPath build/preview-dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            -only-testing:NOOPiOSTests/PerformanceRootNavigationTests \
+            test 2>&1 | tee build/performance-navigation-tests.log
+
       - name: Install and capture screens
         run: |
           set -euo pipefail
@@ -213,7 +232,12 @@ jobs:
           mkdir -p build/ui-previews
           xcrun simctl status_bar "$UDID" override --time 14:27 --batteryLevel 85 \
             --wifiBars 3 --cellularBars 4
-          screens=(liquidtoday strength strengthlogger bodymap coach goalplan privacy)
+          screens=(
+            root today todayscrolled charge rest effort healthmonitor stress trends
+            workouts activitydetail strengthhome strengthlogger exercisepicker bodymap
+            soreness coach goal planproposal planbook journey privacy backup settings
+            loading empty error
+          )
           for screen in "${screens[@]}"; do
             xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
             xcrun simctl launch "$UDID" "$bundle_id" \
@@ -222,6 +246,12 @@ jobs:
             sleep 8
             xcrun simctl io "$UDID" screenshot "build/ui-previews/${screen}.png"
           done
+          expected="${#screens[@]}"
+          actual="$(find build/ui-previews -maxdepth 1 -type f -name '*.png' | wc -l | tr -d ' ')"
+          [[ "$actual" == "$expected" ]] || {
+            echo "::error::Expected $expected screenshots; captured $actual" >&2
+            exit 1
+          }
 
       - name: Upload Thai preview set
         uses: actions/upload-artifact@v4
@@ -236,6 +266,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NOOP-AI-Full-Preview-Logs
-          path: build/preview-xcodebuild.log
+          path: |
+            build/preview-xcodebuild.log
+            build/performance-navigation-tests.log
           if-no-files-found: ignore
           retention-days: 14

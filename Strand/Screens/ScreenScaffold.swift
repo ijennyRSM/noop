@@ -49,7 +49,7 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
             // Unified side margins matching the liquid home (16pt) so every page's cards + header line up
             // to the same edges (2026-07-02); macOS keeps the classic 28 in the #else branch.
             .padding(.horizontal, 16)
-            .padding(.top, 24)
+            .padding(.top, 18)
             // The tab bar floats over the scroll content, so the last card sat hidden behind it.
             // Reserve extra bottom scroll room so every screen's final card clears the floating bar.
             .padding(.bottom, NoopMetrics.tabBarClearance)
@@ -62,6 +62,11 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
             .padding(28)
             .frame(maxWidth: .infinity, alignment: .leading)
             #endif
+            #if DEBUG
+            // Screenshot verification can request the real lower portion of a
+            // screen without replacing the screen with a mock.
+            Color.clear.frame(height: 0).id(screenScaffoldDemoBottomAnchorID)
+            #endif
         }
         #if os(iOS)
         // #697: stop a vertical scroll from drifting/bouncing the screen left-right. `.basedOnSize` only
@@ -73,13 +78,7 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
         // the scroll content — edge-to-edge under the status bar. The scene is CONFINED to the header+hero
         // band (see SceneScreenBackground.height) so it fades out ABOVE the dashboard cards, which then sit
         // on the opaque canvas and stay fully legible (2026-06-23: cards were "losing the data").
-        .background(alignment: .top) {
-            ZStack(alignment: .top) {
-                StrandPalette.surfaceBase
-                topBackground
-            }
-            .ignoresSafeArea()
-        }
+        .background(PerformanceTheme.appBackground.ignoresSafeArea())
         .modifier(RefreshableIfNeeded(onRefresh: onRefresh))
         #if os(macOS)
         // The mac window toolbar's default vibrant material washed the top of the liquid day-of-sky WHITE
@@ -87,6 +86,15 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
         .toolbarBackground(.hidden, for: .windowToolbar)
         #endif
         #if os(iOS)
+        #if DEBUG
+        .onAppear {
+            guard CommandLine.arguments.contains("--demo-screen"),
+                  CommandLine.arguments.contains("todayscrolled") else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                proxy.scrollTo(screenScaffoldDemoBottomAnchorID, anchor: .bottom)
+            }
+        }
+        #endif
         // Scroll-to-top on an at-root tab re-tap (#198 follow-up). iOS-only: the tab shell is the only
         // driver, and gating here keeps the two-param onChange off macOS 13. Inert until the signal moves.
         .onChange(of: scrollToTopSignal) { _, _ in
@@ -120,15 +128,16 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
         // text tokens flip to dark ink in Light mode and went dark-on-dark over the sky, exactly the #1013
         // pattern the Liquid Today hero hit (osifaind's Trends-tab sibling report). Flat-canvas screens
         // (no topBackground) keep the theme tokens so the header reads on the light/dark surfaceBase.
-        let overSky = topBackground != nil
-        let titleColor = overSky ? StrandPalette.onDarkPrimary : StrandPalette.textPrimary
-        let subtitleColor = overSky ? StrandPalette.onDarkSecondary : StrandPalette.textSecondary
+        let titleColor = PerformanceTheme.primaryText
+        let subtitleColor = PerformanceTheme.secondaryText
         return HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 if let title {
                     // Match the liquid home's title face (SF Rounded 28) so every page's header reads
                     // identically (2026-07-02 cohesion pass).
-                    Text(title).font(StrandFont.rounded(28)).foregroundStyle(titleColor)
+                    Text(title)
+                        .font(.system(.title, design: .rounded, weight: .bold))
+                        .foregroundStyle(titleColor)
                 }
                 if let subtitle {
                     Text(subtitle).font(StrandFont.subhead).foregroundStyle(subtitleColor)
@@ -263,6 +272,9 @@ struct DataPendingNote: View {
 /// Zero-height scroll-to-top target id. File scope, not a `static` on `ScreenScaffold` — the latter is
 /// generic (`<Content, Trailing>`) and Swift forbids stored static properties on generic types.
 private let screenScaffoldTopAnchorID = "screenScaffold.top"
+#if DEBUG
+private let screenScaffoldDemoBottomAnchorID = "screenScaffold.demo.bottom"
+#endif
 
 private struct ScrollToTopSignalKey: EnvironmentKey {
     static let defaultValue: Int = 0
