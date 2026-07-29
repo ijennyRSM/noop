@@ -40,12 +40,16 @@ enum UnifiedBackupV2 {
             defaults.data(forKey: key).map { (key, $0.base64EncodedString()) }
         })
         let booleans = Dictionary(uniqueKeysWithValues: boolKeys.compactMap { key in
-            defaults.object(forKey: key).map { (key, defaults.bool(forKey: key)) }
+            defaults.object(forKey: key).map { _ in
+                (key, defaults.bool(forKey: key))
+            }
         })
         let strings = Dictionary(uniqueKeysWithValues: stringKeys.compactMap { key in
             defaults.string(forKey: key).map { (key, $0) }
         })
-        let documents = Dictionary(uniqueKeysWithValues: documentFiles.compactMap { name, file in
+        let documents: [String: String] = Dictionary(
+            uniqueKeysWithValues: documentFiles.compactMap { element -> (String, String)? in
+            let (name, file) = element
             guard let bytes = try? Data(contentsOf: coachDirectory().appendingPathComponent(file)),
                   bytes.count <= maxJSONBytes,
                   let text = String(data: bytes, encoding: .utf8) else { return nil }
@@ -117,7 +121,9 @@ enum UnifiedBackupV2 {
         let oldBool = Dictionary(uniqueKeysWithValues: boolKeys.map { ($0, defaults.object(forKey: $0)) })
         let oldStrings = Dictionary(uniqueKeysWithValues: stringKeys.map { ($0, defaults.string(forKey: $0)) })
         let directoryURL = coachDirectory()
-        let oldDocuments = Dictionary(uniqueKeysWithValues: documentFiles.map { name, file in
+        let oldDocuments: [String: Data?] = Dictionary(
+            uniqueKeysWithValues: documentFiles.map { element -> (String, Data?) in
+            let (name, file) = element
             (name, try? Data(contentsOf: directoryURL.appendingPathComponent(file)))
         })
         do {

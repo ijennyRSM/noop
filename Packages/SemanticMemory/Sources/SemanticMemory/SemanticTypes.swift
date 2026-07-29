@@ -209,7 +209,7 @@ public enum SemanticVector {
     public static func encodeFloat16(_ values: [Float]) -> Data {
         var data = Data(capacity: values.count * MemoryLayout<UInt16>.size)
         for value in values {
-            var littleEndian = Float16(value).bitPattern.littleEndian
+            var littleEndian = float16BitPattern(value).littleEndian
             withUnsafeBytes(of: &littleEndian) { data.append(contentsOf: $0) }
         }
         return data
@@ -225,9 +225,89 @@ public enum SemanticVector {
             let raw = data[index..<next].withUnsafeBytes { bytes in
                 UInt16(littleEndian: bytes.loadUnaligned(as: UInt16.self))
             }
-            result.append(Float(Float16(bitPattern: raw)))
+            result.append(float32(fromFloat16BitPattern: raw))
             index = next
         }
         return result
+    }
+
+    /// IEEE-754 binary32 -> binary16, including subnormals and ties-to-even rounding.
+    ///
+    /// This is intentionally implemented in integer space. Swift's native `Float16`
+    /// conversion is unavailable when the macOS target is compiled for x86_64 with
+    /// Xcode 16, while the app's universal macOS CI still has to read the same vector
+    /// format written by arm64/iOS builds.
+    private static func float16BitPattern(_ value: Float) -> UInt16 {
+        let bits = value.bitPattern
+        let sign = UInt16((bits >> 16) & 0x8000)
+        let exponent = Int((bits >> 23) & 0xff)
+        let fraction = bits & 0x007f_ffff
+
+        if exponent == 0xff {
+            if fraction == 0 { return sign | 0x7c00 }
+            return sign | 0x7e00 | UInt16((fraction >> 13) & 0x01ff)
+        }
+
+        let unbiased = exponent - 127
+        if unbiased > 15 { return sign | 0x7c00 }
+        if unbiased < -24 { return sign }
+
+        if unbiased < -14 {
+            let significand = fraction | 0x0080_0000
+            let shift = 13 + (-14 - unbiased)
+            return sign | UInt16(roundToNearestEven(significand, shiftingRight: shift))
+        }
+
+        var halfExponent = UInt32(unbiased + 15)
+        var halfFraction = roundToNearestEven(fraction, shiftingRight: 13)
+        if halfFraction == 0x0400 {
+            halfExponent += 1
+            halfFraction = 0
+        }
+        if halfExponent >= 0x1f { return sign | 0x7c00 }
+        return sign | UInt16((halfExponent << 10) | halfFraction)
+    }
+
+    private static func roundToNearestEven(
+        _ value: UInt32,
+        shiftingRight shift: Int
+    ) -> UInt32 {
+        let truncated = value >> UInt32(shift)
+        let mask = (UInt32(1) << UInt32(shift)) - 1
+        let remainder = value & mask
+        let halfway = UInt32(1) << UInt32(shift - 1)
+        if remainder > halfway || (remainder == halfway && truncated & 1 == 1) {
+            return truncated + 1
+        }
+        return truncated
+    }
+
+    private static func float32(fromFloat16BitPattern bits: UInt16) -> Float {
+        let sign = UInt32(bits & 0x8000) << 16
+        let exponent = UInt32((bits >> 10) & 0x1f)
+        var fraction = UInt32(bits & 0x03ff)
+        let result: UInt32
+
+        switch exponent {
+        case 0 where fraction == 0:
+            result = sign
+        case 0:
+            var unbiased = -14
+            while fraction & 0x0400 == 0 {
+                fraction <<= 1
+                unbiased -= 1
+            }
+            fraction &= 0x03ff
+            result = sign
+                | (UInt32(unbiased + 127) << 23)
+                | (fraction << 13)
+        case 0x1f:
+            result = sign | 0x7f80_0000 | (fraction << 13)
+        default:
+            result = sign
+                | (UInt32(Int(exponent) - 15 + 127) << 23)
+                | (fraction << 13)
+        }
+        return Float(bitPattern: result)
     }
 }
