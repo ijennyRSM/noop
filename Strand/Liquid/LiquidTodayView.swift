@@ -478,6 +478,25 @@ struct LiquidTodayView: View {
             }
             .ignoresSafeArea()
         }
+        #if os(iOS)
+        // The root intentionally has no navigation bar. Mask content as it scrolls beneath the status
+        // bar so score labels and cards never compete with the clock, Dynamic Island, or system icons.
+        .overlay(alignment: .top) {
+            LinearGradient(
+                colors: [
+                    StrandPalette.surfaceBase,
+                    StrandPalette.surfaceBase.opacity(0.98),
+                    StrandPalette.surfaceBase.opacity(0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 56)
+            .ignoresSafeArea(edges: .top)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+        #endif
         // Swipe left/right to change DAYS (WHOOP-style). Tab-swipe is disabled on Today in RootTabView so
         // this owns the horizontal gesture here.
         .simultaneousGesture(daySwipeGesture)

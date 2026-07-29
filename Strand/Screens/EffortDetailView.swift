@@ -62,7 +62,7 @@ struct EffortDetailView: View {
                             GeometryReader { proxy in
                                 let fraction = min(max((day.strain ?? 0) / 100, 0), 1)
                                 RoundedRectangle(cornerRadius: 3)
-                                    .fill(PerformanceTheme.effort.opacity(day.strain == nil ? 0.12 : 0.85))
+                                    .fill(StrandPalette.effortColor.opacity(day.strain == nil ? 0.12 : 0.85))
                                     .frame(height: max(3, proxy.size.height * fraction))
                                     .frame(maxHeight: .infinity, alignment: .bottom)
                             }
@@ -100,7 +100,7 @@ struct EffortDetailView: View {
                                 LocalizedStringKey(WorkoutSource.displaySport(workout.sport)),
                                 subtitle: LocalizedStringKey(workoutDuration(workout)),
                                 icon: "figure.run",
-                                tint: PerformanceTheme.effort
+                                tint: StrandPalette.effortColor
                             ) {
                                 Text(workout.strain.map { UnitFormatter.effortDisplay($0, scale: scale) } ?? "–")
                                     .font(.system(.body, design: .rounded, weight: .bold))
