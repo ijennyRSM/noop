@@ -720,7 +720,10 @@ struct StrengthWorkoutLogger: View {
                 Text("Not set").tag(0)
                 ForEach(1...10, id: \.self) { Text("\($0)").tag($0) }
             }
-            .pickerStyle(.segmented)
+            // Eleven segmented choices truncate localized labels on an iPhone.
+            // A menu keeps the optional state readable at every Dynamic Type size.
+            .pickerStyle(.menu)
+            .tint(StrandPalette.metricCyan)
             TextField("Session notes (optional)", text: Binding(
                 get: { session.notes ?? "" },
                 set: viewModel.setNotes))
@@ -1184,7 +1187,14 @@ struct StrengthHistoryView: View {
             NOOPMuscle(rawValue: $0.muscleId)?.localizedName
         }.joined(separator: " · ")
         var details: [String] = []
-        if let duration { details.append("\(duration) min") }
+        if let duration {
+            details.append(
+                String(
+                    format: String(localized: "%lld min"),
+                    Int64(duration)
+                )
+            )
+        }
         if let rpe = session.sessionRPE {
             details.append("RPE \(String(format: "%.1f", rpe))")
         }
@@ -1286,7 +1296,8 @@ struct StrengthCompletedEditor: View {
                                 Text("Not set").tag(0)
                                 ForEach(1...10, id: \.self) { Text("\($0)").tag($0) }
                             }
-                            .pickerStyle(.segmented)
+                            .pickerStyle(.menu)
+                            .tint(StrandPalette.metricCyan)
                         if let load = viewModel.loadOutput {
                             Text("Estimated Muscular Load: \(Int(load.muscularLoad.rounded()))/100 · Confidence: \(load.confidence.rawValue.capitalized)")
                                 .font(StrandFont.subhead)

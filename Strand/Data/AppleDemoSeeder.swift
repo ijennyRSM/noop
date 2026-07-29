@@ -244,13 +244,13 @@ enum AppleDemoSeeder {
         try await store.ensureExerciseLibrarySeeded()
         let sessions: [(daysAgo: Int, title: String, exercise: String, name: String,
                         muscles: [(String, Double, Double)])] = [
-            (0, "Upper Strength", "barbell_bench_press", "Barbell Bench Press",
+            (0, "เวทช่วงบน", "barbell_bench_press", "เบนช์เพรสด้วยบาร์เบล",
              [("pectorals", 1_420, 78), ("triceps", 820, 62), ("anterior_deltoids", 610, 55)]),
-            (2, "Lower Strength", "barbell_back_squat", "Barbell Back Squat",
+            (2, "เวทช่วงล่าง", "barbell_back_squat", "แบ็กสควอตด้วยบาร์เบล",
              [("quadriceps", 1_680, 84), ("glutes", 1_220, 72), ("hamstrings", 720, 58)]),
-            (4, "Pull Strength", "pull_up", "Pull-Up",
+            (4, "เวทท่าดึง", "pull_up", "ดึงข้อ",
              [("lats", 1_260, 74), ("biceps", 780, 61), ("upper_back", 690, 57)]),
-            (6, "Full Body Strength", "conventional_deadlift", "Conventional Deadlift",
+            (6, "เวททั่วร่างกาย", "conventional_deadlift", "เดดลิฟต์แบบมาตรฐาน",
              [("hamstrings", 1_090, 69), ("glutes", 1_030, 68), ("erector_spinae", 760, 59)]),
         ]
         for item in sessions {
