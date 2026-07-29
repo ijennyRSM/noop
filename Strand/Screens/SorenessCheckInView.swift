@@ -89,7 +89,7 @@ struct SorenessCheckInView: View {
                 ForEach(Array(NOOPMuscle.allCases.enumerated()), id: \.offset) { _, muscle in
                     muscleRow(muscle)
                     if muscle != NOOPMuscle.allCases.last {
-                        Divider().overlay(PerformanceTheme.divider)
+                        Divider().overlay(PerformanceTheme.subtleDivider)
                     }
                 }
             }
