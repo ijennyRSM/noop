@@ -124,7 +124,9 @@ enum UnifiedBackupV2 {
         let oldDocuments: [String: Data?] = Dictionary(
             uniqueKeysWithValues: documentFiles.map { element -> (String, Data?) in
             let (name, file) = element
-            (name, try? Data(contentsOf: directoryURL.appendingPathComponent(file)))
+            return (name, try? Data(
+                contentsOf: directoryURL.appendingPathComponent(file)
+            ))
         })
         do {
             for (key, encoded) in state.data {
