@@ -75,7 +75,7 @@ struct SorenessCheckInView: View {
                     .textFieldStyle(.plain)
                     .padding(12)
                     .background(
-                        PerformanceTheme.insetSurface,
+                        PerformanceTheme.secondarySurface,
                         in: RoundedRectangle(cornerRadius: PerformanceTheme.Radius.small)
                     )
             }
@@ -86,7 +86,7 @@ struct SorenessCheckInView: View {
         PerformanceCard {
             VStack(alignment: .leading, spacing: PerformanceTheme.Spacing.sm) {
                 PerformanceSectionHeader("Muscles")
-                ForEach(NOOPMuscle.allCases, id: \.rawValue) { muscle in
+                ForEach(Array(NOOPMuscle.allCases.enumerated()), id: \.offset) { _, muscle in
                     muscleRow(muscle)
                     if muscle != NOOPMuscle.allCases.last {
                         Divider().overlay(PerformanceTheme.divider)
@@ -159,7 +159,7 @@ struct SorenessCheckInView: View {
                         .textFieldStyle(.plain)
                         .padding(12)
                         .background(
-                            PerformanceTheme.insetSurface,
+                            PerformanceTheme.secondarySurface,
                             in: RoundedRectangle(cornerRadius: PerformanceTheme.Radius.small)
                         )
                 }
