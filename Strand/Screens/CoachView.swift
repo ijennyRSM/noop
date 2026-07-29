@@ -722,6 +722,9 @@ struct CoachView: View {
         case .myLogs:                  Text("Your logs")
         case .sensitiveLogs:           Text("Sensitive journal")
         case .zoneMinutes:             Text("Zone minutes")
+        case .strengthSummary, .recentStrengthSessions, .muscleLoad,
+             .residualMuscleLoad, .exerciseProgression, .sorenessCheckIn,
+             .strengthRecoveryContext: Text("Strength")
         }
     }
 
@@ -755,6 +758,10 @@ struct CoachView: View {
         case .myLogs:                  Text("What you logged — caffeine, journal, lab, mood")
         case .sensitiveLogs:           Text("Only separately approved sensitive journal entries")
         case .zoneMinutes:             Text("Time spent in each heart-rate zone")
+        case .strengthSummary, .recentStrengthSessions, .muscleLoad,
+             .residualMuscleLoad, .exerciseProgression, .sorenessCheckIn,
+             .strengthRecoveryContext:
+            Text("Sessions, exercises, muscular load, residual load and soreness.")
         }
     }
 

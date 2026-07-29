@@ -606,7 +606,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
             result += chunks(kind: .journalQuestion,
                              sourceID: baseID,
                              text: "\(entry.day): \(entry.question) — \(answer)",
-                             updatedAt: dayDate(entry.day),
+                             updatedAt: CanonicalDay.date(from: entry.day) ?? .distantPast,
                              scope: scope,
                              priority: isRecentDay(entry.day, days: 30) ? 80 : 20)
             if let note = entry.notes?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -614,7 +614,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
                 result += chunks(kind: .journalNote,
                                  sourceID: baseID + "|note",
                                  text: "\(entry.day): \(entry.question) — \(answer). \(note)",
-                                 updatedAt: dayDate(entry.day),
+                                 updatedAt: CanonicalDay.date(from: entry.day) ?? .distantPast,
                                  scope: scope,
                                  priority: isRecentDay(entry.day, days: 30) ? 85 : 25)
             }

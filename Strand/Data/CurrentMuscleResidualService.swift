@@ -21,7 +21,12 @@ actor CurrentMuscleResidualService {
                       refreshToken: Int,
                       recovery: MuscularLoadEngine.RecoveryModifiers = .init(),
                       checkIn suppliedCheckIn: SorenessCheckInRecord? = nil) async -> [MuscleResidualRecord] {
-        let checkIn = suppliedCheckIn ?? (try? await store.latestSorenessCheckIn(deviceId: deviceId))
+        let checkIn: SorenessCheckInRecord?
+        if let suppliedCheckIn {
+            checkIn = suppliedCheckIn
+        } else {
+            checkIn = try? await store.latestSorenessCheckIn(deviceId: deviceId)
+        }
         let checkInDate = checkIn.map { Date(timeIntervalSince1970: TimeInterval($0.recordedAt)) }
         if let cached = cache[deviceId],
            cached.refreshToken == refreshToken,

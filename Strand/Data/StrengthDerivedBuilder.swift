@@ -12,8 +12,12 @@ enum StrengthDerivedBuilder {
         relabel: DetectedWorkoutRelabel? = nil,
         now: Date = Date()
     ) async throws -> StrengthDerivedCommit {
-        let checkIn = suppliedCheckIn
-            ?? (try? await store.latestSorenessCheckIn(deviceId: session.deviceId))
+        let checkIn: SorenessCheckInRecord?
+        if let suppliedCheckIn {
+            checkIn = suppliedCheckIn
+        } else {
+            checkIn = try? await store.latestSorenessCheckIn(deviceId: session.deviceId)
+        }
         let day = await Repository.localDayKey(
             Date(timeIntervalSince1970: TimeInterval(session.startedAt)))
         let muscleRows = output.muscles.map {
