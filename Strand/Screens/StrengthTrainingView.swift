@@ -893,7 +893,7 @@ private struct ExercisePicker: View {
                             viewModel.muscleFilter = nil
                         }
                         ForEach(NOOPMuscle.allCases, id: \.rawValue) { muscle in
-                            filterButton(muscle.englishName,
+                            filterButton(muscle.localizedName,
                                          selected: viewModel.muscleFilter == muscle.rawValue) {
                                 viewModel.muscleFilter = muscle.rawValue
                             }
@@ -1020,13 +1020,13 @@ private struct CustomExerciseSheet: View {
                 Section("Muscles") {
                     Picker("Primary muscle", selection: $primaryMuscle) {
                         ForEach(NOOPMuscle.allCases, id: \.rawValue) {
-                            Text($0.englishName).tag($0.rawValue)
+                            Text($0.localizedName).tag($0.rawValue)
                         }
                     }
                     Picker("Secondary muscle", selection: $secondaryMuscle) {
                         Text("None").tag("")
                         ForEach(NOOPMuscle.allCases, id: \.rawValue) {
-                            Text($0.englishName).tag($0.rawValue)
+                            Text($0.localizedName).tag($0.rawValue)
                         }
                     }
                 }
@@ -1100,17 +1100,22 @@ struct StrengthHistoryView: View {
                                     .foregroundStyle(StrandPalette.textSecondary)
                                     .lineLimit(2)
                                 HStack {
-                                    historyStat("Sets", "\(workingSets(session))")
-                                    historyStat("Volume", volume(session))
-                                    historyStat("Effort", score(session.cardiovascularEffort))
-                                    historyStat("Muscular", score(session.muscularLoad))
-                                    historyStat("Total", score(session.totalTrainingLoad))
+                                    historyStat(String(localized: "Sets"), "\(workingSets(session))")
+                                    historyStat(String(localized: "Volume"), volume(session))
+                                    historyStat(String(localized: "Effort"), score(session.cardiovascularEffort))
+                                    historyStat(String(localized: "Muscular"), score(session.muscularLoad))
+                                    historyStat(String(localized: "Total"), score(session.totalTrainingLoad))
                                 }
                                 Text(historyDetails(session))
                                     .font(StrandFont.footnote)
                                     .foregroundStyle(StrandPalette.textSecondary)
                                     .lineLimit(2)
-                                Text("Confidence: \(session.confidence.capitalized)")
+                                Text(
+                                    String(
+                                        format: String(localized: "Confidence: %@"),
+                                        localizedConfidence(session.confidence)
+                                    )
+                                )
                                     .font(StrandFont.footnote)
                                     .foregroundStyle(StrandPalette.textTertiary)
                             }
@@ -1176,7 +1181,7 @@ struct StrengthHistoryView: View {
             max(0, $0 - session.startedAt) / 60
         }
         let muscleNames = (muscleLoads[session.id] ?? []).prefix(3).compactMap {
-            NOOPMuscle(rawValue: $0.muscleId)?.englishName
+            NOOPMuscle(rawValue: $0.muscleId)?.localizedName
         }.joined(separator: " · ")
         var details: [String] = []
         if let duration { details.append("\(duration) min") }
@@ -1193,6 +1198,15 @@ struct StrengthHistoryView: View {
             Text(value).font(StrandFont.captionNumber)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func localizedConfidence(_ rawValue: String) -> String {
+        switch StrengthConfidence(rawValue: rawValue) {
+        case .low: String(localized: "Low")
+        case .medium: String(localized: "Medium")
+        case .high: String(localized: "High")
+        case nil: rawValue
+        }
     }
 
     private func date(_ timestamp: Int) -> String {

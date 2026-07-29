@@ -128,11 +128,12 @@ final class MuscularLoadEngineTests: XCTestCase {
     }
 
     func testStoredCompatibilityNeverInfersWhoopScaleFromMagnitude() {
+        let total = MuscularLoadEngine.totalTrainingLoad(
+            storedCardiovascularEffort: 10.5,
+            muscularLoad: nil
+        )
         XCTAssertEqual(
-            MuscularLoadEngine.totalTrainingLoad(
-                storedCardiovascularEffort: 10.5,
-                muscularLoad: nil
-            ),
+            try XCTUnwrap(total),
             10.5,
             accuracy: 0.001
         )

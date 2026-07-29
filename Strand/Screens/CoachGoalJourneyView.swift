@@ -7,7 +7,7 @@ import StrandDesign
 struct CoachGoalJourneyScreen: View {
     var body: some View {
         ScreenScaffold(title: "Goal & Journey",
-                       subtitle: "Your target, your pace, your progress.") {
+                       subtitle: "Set a target and see your progress.") {
             CoachGoalJourneyView()
         }
         // TEMP DIAGNOSTIC (#freeze-investigation): timestamps the moment this screen is built, so the

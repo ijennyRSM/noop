@@ -115,6 +115,9 @@ public struct DeviceRegistryStore: Sendable {
         // with the same all-or-nothing privacy guarantee as HR, sleep, and workout history.
         "strengthSession", "dailyMuscleLoad", "strengthSessionMuscleLoad",
         "muscleResidualSnapshot",
+        // v33-strength-integration: soreness and pain remain separate records by design, but both are
+        // device-scoped health data and must be removed by the same delete-all privacy operation.
+        "coachSorenessCheckIn", "coachPainCheckIn",
     ]
 
     /// Permanently delete every recorded sample/derived row belonging to one device, across all
