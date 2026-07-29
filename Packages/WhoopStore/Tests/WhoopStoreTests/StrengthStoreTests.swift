@@ -201,6 +201,36 @@ final class StrengthStoreTests: XCTestCase {
         XCTAssertEqual(rebuilt.first?.normalizedLoad, 55)
     }
 
+    func testRestoreRebuildRegeneratesDailyAggregateAndDropsResidualCache() async throws {
+        let store = try await WhoopStore.inMemory()
+        let session = StrengthSessionRecord(
+            deviceId: "test", startedAt: 1_700_000_000,
+            status: StrengthSessionStatus.completed.rawValue)
+        try await store.commitStrengthDerived(.init(
+            session: session,
+            day: "2023-11-14",
+            muscleLoads: [
+                .init(day: "2023-11-14", muscleId: "quadriceps",
+                      rawStimulus: 900, normalizedLoad: 58,
+                      workingSets: 3, confidence: "high"),
+            ],
+            residualSnapshot: [
+                .init(capturedAt: 1_700_000_100, muscleId: "quadriceps",
+                      residualLoad: 44, confidence: "high",
+                      lastTrainedAt: 1_700_000_000),
+            ],
+            residualCapturedAt: 1_700_000_100
+        ))
+
+        try await store.rebuildStrengthDerivedCaches()
+
+        let daily = try await store.dailyMuscleLoads(
+            deviceId: "test", from: "2023-11-14", to: "2023-11-14")
+        XCTAssertEqual(daily.first?.rawStimulus, 900)
+        XCTAssertEqual(daily.first?.normalizedLoad, 58)
+        XCTAssertTrue(try await store.latestResidualLoads(deviceId: "test").isEmpty)
+    }
+
     func testDerivedCommitRelabelsDetectedWorkoutAtomically() async throws {
         let store = try await WhoopStore.inMemory()
         let workout = WorkoutRow(
@@ -260,5 +290,58 @@ final class StrengthStoreTests: XCTestCase {
             deviceId: "strap", from: 0, to: 3_000, limit: 10)
         XCTAssertEqual(rows.count, 1)
         XCTAssertEqual(rows.first?.source, "manual")
+    }
+
+    func testSorenessAndPainAreStoredSeparatelyAndDeletionIsSoft() async throws {
+        let store = try await WhoopStore.inMemory()
+        let soreness = SorenessCheckInRecord(
+            deviceId: "test", recordedAt: 1_700_000_000,
+            overallSoreness: 4, perMuscleSoreness: ["quadriceps": 8],
+            note: "Legs feel worked")
+        let pain = PainCheckInRecord(
+            deviceId: "test", recordedAt: 1_700_000_100,
+            painPresent: true, note: "User-entered caution")
+        try await store.saveSorenessCheckIn(soreness)
+        try await store.savePainCheckIn(pain)
+
+        XCTAssertEqual(try await store.latestSorenessCheckIn(deviceId: "test"), soreness)
+        XCTAssertEqual(try await store.latestPainCheckIn(deviceId: "test"), pain)
+
+        try await store.deleteSorenessCheckIn(id: soreness.id)
+        XCTAssertNil(try await store.latestSorenessCheckIn(deviceId: "test"))
+        XCTAssertEqual(try await store.latestPainCheckIn(deviceId: "test"), pain,
+                       "deleting soreness must not delete or rewrite pain")
+    }
+
+    func testStrengthPlanLinkStartsUnboundAndCanCompleteAfterSessionFinalizes() async throws {
+        let store = try await WhoopStore.inMemory()
+        let proposal = UUID().uuidString
+        try await store.upsertStrengthPlanLink(.init(
+            proposalId: proposal,
+            canonicalActivityId: "strength_training",
+            createdAt: 1_700_000_000
+        ))
+        let unbound = try await store.strengthPlanLink(proposalId: proposal)
+        XCTAssertNil(unbound?.sessionId)
+        let pending = try await store.pendingStrengthPlanLink(
+            forSessionStartedAt: 1_700_000_100)
+        XCTAssertEqual(pending?.proposalId, proposal)
+        let unrelatedLaterSession = try await store.pendingStrengthPlanLink(
+            forSessionStartedAt: 1_700_100_000)
+        XCTAssertNil(unrelatedLaterSession,
+                     "an abandoned plan must not attach to an unrelated future workout")
+
+        let session = StrengthSessionRecord(
+            deviceId: "test", startedAt: 1_700_000_100,
+            endedAt: 1_700_003_000, status: StrengthSessionStatus.completed.rawValue)
+        try await store.saveStrengthSession(session)
+        try await store.upsertStrengthPlanLink(.init(
+            proposalId: proposal, sessionId: session.id,
+            canonicalActivityId: "strength_training",
+            createdAt: 1_700_000_000, completedAt: 1_700_003_000
+        ))
+        let linked = try XCTUnwrap(try await store.strengthPlanLink(proposalId: proposal))
+        XCTAssertEqual(linked.sessionId, session.id)
+        XCTAssertEqual(linked.completedAt, 1_700_003_000)
     }
 }

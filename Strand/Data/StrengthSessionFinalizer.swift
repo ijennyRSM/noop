@@ -61,6 +61,16 @@ enum StrengthSessionFinalizer {
             recovery: .init(sleepHours: sleepHours, charge: charge)
         )
         try await store.commitStrengthDerived(commit)
+        if var link = try await store.pendingStrengthPlanLink(
+            forSessionStartedAt: session.startedAt) {
+            link.sessionId = session.id
+            link.completedAt = endedAt
+            try await store.upsertStrengthPlanLink(link)
+            if let proposalId = UUID(uuidString: link.proposalId) {
+                CoachPlanStore.shared.completeStrength(
+                    proposalId, finalizedSessionId: session.id)
+            }
+        }
         await CurrentMuscleResidualService.shared.invalidate(deviceId: deviceId)
     }
 }

@@ -900,6 +900,50 @@ extension WhoopStore {
                 t.column("useCount", .integer).notNull().defaults(to: 1)
             }
         }
+        // DX + Strength integration data. Soreness and pain deliberately live in separate tables:
+        // soreness may modestly adjust recovery context, while pain must never be converted into load.
+        // The strength-plan link records an explicit Start/finalize lifecycle without making a Coach
+        // proposal create or complete a workout on its own.
+        migrator.registerMigration("v33-strength-integration") { db in
+            try db.create(table: "coachSorenessCheckIn") { t in
+                t.column("id", .text).primaryKey()
+                t.column("deviceId", .text).notNull()
+                t.column("recordedAt", .integer).notNull()
+                t.column("overallSoreness", .integer)
+                t.column("note", .text)
+                t.column("deletedAt", .integer)
+            }
+            try db.create(index: "idx_coachSoreness_device_recorded",
+                          on: "coachSorenessCheckIn", columns: ["deviceId", "recordedAt"])
+            try db.create(table: "coachMuscleSoreness") { t in
+                t.column("checkInId", .text).notNull()
+                    .references("coachSorenessCheckIn", onDelete: .cascade)
+                t.column("muscleId", .text).notNull()
+                t.column("score", .integer).notNull()
+                t.primaryKey(["checkInId", "muscleId"])
+            }
+            try db.create(table: "coachPainCheckIn") { t in
+                t.column("id", .text).primaryKey()
+                t.column("deviceId", .text).notNull()
+                t.column("recordedAt", .integer).notNull()
+                t.column("painPresent", .boolean).notNull()
+                t.column("note", .text)
+                t.column("deletedAt", .integer)
+            }
+            try db.create(index: "idx_coachPain_device_recorded",
+                          on: "coachPainCheckIn", columns: ["deviceId", "recordedAt"])
+            try db.create(table: "strengthPlanLink") { t in
+                t.column("proposalId", .text).primaryKey()
+                t.column("sessionId", .text)
+                    .references("strengthSession", onDelete: .setNull)
+                t.column("canonicalActivityId", .text).notNull()
+                t.column("templateId", .text)
+                t.column("createdAt", .integer).notNull()
+                t.column("completedAt", .integer)
+            }
+            try db.create(index: "idx_strengthPlanLink_session",
+                          on: "strengthPlanLink", columns: ["sessionId"])
+        }
         return migrator
     }
 }

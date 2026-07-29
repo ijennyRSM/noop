@@ -364,3 +364,62 @@ public struct WorkoutTemplateRecord: Codable, Equatable, Identifiable, Sendable 
         self.exercises = exercises
     }
 }
+
+public struct SorenessCheckInRecord: Codable, Equatable, Identifiable, Sendable {
+    public var id: String
+    public var deviceId: String
+    public var recordedAt: Int
+    public var overallSoreness: Int?
+    public var perMuscleSoreness: [String: Int]
+    public var note: String?
+
+    public init(id: String = UUID().uuidString, deviceId: String, recordedAt: Int,
+                overallSoreness: Int? = nil,
+                perMuscleSoreness: [String: Int] = [:], note: String? = nil) {
+        self.id = id
+        self.deviceId = deviceId
+        self.recordedAt = recordedAt
+        self.overallSoreness = overallSoreness.map { min(10, max(0, $0)) }
+        self.perMuscleSoreness = perMuscleSoreness.mapValues { min(10, max(0, $0)) }
+        self.note = note
+    }
+}
+
+/// Pain is intentionally separate from soreness. It can inform a cautionary Coach response when the
+/// user explicitly grants pain-sensitive access, but is never an input to muscular-load calculations.
+public struct PainCheckInRecord: Codable, Equatable, Identifiable, Sendable {
+    public var id: String
+    public var deviceId: String
+    public var recordedAt: Int
+    public var painPresent: Bool
+    public var note: String?
+
+    public init(id: String = UUID().uuidString, deviceId: String, recordedAt: Int,
+                painPresent: Bool, note: String? = nil) {
+        self.id = id
+        self.deviceId = deviceId
+        self.recordedAt = recordedAt
+        self.painPresent = painPresent
+        self.note = note
+    }
+}
+
+public struct StrengthPlanLinkRecord: Codable, Equatable, Sendable {
+    public var proposalId: String
+    public var sessionId: String?
+    public var canonicalActivityId: String
+    public var templateId: String?
+    public var createdAt: Int
+    public var completedAt: Int?
+
+    public init(proposalId: String, sessionId: String? = nil,
+                canonicalActivityId: String, templateId: String? = nil,
+                createdAt: Int, completedAt: Int? = nil) {
+        self.proposalId = proposalId
+        self.sessionId = sessionId
+        self.canonicalActivityId = canonicalActivityId
+        self.templateId = templateId
+        self.createdAt = createdAt
+        self.completedAt = completedAt
+    }
+}

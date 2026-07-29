@@ -8,10 +8,12 @@ enum StrengthDerivedBuilder {
         output: MuscularLoadEngine.SessionOutput,
         store: WhoopStore,
         recovery: MuscularLoadEngine.RecoveryModifiers,
-        checkIn: CoachSorenessCheckIn? = LocalCoachPreferences.loadCheckIn(),
+        checkIn suppliedCheckIn: SorenessCheckInRecord? = nil,
         relabel: DetectedWorkoutRelabel? = nil,
         now: Date = Date()
     ) async throws -> StrengthDerivedCommit {
+        let checkIn = suppliedCheckIn
+            ?? (try? await store.latestSorenessCheckIn(deviceId: session.deviceId))
         let day = await Repository.localDayKey(
             Date(timeIntervalSince1970: TimeInterval(session.startedAt)))
         let muscleRows = output.muscles.map {
@@ -26,9 +28,16 @@ enum StrengthDerivedBuilder {
             )
         }
 
+        let calendar = CanonicalDay.calendar()
+        let today = calendar.startOfDay(for: now)
+        let historyStart = calendar.date(
+            byAdding: .day,
+            value: -30,
+            to: today
+        ) ?? today
         let prior = try await store.historicalMuscleLoads(
             deviceId: session.deviceId,
-            from: Int(now.addingTimeInterval(-30 * 86_400).timeIntervalSince1970)
+            from: Int(historyStart.timeIntervalSince1970)
         ).filter { $0.trainedAt != session.startedAt }
         var history = prior.map {
             MuscularLoadEngine.HistoricalMuscleLoad(
@@ -52,7 +61,7 @@ enum StrengthDerivedBuilder {
             history: history, at: now, recovery: recovery)
         let capturedAt = Int(now.timeIntervalSince1970)
         let residualRows = residual.map { value in
-            let soreness = LocalCoachPreferences.sorenessMultiplier(
+            let soreness = SorenessAdjustment.multiplier(
                 checkIn: checkIn, muscleId: value.muscleId, now: now)
             return MuscleResidualRecord(
                 capturedAt: capturedAt,

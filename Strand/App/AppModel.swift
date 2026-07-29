@@ -406,6 +406,9 @@ final class AppModel: ObservableObject {
                 self.live.batteryPct = 68
             }
             #endif
+            if let store = await self.repo.storeHandle() {
+                await StrengthDerivedRestore.rebuildIfRequired(store: store)
+            }
             await self.repo.refresh()                          // surface any imported data at once
             await self.wireSourceCoordinator()                 // dormant unless a generic strap is active
             try? await Task.sleep(nanoseconds: 6_000_000_000)  // give the first offload a moment

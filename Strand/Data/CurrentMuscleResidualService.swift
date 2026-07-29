@@ -20,17 +20,26 @@ actor CurrentMuscleResidualService {
                       now: Date = Date(),
                       refreshToken: Int,
                       recovery: MuscularLoadEngine.RecoveryModifiers = .init(),
-                      checkIn: CoachSorenessCheckIn? = nil) async -> [MuscleResidualRecord] {
+                      checkIn suppliedCheckIn: SorenessCheckInRecord? = nil) async -> [MuscleResidualRecord] {
+        let checkIn = suppliedCheckIn ?? (try? await store.latestSorenessCheckIn(deviceId: deviceId))
+        let checkInDate = checkIn.map { Date(timeIntervalSince1970: TimeInterval($0.recordedAt)) }
         if let cached = cache[deviceId],
            cached.refreshToken == refreshToken,
-           cached.checkInTimestamp == checkIn?.recordedAt,
+           cached.checkInTimestamp == checkInDate,
            now.timeIntervalSince(cached.computedAt) >= 0,
            now.timeIntervalSince(cached.computedAt) < cacheLifetime {
             return cached.rows
         }
 
         do {
-            let from = Int(now.addingTimeInterval(-30 * 86_400).timeIntervalSince1970)
+            let calendar = CanonicalDay.calendar()
+            let today = calendar.startOfDay(for: now)
+            let historyStart = calendar.date(
+                byAdding: .day,
+                value: -30,
+                to: today
+            ) ?? today
+            let from = Int(historyStart.timeIntervalSince1970)
             let historyRows = try await store.historicalMuscleLoads(
                 deviceId: deviceId, from: from)
             let history = historyRows.map {
@@ -46,7 +55,7 @@ actor CurrentMuscleResidualService {
                 history: history, at: now, recovery: recovery)
             let capturedAt = Int(now.timeIntervalSince1970)
             let rows = base.map { value in
-                let soreness = LocalCoachPreferences.sorenessMultiplier(
+                let soreness = SorenessAdjustment.multiplier(
                     checkIn: checkIn, muscleId: value.muscleId, now: now)
                 return MuscleResidualRecord(
                     capturedAt: capturedAt,
@@ -65,7 +74,7 @@ actor CurrentMuscleResidualService {
                 rows: rows,
                 computedAt: now,
                 refreshToken: refreshToken,
-                checkInTimestamp: checkIn?.recordedAt
+                checkInTimestamp: checkInDate
             )
             return rows
         } catch {
@@ -74,7 +83,7 @@ actor CurrentMuscleResidualService {
                 rows: fallback,
                 computedAt: now,
                 refreshToken: refreshToken,
-                checkInTimestamp: checkIn?.recordedAt
+                checkInTimestamp: checkInDate
             )
             return fallback
         }

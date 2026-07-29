@@ -684,6 +684,32 @@ extension WhoopStore {
         }
     }
 
+    /// Rebuild the disposable day aggregate from session-level source rows after a backup restore.
+    /// Residual snapshots are intentionally dropped; the runtime service recomputes them at the current
+    /// time rather than reviving a value captured on the exporting device.
+    public func rebuildStrengthDerivedCaches() async throws {
+        let now = Int(Date().timeIntervalSince1970)
+        try syncWrite { db in
+            try db.execute(sql: "DELETE FROM dailyMuscleLoad")
+            try db.execute(sql: """
+                INSERT INTO dailyMuscleLoad
+                  (deviceId, day, muscleId, side, rawStimulus, normalizedLoad,
+                   workingSets, confidence, updatedAt)
+                SELECT deviceId, day, muscleId, side, SUM(rawStimulus),
+                       MAX(normalizedLoad), SUM(workingSets),
+                       CASE
+                         WHEN SUM(CASE WHEN confidence = 'low' THEN 1 ELSE 0 END) > 0 THEN 'low'
+                         WHEN SUM(CASE WHEN confidence = 'medium' THEN 1 ELSE 0 END) > 0 THEN 'medium'
+                         ELSE 'high'
+                       END,
+                       ?
+                FROM strengthSessionMuscleLoad
+                GROUP BY deviceId, day, muscleId, side
+                """, arguments: [now])
+            try db.execute(sql: "DELETE FROM muscleResidualSnapshot")
+        }
+    }
+
     public func strengthSessionMuscleLoads(sessionId: String) async throws
         -> [DailyMuscleLoadRecord] {
         try syncRead { db in
