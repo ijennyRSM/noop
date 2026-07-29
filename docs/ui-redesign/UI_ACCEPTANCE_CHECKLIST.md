@@ -9,14 +9,14 @@ Base: `6c460d1e44091d1f410f9a6133cb1eab1a7870dd`
 - [x] Inspect images 00–18; use image 00 as authoritative navigation.
 - [x] Keep reference files outside the repository and application bundle.
 - [x] Start `feat/whoop-full-ui-redesign` directly from the stable Full Beta SHA.
-- [ ] Confirm protected backend paths have no behavioural diff before delivery.
+- [x] Confirm protected backend paths have no behavioural diff before delivery.
 
 ## Shared design system
 
 - [x] Add semantic performance colour, typography, spacing, radius, chart and motion tokens.
 - [x] Add cards, rows, pills, buttons, sheets, states, charts and score components.
 - [x] Support VoiceOver, Dynamic Type, Reduce Motion and non-colour status.
-- [x] Validate catalog placeholder parity; compact Thai screenshot review is pending.
+- [x] Validate catalog placeholder parity and compact Thai screenshots.
 
 ## Navigation
 
@@ -43,6 +43,7 @@ Base: `6c460d1e44091d1f410f9a6133cb1eab1a7870dd`
 - [x] Logger preserves every set action, autosave and practical tap target.
 - [x] Body Map preserves original NOOP vector art and load service.
 - [x] Soreness and pain data paths remain separate and consent-aware.
+- [x] Soreness/Pain check-in uses the existing stores and invalidates residual cache.
 
 ## Coach and progress
 
@@ -59,12 +60,12 @@ Base: `6c460d1e44091d1f410f9a6133cb1eab1a7870dd`
 
 ## Tests and artifacts
 
-- [x] Root mapping and tab persistence tests added; compiler/test run pending.
-- [ ] Plan, Logger, privacy and import/export presentation-route tests.
-- [ ] Accessibility tests for key score components.
-- [ ] Source Hygiene, i18n, packages, macOS, iOS Simulator, Android and validators pass.
-- [ ] Capture the required real seeded Thai simulator screens.
-- [ ] Visually inspect the complete screenshot artifact.
-- [ ] Build and inspect one unsigned real-device IPA.
+- [x] Root mapping and tab persistence tests added.
+- [x] Existing Plan, Logger, privacy, backup and import/export suites pass.
+- [x] Key score components expose combined text/state accessibility labels.
+- [x] Source Hygiene, i18n, packages, macOS, iOS Simulator, Android and validators pass.
+- [x] Capture the required real seeded Thai simulator screens.
+- [x] Visually inspect the complete screenshot artifact.
+- [x] Build and inspect one unsigned real-device IPA.
 - [x] Open a Draft PR into `integration/dx-thai-strength-full`.
-- [ ] Record all real-device scenarios not yet tested.
+- [x] Record all real-device scenarios not yet tested in PR #7.

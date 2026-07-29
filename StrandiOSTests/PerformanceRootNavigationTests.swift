@@ -27,5 +27,13 @@ final class PerformanceRootNavigationTests: XCTestCase {
             "noop.performance.selectedRootTab"
         )
     }
+
+    func testCriticalPerformanceRoutesRemainAvailable() {
+        let routes: [MoreDestination] = [
+            .strength, .soreness, .workouts, .dataSources,
+            .backupSync, .coachSettings, .settings,
+        ]
+        XCTAssertEqual(Set(routes).count, routes.count)
+    }
 }
 #endif

@@ -235,7 +235,7 @@ jobs:
           screens=(
             root today todayscrolled charge rest effort healthmonitor stress trends
             workouts activitydetail strengthhome strengthlogger exercisepicker bodymap
-            coach goal planproposal planbook journey privacy backup settings
+            soreness coach goal planproposal planbook journey privacy backup settings
             loading empty error
           )
           for screen in "${screens[@]}"; do

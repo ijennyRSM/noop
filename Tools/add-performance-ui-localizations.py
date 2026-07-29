@@ -55,6 +55,8 @@ APP_THAI = {
     "Connect a data source or import your history to begin.": "เชื่อมต่อแหล่งข้อมูลหรือนำเข้าประวัติเพื่อเริ่มต้น",
     "Data unavailable": "ไม่สามารถใช้ข้อมูลได้",
     "Your saved data is safe. Try refreshing this screen.": "ข้อมูลที่บันทึกไว้ยังปลอดภัย โปรดลองรีเฟรชหน้าจอนี้",
+    "Pain is kept separate from soreness and never becomes training load.": "อาการปวดถูกแยกจากความล้าของกล้ามเนื้อ และจะไม่ถูกนำมาคำนวณเป็นภาระการฝึก",
+    "Mild tightness after leg training": "ตึงเล็กน้อยหลังการฝึกขา",
 }
 
 DESIGN_THAI = {

@@ -243366,6 +243366,134 @@
           }
         }
       }
+    },
+    "Pain is kept separate from soreness and never becomes training load.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อาการปวดถูกแยกจากความล้าของกล้ามเนื้อ และจะไม่ถูกนำมาคำนวณเป็นภาระการฝึก"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pain is kept separate from soreness and never becomes training load."
+          }
+        }
+      }
+    },
+    "Mild tightness after leg training": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตึงเล็กน้อยหลังการฝึกขา"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild tightness after leg training"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

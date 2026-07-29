@@ -472,6 +472,7 @@ struct RootTabView: View {
                 }
                 moreSection("Body") {
                     MoreRow("Strength", "dumbbell.fill", .strength)
+                    MoreRow("Soreness", "figure.strengthtraining.traditional", .soreness)
                     MoreRow("Live", "waveform.path.ecg", .live)
                     MoreRow("Workouts", "figure.run", .workouts)
                     MoreRow("Health", "heart.text.square.fill", .health)
@@ -597,7 +598,7 @@ struct RootTabView: View {
 enum MoreDestination: Hashable {
     case insightsHub, intelligence, coach, coachSettings, goalJourney, planBook, updates
     case insights, explore, compare
-    case strength, live, workouts, health, labBook, stress, breathe, intervals, rhythm
+    case strength, soreness, live, workouts, health, labBook, stress, breathe, intervals, rhythm
     case fusedRecord, appleHealth, miBand, dataSources, backupSync, shortcutsExport
     case alarms, automations, testCentre, siriShortcuts, settings
 
@@ -614,6 +615,7 @@ enum MoreDestination: Hashable {
         case .explore:         MetricExplorerView()
         case .compare:         CompareView()
         case .strength:        StrengthHistoryView()
+        case .soreness:        SorenessCheckInView()
         case .live:            LiveView()
         case .workouts:        WorkoutsView()
         case .health:          HealthView()

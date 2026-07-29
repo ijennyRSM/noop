@@ -416,6 +416,7 @@ enum DemoScreens {
         case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
         case "exercisepicker": return AnyView(ExercisePickerDemoHost())
         case "bodymap": return AnyView(BodyMapDemoHost())
+        case "soreness": return AnyView(SorenessCheckInView(previewMode: true))
         case "coach": return AnyView(CoachView())
         case "goalplan", "goal": return AnyView(CoachGoalJourneyScreen())
         case "planproposal", "planbook": return AnyView(CoachPlanView())
@@ -473,6 +474,57 @@ private struct StrengthLoggerDemoHost: View {
                 deviceId: repository.deviceId,
                 startedAt: Date().addingTimeInterval(-38 * 60),
                 bodyweightKg: ProfileStore().weightKg)
+            await seedPopulatedWorkoutIfNeeded()
+        }
+    }
+
+    private func seedPopulatedWorkoutIfNeeded() async {
+        guard viewModel.session?.exercises.isEmpty == true else { return }
+
+        viewModel.query = "bench press"
+        await viewModel.search()
+        if let exercise = viewModel.searchResults.first(where: {
+            $0.canonicalName.localizedCaseInsensitiveContains("bench press")
+        }) {
+            viewModel.addExercise(exercise)
+            populateLastExercise(weight: 60, reps: 10, rpe: 7.5)
+            addPopulatedSet(weight: 62.5, reps: 8, rpe: 8)
+        }
+
+        viewModel.query = "back squat"
+        await viewModel.search()
+        if let exercise = viewModel.searchResults.first(where: {
+            $0.canonicalName.localizedCaseInsensitiveContains("back squat")
+        }) {
+            viewModel.addExercise(exercise)
+            populateLastExercise(weight: 80, reps: 8, rpe: 7.5)
+            addPopulatedSet(weight: 85, reps: 6, rpe: 8.5)
+        }
+        viewModel.setSessionRPE(8)
+    }
+
+    private func populateLastExercise(weight: Double, reps: Int, rpe: Double) {
+        guard let exercise = viewModel.session?.exercises.last,
+              let set = exercise.sets.first else { return }
+        viewModel.updateSet(exerciseId: exercise.id, setId: set.id) {
+            $0.weightKg = weight
+            $0.reps = reps
+            $0.rpe = rpe
+            $0.rir = max(0, 10 - rpe)
+            $0.completed = true
+        }
+    }
+
+    private func addPopulatedSet(weight: Double, reps: Int, rpe: Double) {
+        guard let exerciseID = viewModel.session?.exercises.last?.id else { return }
+        viewModel.addSet(to: exerciseID)
+        guard let set = viewModel.session?.exercises.last?.sets.last else { return }
+        viewModel.updateSet(exerciseId: exerciseID, setId: set.id) {
+            $0.weightKg = weight
+            $0.reps = reps
+            $0.rpe = rpe
+            $0.rir = max(0, 10 - rpe)
+            $0.completed = true
         }
     }
 }

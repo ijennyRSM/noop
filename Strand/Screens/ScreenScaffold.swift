@@ -62,6 +62,11 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
             .padding(28)
             .frame(maxWidth: .infinity, alignment: .leading)
             #endif
+            #if DEBUG
+            // Screenshot verification can request the real lower portion of a
+            // screen without replacing the screen with a mock.
+            Color.clear.frame(height: 0).id(screenScaffoldDemoBottomAnchorID)
+            #endif
         }
         #if os(iOS)
         // #697: stop a vertical scroll from drifting/bouncing the screen left-right. `.basedOnSize` only
@@ -81,6 +86,15 @@ struct ScreenScaffold<Content: View, Trailing: View>: View {
         .toolbarBackground(.hidden, for: .windowToolbar)
         #endif
         #if os(iOS)
+        #if DEBUG
+        .onAppear {
+            guard CommandLine.arguments.contains("--demo-screen"),
+                  CommandLine.arguments.contains("todayscrolled") else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                proxy.scrollTo(screenScaffoldDemoBottomAnchorID, anchor: .bottom)
+            }
+        }
+        #endif
         // Scroll-to-top on an at-root tab re-tap (#198 follow-up). iOS-only: the tab shell is the only
         // driver, and gating here keeps the two-param onChange off macOS 13. Inert until the signal moves.
         .onChange(of: scrollToTopSignal) { _, _ in
@@ -258,6 +272,9 @@ struct DataPendingNote: View {
 /// Zero-height scroll-to-top target id. File scope, not a `static` on `ScreenScaffold` — the latter is
 /// generic (`<Content, Trailing>`) and Swift forbids stored static properties on generic types.
 private let screenScaffoldTopAnchorID = "screenScaffold.top"
+#if DEBUG
+private let screenScaffoldDemoBottomAnchorID = "screenScaffold.demo.bottom"
+#endif
 
 private struct ScrollToTopSignalKey: EnvironmentKey {
     static let defaultValue: Int = 0

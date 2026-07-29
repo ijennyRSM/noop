@@ -58,8 +58,8 @@ Status legend:
 | 37 | Detected Strength details | `DetectedStrengthDetailsSheet.swift` | workout detail sheet | derived finalizer/store | classify/save/error | 09, 10 | P1 Protected | Critical |
 | 38 | Body Map front/back, Today/7-day/Residual | `MuscleBodyMapView.swift`, `AnatomicalMuscleMap.swift` | Strength navigation | `CurrentMuscleResidualService` + store | switch mode/side/open muscle | original NOOP anatomy; shared language | P0 Protected | Critical |
 | 39 | Muscle detail | `MuscleBodyMapView.swift` | Body Map sheet | body-map model | inspect load/frequency/confidence | 09, 10 | P1 Protected | High |
-| 40 | Soreness check-in | `MuscleBodyMapView.swift`, Strength integration store | Body Map/Strength sheet | check-in store | edit/delete/skip | compact status cards | P0 Protected | Critical |
-| 41 | Pain/discomfort confirmation | Strength check-in surfaces | check-in sheet | pain store + consent | confirm/note/delete | explicit warning cards | P1 Protected | Critical |
+| 40 | Soreness check-in | `SorenessCheckInView.swift`, Strength integration store | More/Strength | check-in store | edit/delete/skip | compact status cards | P0 Protected | Critical |
+| 41 | Pain/discomfort confirmation | `SorenessCheckInView.swift` | Soreness check-in | separate pain store + consent | confirm/note/delete | explicit warning cards | P1 Protected | Critical |
 | 42 | Coach chat, composer, streaming and errors | `CoachView.swift`, `CoachStreamingText.swift`, `CoachMarkdownTheme.swift` | circular Coach cover | `AICoachEngine` | send/stop/retry/tool approval/open card | 06 | P0 Protected | Critical |
 | 43 | Coach tool-call/chart status | `CoachView.swift`, `Strand/AI/CoachChart.swift` | transcript inline/sheet | Coach engine/tool catalog | inspect chart/tool result | 06, 18 | P1 Protected | Critical |
 | 44 | Coach conversation history | `CoachHistoryView.swift` | Coach sheet | transcript store | open/delete conversation | 06 | P1 Protected | High |
@@ -115,14 +115,15 @@ mock replaces a real state-owning view.
   `NoopCard`/`StrandCard`, and `ScreenScaffold`.
 - **Directly adapted in this branch:** root dock and Coach action, Today root
   selection, Health hub, Progress hub, More routing, Coach chat background,
-  Strength picker, Strength cards, and anatomical Body Map.
+  Strength picker, populated Logger verification, Soreness/Pain check-in,
+  Strength cards, and anatomical Body Map.
 - **Existing state-owning views retained:** all 76 families. No screenshot,
   duplicate Today, duplicate Coach, mock repository, or alternate calculation
   owner replaces a production view.
-- **Pending evidence:** simulator compile/tests, Thai seeded screenshots, full
-  macOS/iOS/Android CI, and unsigned device IPA. These remain unchecked in the
-  acceptance checklist until the corresponding GitHub runs finish.
-- **Known source limitation:** the stable integration base stores soreness and
-  pain separately and exposes them to consent-aware Coach tools, but does not
-  contain a standalone user-facing soreness/pain editor view. This UI-only branch
-  does not invent a second persistence owner to manufacture one.
+- **Verification contract:** the screenshot workflow captures the real views,
+  including a distinct scrolled Today state, populated Strength Logger, and
+  Soreness/Pain check-in. CI and artifact links are recorded in PR #7.
+- **Soreness/Pain ownership:** the presentation writes to the existing
+  `coachSorenessCheckIn` and `coachPainCheckIn` stores. It invalidates the
+  authoritative residual-load cache after a change and never combines pain with
+  soreness or load.
