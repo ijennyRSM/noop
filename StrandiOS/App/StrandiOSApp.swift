@@ -41,6 +41,14 @@ struct StrandiOSApp: App {
         // MUST live here, not in StrandApp.swift — that is the macOS @main and is excluded from the iOS
         // target, so the hook there never runs on iOS.
         DemoDayHarness.applyLaunchArgsIfNeeded()
+        if CommandLine.arguments.contains("--demo-seed") {
+            // The screenshot harness must exercise the same persistent feature
+            // gates as a configured app so the separate root Coach action is
+            // visible. Release builds never execute this path.
+            UserDefaults.standard.set(true, forKey: CoachFeaturePrefs.enabledKey)
+            UserDefaults.standard.set(true, forKey: CoachEntryPrefs.uiEnabledKey)
+            UserDefaults.standard.set(true, forKey: CoachEntryPrefs.floatingButtonKey)
+        }
         #endif
         // Debug-only canary: trips if the App Group entitlement is missing on this target before any
         // silent no-op (PendingIntents, WidgetSnapshot.publish, Live Activity) can mask the issue as
@@ -380,28 +388,42 @@ enum DemoScreens {
         let args = CommandLine.arguments
         guard let i = args.firstIndex(of: "--demo-screen"), i + 1 < args.count else { return nil }
         switch args[i + 1].lowercased() {
+        case "root":     return AnyView(RootTabView())
         case "today":    return AnyView(TodayView())
+        case "todayscrolled": return AnyView(TodayView())
         // The DEFAULT iOS Today (`noop.liquidTodayEnabled` ships true), so it needs its own entry — plain
         // "today" renders the CLASSIC screen, which is exactly the screen whose behaviour Liquid was found
         // to have diverged from. Without this, the default Today was the one screen the harness could not
         // capture.
         case "liquidtoday": return AnyView(LiquidTodayView())
         case "trends":   return AnyView(TrendsView())
+        case "charge":   return AnyView(CoupledView())
+        case "rest":     return AnyView(SleepView())
+        case "effort":   return AnyView(TrendsView())
+        case "healthmonitor": return AnyView(HealthView())
         case "sleep":    return AnyView(SleepView())
         case "live":     return AnyView(LiveView())
         case "stress":   return AnyView(StressView())
         case "workouts": return AnyView(WorkoutsView())
+        case "activitydetail": return AnyView(WorkoutDetailDemoHost())
         case "health":   return AnyView(HealthView())
         case "insights": return AnyView(InsightsView())
         case "explore":  return AnyView(MetricExplorerView())
         case "compare":  return AnyView(CompareView())
         case "settings": return AnyView(SettingsView())
-        case "strength": return AnyView(StrengthHistoryView())
+        case "strength", "strengthhome": return AnyView(StrengthHistoryView())
         case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
+        case "exercisepicker": return AnyView(ExercisePickerDemoHost())
         case "bodymap": return AnyView(BodyMapDemoHost())
         case "coach": return AnyView(CoachView())
-        case "goalplan": return AnyView(CoachGoalJourneyScreen())
+        case "goalplan", "goal": return AnyView(CoachGoalJourneyScreen())
+        case "planproposal", "planbook": return AnyView(CoachPlanView())
+        case "journey": return AnyView(CoachGoalJourneyScreen())
         case "privacy": return AnyView(CoachSettingsView())
+        case "backup": return AnyView(BackupSyncView())
+        case "loading": return AnyView(PerformanceStateDemoHost(kind: .loading))
+        case "empty": return AnyView(PerformanceStateDemoHost(kind: .empty))
+        case "error": return AnyView(PerformanceStateDemoHost(kind: .error))
         case "chargebreakdown": return AnyView(ChargeBreakdownDemoHost())
         case "devices":  return AnyView(DevicesView())
         case "devicescatalog": return AnyView(DeviceCardCatalog())
@@ -454,11 +476,86 @@ private struct StrengthLoggerDemoHost: View {
     }
 }
 
+private struct ExercisePickerDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+
+    var body: some View {
+        ExercisePicker(viewModel: viewModel)
+            .task {
+                await viewModel.load(
+                    repository: repository,
+                    deviceId: repository.deviceId,
+                    startedAt: Date().addingTimeInterval(-38 * 60),
+                    bodyweightKg: ProfileStore().weightKg
+                )
+            }
+    }
+}
+
+private struct WorkoutDetailDemoHost: View {
+    private let row = WorkoutRow(
+        startTs: Int(Date().addingTimeInterval(-72 * 60).timeIntervalSince1970),
+        endTs: Int(Date().addingTimeInterval(-8 * 60).timeIntervalSince1970),
+        sport: "Football",
+        source: "on-device",
+        durationS: 64 * 60,
+        energyKcal: 612,
+        avgHr: 148,
+        maxHr: 181,
+        strain: 59.8,
+        distanceM: 7420,
+        zonesJSON: "{\"zone1\":8,\"zone2\":18,\"zone3\":24,\"zone4\":10,\"zone5\":4}",
+        notes: nil
+    )
+
+    var body: some View {
+        WorkoutDetailView(row: row)
+    }
+}
+
 private struct BodyMapDemoHost: View {
     var body: some View {
         ScrollView {
             MuscleBodyMapCard()
                 .padding()
+        }
+    }
+}
+
+private struct PerformanceStateDemoHost: View {
+    enum Kind {
+        case loading
+        case empty
+        case error
+    }
+
+    let kind: Kind
+
+    var body: some View {
+        ScreenScaffold(title: "Today") {
+            switch kind {
+            case .loading:
+                PerformanceCard {
+                    HStack(spacing: PerformanceTheme.Spacing.sm) {
+                        ProgressView()
+                        Text("Loading your data…")
+                            .foregroundStyle(PerformanceTheme.secondaryText)
+                    }
+                    .frame(minHeight: 88)
+                }
+                .accessibilityElement(children: .combine)
+            case .empty:
+                EmptyStateCard(
+                    title: "No data yet",
+                    message: "Connect a data source or import your history to begin."
+                )
+            case .error:
+                ErrorStateCard(
+                    title: "Data unavailable",
+                    message: "Your saved data is safe. Try refreshing this screen."
+                )
+            }
         }
     }
 }

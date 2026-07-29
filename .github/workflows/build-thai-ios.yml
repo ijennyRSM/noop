@@ -139,7 +139,7 @@ jobs:
             exit 1
           fi
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          IPA_NAME="NOOP-AI-Full-Thai-Strength-v${VERSION}-${SHORT_SHA}-unsigned.ipa"
+          IPA_NAME="NOOP-AI-Full-Thai-Strength-PerformanceUI-v${VERSION}-${SHORT_SHA}-unsigned.ipa"
           IPA_ROOT="build/ipa"
 
           rm -rf "$IPA_ROOT"
@@ -175,7 +175,7 @@ jobs:
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: NOOP-AI-Full-Thai-Strength-Unsigned-IPA
+          name: NOOP-AI-Full-Thai-Strength-PerformanceUI-Unsigned-IPA
           path: ${{ steps.package.outputs.ipa_path }}
           if-no-files-found: error
           retention-days: 14
@@ -243,7 +243,12 @@ jobs:
           xcrun simctl ui "$UDID" appearance dark
           xcrun simctl status_bar "$UDID" override \
             --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
-          screens=(liquidtoday strength strengthlogger bodymap coach goalplan privacy)
+          screens=(
+            root today todayscrolled charge rest effort healthmonitor stress trends
+            workouts activitydetail strengthhome strengthlogger exercisepicker bodymap
+            coach goal planproposal planbook journey privacy backup settings
+            loading empty error
+          )
           for screen in "${screens[@]}"; do
             xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
             xcrun simctl launch "$UDID" "$bundle_id" \

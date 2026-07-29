@@ -26,16 +26,10 @@ struct AnatomicalMuscleMap: View {
         GeometryReader { geometry in
             ZStack {
                 AnatomicalSilhouette()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.13), Color.white.opacity(0.055)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    .fill(PerformanceTheme.secondarySurface)
                     .overlay(
                         AnatomicalSilhouette()
-                            .stroke(Color.white.opacity(0.18), lineWidth: 0.8)
+                            .stroke(PerformanceTheme.subtleDivider, lineWidth: 0.8)
                     )
 
                 ForEach(regions) { region in
@@ -50,12 +44,6 @@ struct AnatomicalMuscleMap: View {
                                     : Color.white.opacity(0.10),
                                 lineWidth: value > 0 ? 0.9 : 0.55
                             )
-                        )
-                        .shadow(
-                            color: value > 0
-                                ? MuscleLoadColorScale.color(value).opacity(0.30)
-                                : .clear,
-                            radius: 4
                         )
                         .contentShape(shape)
                         .onTapGesture { onSelect(region.muscle) }

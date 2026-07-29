@@ -50,6 +50,11 @@ APP_THAI = {
     "Plan Book": "สมุดแผน",
     "Proposals, commitments and history": "ข้อเสนอ สิ่งที่วางแผนไว้ และประวัติ",
     "Changes and items that need attention": "การเปลี่ยนแปลงและรายการที่ต้องตรวจสอบ",
+    "Loading your data…": "กำลังโหลดข้อมูลของคุณ…",
+    "No data yet": "ยังไม่มีข้อมูล",
+    "Connect a data source or import your history to begin.": "เชื่อมต่อแหล่งข้อมูลหรือนำเข้าประวัติเพื่อเริ่มต้น",
+    "Data unavailable": "ไม่สามารถใช้ข้อมูลได้",
+    "Your saved data is safe. Try refreshing this screen.": "ข้อมูลที่บันทึกไว้ยังปลอดภัย โปรดลองรีเฟรชหน้าจอนี้",
 }
 
 DESIGN_THAI = {
