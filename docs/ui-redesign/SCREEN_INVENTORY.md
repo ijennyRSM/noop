@@ -106,3 +106,23 @@ Status legend:
 The branch may only claim a complete redesign when every row above is marked complete
 in `UI_ACCEPTANCE_CHECKLIST.md`, no existing route becomes unreachable, and no static
 mock replaces a real state-owning view.
+
+## Implementation status
+
+- **76/76 families audited.**
+- **76/76 inherit the shared performance palette, flat card surface, typography,
+  page background, spacing and state components** through `StrandDesign`,
+  `NoopCard`/`StrandCard`, and `ScreenScaffold`.
+- **Directly adapted in this branch:** root dock and Coach action, Today root
+  selection, Health hub, Progress hub, More routing, Coach chat background,
+  Strength picker, Strength cards, and anatomical Body Map.
+- **Existing state-owning views retained:** all 76 families. No screenshot,
+  duplicate Today, duplicate Coach, mock repository, or alternate calculation
+  owner replaces a production view.
+- **Pending evidence:** simulator compile/tests, Thai seeded screenshots, full
+  macOS/iOS/Android CI, and unsigned device IPA. These remain unchecked in the
+  acceptance checklist until the corresponding GitHub runs finish.
+- **Known source limitation:** the stable integration base stores soreness and
+  pain separately and exposes them to consent-aware Coach tools, but does not
+  contain a standalone user-facing soreness/pain editor view. This UI-only branch
+  does not invent a second persistence owner to manufacture one.

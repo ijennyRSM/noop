@@ -211,8 +211,7 @@ struct CoachView: View {
 
     /// The full-bleed day-of-sky backdrop the liquid tabs carry, so Coach sits in one atmosphere.
     private var chatBackground: some View {
-        liquidScaffoldSky(height: 240)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        PerformanceTheme.appBackground
             .ignoresSafeArea()
     }
 
@@ -506,14 +505,7 @@ struct CoachView: View {
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    // A tail-side corner pulled tight (and a soft gradient instead of a flat fill) is what
-                    // makes a rectangle read as a spoken turn rather than as a table cell.
-                    .background(
-                        LinearGradient(colors: [StrandPalette.accent,
-                                                StrandPalette.accent.opacity(0.86)],
-                                       startPoint: .top, endPoint: .bottom),
-                        in: CoachBubbleShape(side: .user)
-                    )
+                    .background(PerformanceTheme.effort, in: CoachBubbleShape(side: .user))
                     .frame(maxWidth: 520, alignment: .trailing)
                     .contextMenu {
                         copyButton(message.text)
