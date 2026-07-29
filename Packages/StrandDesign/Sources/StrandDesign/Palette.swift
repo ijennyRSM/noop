@@ -68,17 +68,17 @@ public enum StrandPalette {
 
     // MARK: Surfaces — deep navy canvas, tinted frosted cards
     // Background is a near-black navy (NOT pure black); cards float just above it.
-    public static let surfaceBase    = Color(light: "#F2F2F7", dark: "#121518") // WHOOP dark blue-grey canvas (sampled)
-    public static let surfaceRaised  = Color(light: "#FFFFFF", dark: "#25292C") // WHOOP grey list-card fill (sampled)
-    public static let surfaceOverlay = Color(light: "#FFFFFF", dark: "#1C1F26") // popovers / sheets / tooltips
-    public static let surfaceInset   = Color(light: "#E9E9EE", dark: "#1F2229") // wells / chart insets / segmented track
-    public static let hairline       = Color(light: "#D8D0BD", dark: "#21304A") // soft 1px border (stronger on light for card edges)
-    public static let hairlineStrong = Color(light: "#C7BCA4", dark: "#2E3C57") // hover / emphasis border
+    public static let surfaceBase    = Color(light: "#F2F4F7", dark: "#0C1014")
+    public static let surfaceRaised  = Color(light: "#FFFFFF", dark: "#171C21")
+    public static let surfaceOverlay = Color(light: "#FFFFFF", dark: "#20262C")
+    public static let surfaceInset   = Color(light: "#E9EDF1", dark: "#11171C")
+    public static let hairline       = Color(light: "#DDE2E7", dark: "#303840")
+    public static let hairlineStrong = Color(light: "#C8D0D8", dark: "#46515B")
 
     // MARK: Text — deep navy-ink on paper / cool off-white on navy
-    public static let textPrimary    = Color(light: "#1A2230", dark: "#F4F6F8")
-    public static let textSecondary  = Color(light: "#4C5564", dark: "#C8CFD8")
-    public static let textTertiary   = Color(light: "#7C8696", dark: "#8A94A4")
+    public static let textPrimary    = Color(light: "#111820", dark: "#F6F8FA")
+    public static let textSecondary  = Color(light: "#4F5B67", dark: "#B9C1C9")
+    public static let textTertiary   = Color(light: "#788490", dark: "#7F8A95")
 
     // MARK: Text ON a permanently-dark surface (scheme-invariant)
     // Use these — NOT textPrimary/Secondary/Tertiary — for labels/pills drawn over a fill that is pinned
@@ -96,9 +96,9 @@ public enum StrandPalette {
     // MARK: Accent — chrome anchor (links, selection, focus, generic accent). On DARK this is the brand
     // GOLD; on LIGHT it shifts to the deep brand BLUE so gold is reserved for the recovery/Charge world
     // and the gold FAB — keeping the light theme from reading as wall-to-wall gold (the maintainer 2026-06-16).
-    public static let accent         = Color(light: "#234F9E", dark: "#60A0E0") // WHOOP link/action blue (gold killed 2026-06-22)
-    public static let accentHover    = Color(light: "#1C3F80", dark: "#8FBEEC")
-    public static let accentMuted    = Color(light: "#E4ECF6", dark: "#16233A") // selected-row tint (pale blue / dark blue)
+    public static let accent         = Color(light: "#0077B8", dark: "#00AEEF")
+    public static let accentHover    = Color(light: "#00669E", dark: "#46C8FF")
+    public static let accentMuted    = Color(light: "#E1F2FA", dark: "#0C2A38")
     /// Focus ring color (blue on both schemes — WHOOP has no gold).
     public static let focusRing      = Color(light: "#2F6FCB", dark: "#60A0E0")
     /// Opacity for dimmed/disabled sections (shared so screens don't invent their own value).

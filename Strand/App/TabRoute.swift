@@ -37,6 +37,7 @@ enum TabRoute: Hashable {
     case stress
     case sleep
     case health
+    case trends
     case hydration
     case coupled
 }
@@ -74,6 +75,7 @@ extension View {
             case .stress: StressView()
             case .sleep: SleepView()
             case .health: HealthView()
+            case .trends: TrendsView()
             case .hydration: HydrationView()
             case .coupled: CoupledView()
             }

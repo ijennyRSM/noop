@@ -121,8 +121,9 @@ enum CoachButtonCorner: String, CaseIterable, Identifiable {
 
     /// Side margin from the screen edge.
     static let margin: CGFloat = 18
-    /// Extra clearance ABOVE the floating tab bar, so a bottom-pinned button never sits on the menu.
-    static let bottomChrome: CGFloat = 96
+    /// Bottom inset shared with the performance dock. The trailing circle sits beside the dock,
+    /// rather than above it, and the dock reserves a dedicated action bay on the right.
+    static let bottomChrome: CGFloat = 4
     /// Extra clearance BELOW the status bar + Today header cluster, so a top-pinned button never covers
     /// the header's round buttons.
     static let topChrome: CGFloat = 64
@@ -428,7 +429,7 @@ struct CoachFloatingButton: View {
     /// Live drag translation while the finger is down (committed to fracX/fracY on release).
     @GestureState private var dragging: CGSize = .zero
 
-    private let size: CGFloat = 56
+    private let size: CGFloat = PerformanceTheme.Metrics.navigationHeight
 
     init(isPresented: Binding<Bool>) {
         _isPresented = isPresented
@@ -453,12 +454,27 @@ struct CoachFloatingButton: View {
             let x = clamp(baseX + dragging.width, min: half + margin, max: w - half - margin)
             let y = clamp(baseY + dragging.height, min: half + margin, max: h - half - margin)
 
-            Image(systemName: "sparkles")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(.white)
+            Image(systemName: "waveform.path.ecg")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(PerformanceTheme.primaryText)
                 .frame(width: size, height: size)
-                .background(Circle().fill(StrandPalette.accent))
-                .overlay(Circle().strokeBorder(.white.opacity(0.18), lineWidth: 1))
+                .background(
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .overlay(Circle().fill(PerformanceTheme.primarySurface.opacity(0.88)))
+                )
+                .overlay(
+                    Circle()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [PerformanceTheme.coach, PerformanceTheme.effort],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 2
+                        )
+                        .padding(7)
+                )
                 // A brief or nudge the user hasn't seen. Without it the coach reaches out into an
                 // interface that gives no sign anything arrived, so proactive messages are only ever
                 // found by chance. Not a count: one dot says "there's something", which is all the
@@ -473,7 +489,7 @@ struct CoachFloatingButton: View {
                             .accessibilityHidden(true)
                     }
                 }
-                .shadow(color: .black.opacity(0.28), radius: 10, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
                 .contentShape(Circle())
                 .position(x: x, y: y)
                 // Locked: no drag gesture at all, so the button can't be nudged. minimumDistance lets a
