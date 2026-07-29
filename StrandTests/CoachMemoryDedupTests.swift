@@ -145,9 +145,15 @@ final class CoachMemoryDedupTests: XCTestCase {
     func testSupersedingNeverDowngradesPinnedImportance() {
         let memory = freshMemory()
         memory.add("Left knee pain when running downhill", category: .injury, importance: .pinned)
+        // Health-sensitive facts require explicit confirmation before they are injected into every prompt.
+        // Confirm the original, then verify that a normal-importance restatement keeps both properties.
+        if let id = memory.facts.first?.id {
+            memory.confirm(id)
+        }
         memory.add("Left knee pain when running downhill and after", category: .injury, importance: .normal)
         XCTAssertEqual(memory.facts.count, 1)
         XCTAssertEqual(memory.facts.first?.importance, .pinned)
+        XCTAssertEqual(memory.facts.first?.verification, .confirmed)
         XCTAssertTrue(memory.pinnedBlock.contains("downhill and after"))
     }
 

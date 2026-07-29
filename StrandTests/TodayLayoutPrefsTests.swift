@@ -15,10 +15,10 @@ final class TodayLayoutPrefsTests: XCTestCase {
         let reordered: [TodaySection] = [
             .heartRate, .hero, .yourCards, .liveSession, .synthesis, .keyMetrics, .workouts,
             .strengthStatus, .recoveryVitals,
-            .journal, .dataSources,
+            .journal, .dataSources, .coach,
         ]
         let encoded = TodayLayoutPrefs.encode(reordered)
-        XCTAssertEqual(encoded, "heartRate,hero,yourCards,liveSession,synthesis,keyMetrics,workouts,strengthStatus,recoveryVitals,journal,dataSources")
+        XCTAssertEqual(encoded, "heartRate,hero,yourCards,liveSession,synthesis,keyMetrics,workouts,strengthStatus,recoveryVitals,journal,dataSources,coach")
         XCTAssertEqual(TodayLayoutPrefs.decodeOrder(encoded), reordered)
     }
 
