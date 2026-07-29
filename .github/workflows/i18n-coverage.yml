@@ -20,6 +20,7 @@ on:
   # else trips over it. Same 8-second job; no new cost.
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: i18n-coverage-${{ github.ref }}
