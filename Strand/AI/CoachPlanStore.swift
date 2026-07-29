@@ -1,5 +1,32 @@
 import Foundation
 
+struct StrengthPlanMetadata: Codable, Equatable {
+    enum TrainingIntent: String, Codable, CaseIterable {
+        case upper, lower, full, recovery
+    }
+
+    var canonicalActivityId: String
+    var trainingIntent: TrainingIntent?
+    var targetRPE: Double?
+    var templateId: String?
+    var musclesToAvoid: [String]
+    var completedSessionId: String?
+
+    init(canonicalActivityId: String = "strength_training",
+         trainingIntent: TrainingIntent? = nil,
+         targetRPE: Double? = nil,
+         templateId: String? = nil,
+         musclesToAvoid: [String] = [],
+         completedSessionId: String? = nil) {
+        self.canonicalActivityId = canonicalActivityId
+        self.trainingIntent = trainingIntent
+        self.targetRPE = targetRPE.map { min(10, max(0, $0)) }
+        self.templateId = templateId
+        self.musclesToAvoid = musclesToAvoid
+        self.completedSessionId = completedSessionId
+    }
+}
+
 /// A session the coach PROPOSED — and what the user decided about it.
 ///
 /// The central rule of this file: **nothing the model says becomes a plan on its own.** The coach can
@@ -131,6 +158,9 @@ struct PlanProposal: Codable, Identifiable, Equatable {
     var decidedAt: Date?
     var effectFeedback: EffectFeedback?
     var feedbackNote: String?
+    /// Accepting a proposal never starts a workout. The completed session ID is attached only after
+    /// a user-started Strength session finalizes successfully.
+    var strength: StrengthPlanMetadata?
 
     init(id: UUID = UUID(),
          day: String,
@@ -148,7 +178,8 @@ struct PlanProposal: Codable, Identifiable, Equatable {
          createdAt: Date = Date(),
          decidedAt: Date? = nil,
          effectFeedback: EffectFeedback? = nil,
-         feedbackNote: String? = nil) {
+         feedbackNote: String? = nil,
+         strength: StrengthPlanMetadata? = nil) {
         self.id = id
         self.day = day
         self.time = time
@@ -166,13 +197,14 @@ struct PlanProposal: Codable, Identifiable, Equatable {
         self.decidedAt = decidedAt
         self.effectFeedback = effectFeedback
         self.feedbackNote = feedbackNote
+        self.strength = strength
     }
 
     // Back-compat: fields added later decode with defaults so a stored plan never fails to load.
     private enum CodingKeys: String, CodingKey {
         case id, day, time, sport, intent, targetEffort, rationale, status
         case source, swappedFrom, rescheduledFrom, skipReason, goalId, createdAt, decidedAt
-        case effectFeedback, feedbackNote
+        case effectFeedback, feedbackNote, strength
     }
 
     init(from decoder: Decoder) throws {
@@ -194,6 +226,7 @@ struct PlanProposal: Codable, Identifiable, Equatable {
         decidedAt = try c.decodeIfPresent(Date.self, forKey: .decidedAt)
         effectFeedback = try c.decodeIfPresent(EffectFeedback.self, forKey: .effectFeedback)
         feedbackNote = try c.decodeIfPresent(String.self, forKey: .feedbackNote)
+        strength = try c.decodeIfPresent(StrengthPlanMetadata.self, forKey: .strength)
     }
 
     /// One-line description for the context / UI, e.g. "Zone 2 ride (easy) at 10:00".
@@ -318,7 +351,7 @@ final class CoachPlanStore: ObservableObject {
                 id: existing.id, day: p.day, time: p.time, sport: p.sport, intent: p.intent,
                 targetEffort: p.targetEffort, rationale: p.rationale, status: .proposed,
                 source: .coachProposed, goalId: p.goalId ?? existing.goalId,
-                createdAt: existing.createdAt)
+                createdAt: existing.createdAt, strength: p.strength ?? existing.strength)
             return true
         }
         proposals.insert(p, at: 0)
@@ -380,6 +413,16 @@ final class CoachPlanStore: ObservableObject {
         update(id) { p in
             p.status = .completed
             p.decidedAt = Date()
+        }
+    }
+
+    /// A strength plan can be completed only by linking a successfully finalized session.
+    func completeStrength(_ id: UUID, finalizedSessionId: String) {
+        update(id) { proposal in
+            guard proposal.status.isCommitment, proposal.strength != nil else { return }
+            proposal.strength?.completedSessionId = finalizedSessionId
+            proposal.status = .completed
+            proposal.decidedAt = Date()
         }
     }
 

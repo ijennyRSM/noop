@@ -92,4 +92,41 @@ final class CoachSemanticMemorySourceTests: XCTestCase {
         XCTAssertTrue(allowed.contains { $0.sourceKind == .habitHypothesis })
         XCTAssertTrue(allowed.allSatisfy { $0.consentScope == .patterns })
     }
+
+    func testStrengthSessionsNeedStrengthScopeAndExcludeRawOrDeviceIdentity() {
+        let session = StrengthSessionRecord(
+            id: "strength-1",
+            deviceId: "secret-device-id",
+            startedAt: 1_774_915_200,
+            endedAt: 1_774_918_440,
+            title: "Lower Strength",
+            status: StrengthSessionStatus.completed.rawValue,
+            sessionRPE: 8,
+            confidence: StrengthConfidence.high.rawValue,
+            muscularLoad: 76,
+            exercises: [
+                .init(
+                    exerciseId: "barbell_back_squat",
+                    snapshotName: "Barbell Back Squat",
+                    orderIndex: 0,
+                    sets: [
+                        .init(setIndex: 0, weightKg: 80, reps: 5, completed: true),
+                    ])
+            ])
+
+        let denied = CoachSemanticMemory.documents(
+            facts: [], conversations: [], journalEntries: [], proposals: [],
+            strengthSessions: [session], allowedScopes: [.memory])
+        XCTAssertFalse(denied.contains { $0.sourceKind == .strengthSession })
+
+        let allowed = CoachSemanticMemory.documents(
+            facts: [], conversations: [], journalEntries: [], proposals: [],
+            strengthSessions: [session], allowedScopes: [.strength])
+        let document = allowed.first { $0.sourceKind == .strengthSession }
+        XCTAssertEqual(document?.consentScope, .strength)
+        XCTAssertTrue(document?.text.contains("Barbell Back Squat") == true)
+        XCTAssertTrue(document?.text.contains("54 min") == true)
+        XCTAssertFalse(document?.text.contains("secret-device-id") == true)
+        XCTAssertFalse(document?.text.lowercased().contains("sensor") == true)
+    }
 }

@@ -501,7 +501,25 @@ final class StrengthTrainingViewModel: ObservableObject {
             recovery: recovery
         )
         try await store.commitStrengthDerived(commit)
+        try await completeLinkedPlanIfNeeded(session: session, store: store)
         await CurrentMuscleResidualService.shared.invalidate(deviceId: session.deviceId)
+    }
+
+    private func completeLinkedPlanIfNeeded(
+        session: StrengthSessionRecord,
+        store: WhoopStore
+    ) async throws {
+        guard session.status == StrengthSessionStatus.completed.rawValue,
+              var link = try await store.pendingStrengthPlanLink(
+                forSessionStartedAt: session.startedAt)
+        else { return }
+        link.sessionId = session.id
+        link.completedAt = session.endedAt ?? Int(Date().timeIntervalSince1970)
+        try await store.upsertStrengthPlanLink(link)
+        if let proposalId = UUID(uuidString: link.proposalId) {
+            CoachPlanStore.shared.completeStrength(
+                proposalId, finalizedSessionId: session.id)
+        }
     }
 }
 

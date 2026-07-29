@@ -7,7 +7,8 @@ import Foundation
 /// building, the daily brief, proactive nudges and `MemoryMaintainer`; a `CoachPurpose` only narrows what
 /// tools are offered/allowed once that master switch is already on.
 enum CoachPurpose: String, Codable, CaseIterable, Identifiable {
-    case coreBiometrics, longHistory, workouts, planning, stress, logs, sensitiveLogs, memory, patterns
+    case coreBiometrics, longHistory, workouts, strength, painSensitive
+    case planning, stress, logs, sensitiveLogs, memory, patterns
 
     var id: String { rawValue }
 }
@@ -24,11 +25,11 @@ enum CoachDataAccessMode: String, CaseIterable, Identifiable {
         case .essentials:
             return [.coreBiometrics, .workouts, .planning, .memory]
         case .personal:
-            return [.coreBiometrics, .workouts, .planning, .stress, .logs, .memory, .patterns]
+            return [.coreBiometrics, .workouts, .strength, .planning, .stress, .logs, .memory, .patterns]
         case .deepInsights:
             // Sensitive journal labels intentionally remain OFF even here: they need a conscious
             // separate choice in Expert settings rather than riding a broad convenience preset.
-            return [.coreBiometrics, .longHistory, .workouts, .planning, .stress, .logs, .memory, .patterns]
+            return [.coreBiometrics, .longHistory, .workouts, .strength, .planning, .stress, .logs, .memory, .patterns]
         case .expert:
             return nil
         }
@@ -54,6 +55,10 @@ extension CoachTool {
             return .longHistory
         case .recentWorkouts, .zoneMinutes, .sessionOutlook, .simulateDay:
             return .workouts
+        case .strengthSummary, .recentStrengthSessions, .muscleLoad,
+             .residualMuscleLoad, .exerciseProgression, .sorenessCheckIn,
+             .strengthRecoveryContext:
+            return .strength
         case .proposePlan, .planAdherence, .rangeReport:
             return .planning
         case .stressIndex:

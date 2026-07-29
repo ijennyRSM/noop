@@ -438,6 +438,12 @@ final class AICoachEngine: ObservableObject {
         return CoachSemanticMemory.allowedScopes(for: toolConsent)
     }
 
+    private func semanticStrengthSessions() async -> [StrengthSessionRecord] {
+        guard semanticAllowedScopes.contains(.strength),
+              let store = await repo.storeHandle() else { return [] }
+        return (try? await store.strengthSessions(deviceId: repo.deviceId, limit: 24)) ?? []
+    }
+
     /// Called from the Coach screen. It only reconciles text metadata and begins an asynchronous warm-up;
     /// normal app launch still never opens the 328 MB model.
     func prepareSemanticMemory() async {
@@ -445,9 +451,11 @@ final class AICoachEngine: ObservableObject {
             || semanticAllowedScopes.contains(.sensitiveLogs)
             ? await repo.journalEntries()
             : []
+        let strengthSessions = await semanticStrengthSessions()
         await CoachSemanticMemory.shared.prewarm(
             conversations: conversations,
             journalEntries: entries,
+            strengthSessions: strengthSessions,
             allowedScopes: semanticAllowedScopes
         )
     }
@@ -458,9 +466,11 @@ final class AICoachEngine: ObservableObject {
             || semanticAllowedScopes.contains(.sensitiveLogs)
             ? await repo.journalEntries()
             : []
+        let strengthSessions = await semanticStrengthSessions()
         await CoachSemanticMemory.shared.performMaintenance(
             conversations: conversations,
             journalEntries: entries,
+            strengthSessions: strengthSessions,
             allowedScopes: semanticAllowedScopes,
             limit: limit
         )
@@ -473,9 +483,11 @@ final class AICoachEngine: ObservableObject {
             || semanticAllowedScopes.contains(.sensitiveLogs)
             ? await repo.journalEntries()
             : []
+        let strengthSessions = await semanticStrengthSessions()
         await CoachSemanticMemory.shared.reconcile(
             conversations: conversations,
             journalEntries: entries,
+            strengthSessions: strengthSessions,
             allowedScopes: semanticAllowedScopes
         )
         CoachSemanticMemory.shared.startManualIndexing()
@@ -494,9 +506,11 @@ final class AICoachEngine: ObservableObject {
             || semanticAllowedScopes.contains(.sensitiveLogs)
             ? await repo.journalEntries()
             : []
+        let strengthSessions = await semanticStrengthSessions()
         await CoachSemanticMemory.shared.reconcile(
             conversations: conversations,
             journalEntries: entries,
+            strengthSessions: strengthSessions,
             allowedScopes: semanticAllowedScopes
         )
     }
@@ -573,7 +587,7 @@ final class AICoachEngine: ObservableObject {
     /// user turn so they don't linger past the moment they belong to.
     @Published var cardSuggestions: [String] = []
 
-    private let repo: Repository
+    let repo: Repository
     private let session: URLSession
 
     /// Closure `AppModel` wires right after constructing the engine, so the coach can read the LIVE
@@ -748,6 +762,9 @@ final class AICoachEngine: ObservableObject {
     not after guessing. What your tools do:
     • READ their data — get_biometric_summary, get_readiness, get_charge_drivers, get_sleep_detail, \
     get_recent_workouts, get_stress_index, get_zone_minutes, get_range_report, get_plan_adherence, \
+    get_strength_summary, get_recent_strength_sessions, get_muscle_load, \
+    get_residual_muscle_load, get_exercise_progression, get_soreness_check_in, \
+    get_strength_recovery_context, \
     get_my_logs (read back what they logged — caffeine, journal, lab, hydration, mood), plot_metric to \
     draw one, get_training_preferences before a plan when repeated declines may matter, and \
     get_personal_patterns when they've shared it. For a long-horizon or imported metric question, first \
@@ -860,6 +877,7 @@ final class AICoachEngine: ObservableObject {
     init(repo: Repository, session: URLSession = .shared) {
         self.repo = repo
         self.session = session
+        DonorProfileMigrationCoordinator.prepareIfNeeded()
 
         // Restore persisted provider / model (falling back to sane defaults).
         let storedProvider = UserDefaults.standard.string(forKey: Self.providerKey)
@@ -1440,16 +1458,19 @@ final class AICoachEngine: ObservableObject {
             : []
         let semanticRetrieval: CoachSemanticRetrieval
         if dataConsent {
+            let semanticStrength = await semanticStrengthSessions()
             semanticRetrieval = await CoachSemanticMemory.shared.retrieve(
                 question: trimmed,
                 conversations: conversationsBeforeCurrentQuestion,
                 journalEntries: semanticJournalEntries,
+                strengthSessions: semanticStrength,
                 allowedScopes: semanticAllowedScopes
             )
             // Queue the just-added user turn immediately, but do not start another model operation.
             await CoachSemanticMemory.shared.reconcile(
                 conversations: conversations,
                 journalEntries: semanticJournalEntries,
+                strengthSessions: semanticStrength,
                 allowedScopes: semanticAllowedScopes
             )
         } else {
@@ -3352,11 +3373,19 @@ final class AICoachEngine: ObservableObject {
         // wrong goal's progress — an unlinked session still counts on the journey page, a misfiled one
         // silently corrupts two goals at once.
         let activeGoals = CoachGoalStore.shared.activeGoals
+        let strengthMetadata: StrengthPlanMetadata? = ActivityID.isStrength(
+            activityID: ActivityID.slug(forCanonicalName: trimmedSport),
+            canonicalSport: trimmedSport
+        ) ? StrengthPlanMetadata(
+            canonicalActivityId: ActivityID.slug(forCanonicalName: trimmedSport),
+            trainingIntent: parsedIntent == .rest || parsedIntent == .mobility ? .recovery : .full
+        ) : nil
         let proposal = PlanProposal(day: dayKey, time: when, sport: trimmedSport,
                                     intent: parsedIntent,
                                     targetEffort: targetEffort.map { max(0, min($0, 100)) },
                                     rationale: rationale,
-                                    goalId: activeGoals.count == 1 ? activeGoals[0].id : nil)
+                                    goalId: activeGoals.count == 1 ? activeGoals[0].id : nil,
+                                    strength: strengthMetadata)
         guard CoachPlanStore.shared.propose(proposal) else {
             // The user already has this exact session committed for that day (their own routine, or a
             // proposal they accepted) — the store refused the duplicate (#P7 9.8/10.5). Tell the model so

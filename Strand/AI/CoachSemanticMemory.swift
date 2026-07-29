@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SemanticMemory
+import StrandAnalytics
 import WhoopStore
 
 enum CoachSemanticRetrievalMode: String {
@@ -124,6 +125,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
         if consent.enabled.contains(.logs) { scopes.insert(.personalLogs) }
         if consent.enabled.contains(.sensitiveLogs) { scopes.insert(.sensitiveLogs) }
         if consent.enabled.contains(.patterns) { scopes.insert(.patterns) }
+        if consent.enabled.contains(.strength) { scopes.insert(.strength) }
         return scopes
     }
 
@@ -131,6 +133,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
     /// scopes are removed before any future search can observe them.
     func reconcile(conversations: [CoachConversation],
                    journalEntries: [JournalEntry],
+                   strengthSessions: [StrengthSessionRecord] = [],
                    allowedScopes: Set<SemanticConsentScope>) async {
         guard let store else { return }
         guard isEnabled, CoachFeaturePrefs.isEnabled, !allowedScopes.isEmpty else {
@@ -147,6 +150,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
             conversations: conversations,
             journalEntries: journalEntries,
             proposals: CoachPlanStore.shared.proposals,
+            strengthSessions: strengthSessions,
             allowedScopes: allowedScopes
         )
         liveDocuments = Dictionary(documents.map { ($0.documentID, $0) },
@@ -272,9 +276,11 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
     /// Coach-open prewarm. Indexing starts asynchronously and never gates navigation or the composer.
     func prewarm(conversations: [CoachConversation],
                  journalEntries: [JournalEntry],
+                 strengthSessions: [StrengthSessionRecord] = [],
                  allowedScopes: Set<SemanticConsentScope>) async {
         await reconcile(conversations: conversations,
                         journalEntries: journalEntries,
+                        strengthSessions: strengthSessions,
                         allowedScopes: allowedScopes)
         guard provider != nil, isEnabled, CoachFeaturePrefs.isEnabled else { return }
         activeWork?.cancel()
@@ -290,9 +296,11 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
     func retrieve(question: String,
                   conversations: [CoachConversation],
                   journalEntries: [JournalEntry],
+                  strengthSessions: [StrengthSessionRecord] = [],
                   allowedScopes: Set<SemanticConsentScope>) async -> CoachSemanticRetrieval {
         await reconcile(conversations: conversations,
                         journalEntries: journalEntries,
+                        strengthSessions: strengthSessions,
                         allowedScopes: allowedScopes)
         let lexical = Self.lexicalHits(question: question,
                                        documents: Array(liveDocuments.values),
@@ -346,10 +354,12 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
     /// independently, so expiration can cancel between rows without leaving a half-written batch.
     func performMaintenance(conversations: [CoachConversation],
                             journalEntries: [JournalEntry],
+                            strengthSessions: [StrengthSessionRecord] = [],
                             allowedScopes: Set<SemanticConsentScope>,
                             limit: Int) async {
         await reconcile(conversations: conversations,
                         journalEntries: journalEntries,
+                        strengthSessions: strengthSessions,
                         allowedScopes: allowedScopes)
         await processPending(limit: limit)
     }
@@ -550,6 +560,7 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
                           conversations: [CoachConversation],
                           journalEntries: [JournalEntry],
                           proposals: [PlanProposal],
+                          strengthSessions: [StrengthSessionRecord] = [],
                           allowedScopes: Set<SemanticConsentScope>) -> [SemanticDocument] {
         var result: [SemanticDocument] = []
         if allowedScopes.contains(.memory) {
@@ -650,6 +661,36 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
                                  priority: report.days == 28 ? 75 : 55)
             }
         }
+        if allowedScopes.contains(.strength) {
+            for session in strengthSessions
+            where session.status == StrengthSessionStatus.completed.rawValue {
+                let duration = Double(max(
+                    0, (session.endedAt ?? session.startedAt) - session.startedAt)) / 60
+                let exercises = session.exercises.prefix(8).map { exercise in
+                    "\(exercise.snapshotName): \(exercise.sets.filter(\.completed).count) completed sets"
+                }.joined(separator: ", ")
+                var lines = [
+                    "\(CanonicalDay.key(for: Date(timeIntervalSince1970: TimeInterval(session.startedAt)))) strength session",
+                    "Title: \(session.title)",
+                    "Duration: \(CoachDurationFormatter.format(minutes: duration))",
+                    "Exercises: \(exercises.isEmpty ? "not recorded" : exercises)",
+                ]
+                if let load = session.muscularLoad {
+                    lines.append(String(format: "Muscular load: %.1f/100", load))
+                }
+                if let rpe = session.sessionRPE {
+                    lines.append(String(format: "Session RPE: %.1f/10", rpe))
+                }
+                result += chunks(
+                    kind: .strengthSession,
+                    sourceID: session.id,
+                    text: lines.joined(separator: "\n"),
+                    updatedAt: Date(timeIntervalSince1970: TimeInterval(
+                        session.endedAt ?? session.startedAt)),
+                    scope: .strength,
+                    priority: 70)
+            }
+        }
         return result
     }
 
@@ -748,22 +789,17 @@ final class CoachSemanticMemory: ObservableObject, SemanticMemoryCoordinator {
             case .journalQuestion, .journalNote: label = "Journal"
             case .recommendationFeedback: label = "Recommendation feedback"
             case .habitHypothesis: label = "Habit hypothesis"
+            case .strengthSession: label = "Strength session"
             }
             lines.append("• [\(label)] \(document.text)")
         }
         return lines.joined(separator: "\n")
     }
 
-    private static func dayDate(_ day: String) -> Date {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = .current
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: day) ?? .distantPast
-    }
-
     private static func isRecentDay(_ day: String, days: Int) -> Bool {
-        dayDate(day) >= Date().addingTimeInterval(-Double(days) * 86_400)
+        guard days > 0,
+              let distance = CanonicalDay.daysBetween(day, Date())
+        else { return false }
+        return (0..<days).contains(distance)
     }
 }

@@ -1,4 +1,6 @@
 import Foundation
+import StrandAnalytics
+import WhoopStore
 
 /// Tool-calling for the coach. Instead of pre-baking one fixed text block into every request, the
 /// model is offered TOOLS it can call to pull the user's own metrics on demand — so it reasons about
@@ -63,6 +65,14 @@ enum CoachTool: String, CaseIterable {
     /// Time-in-zone minutes (Zone 1–5) over recent workouts, so a "did I hit Zone 2?" question — and
     /// `propose_plan`'s own Zone-2 prescriptions — can actually be checked against what was done.
     case zoneMinutes = "get_zone_minutes"
+    /// Local, derived Strength Training summaries. These never expose sensor rows or device identifiers.
+    case strengthSummary = "get_strength_summary"
+    case recentStrengthSessions = "get_recent_strength_sessions"
+    case muscleLoad = "get_muscle_load"
+    case residualMuscleLoad = "get_residual_muscle_load"
+    case exerciseProgression = "get_exercise_progression"
+    case sorenessCheckIn = "get_soreness_check_in"
+    case strengthRecoveryContext = "get_strength_recovery_context"
 
     /// Natural-language description the model reads to decide when to call the tool.
     var description: String {
@@ -197,6 +207,24 @@ enum CoachTool: String, CaseIterable {
             return "Get time-in-zone minutes (Zone 1–5, from the user's HR during recent workouts) over "
                 + "the last N days. Use it to check whether they actually hit an intensity — especially "
                 + "a Zone 2 session you prescribed — rather than assuming a plan was followed as written."
+        case .strengthSummary:
+            return "Get a compact local Strength Training summary: recent session count, duration, "
+                + "muscular load and most-trained muscles. Returns derived summaries only."
+        case .recentStrengthSessions:
+            return "Get up to six recent finalized strength sessions with exercises, set counts, "
+                + "session RPE and human-readable duration. Never returns raw sensor samples."
+        case .muscleLoad:
+            return "Get normalized muscular load by muscle for today and the last seven local calendar days."
+        case .residualMuscleLoad:
+            return "Get current time-decayed residual muscular load by muscle, recomputed locally."
+        case .exerciseProgression:
+            return "Get bounded progression summaries for one canonical exercise ID from finalized sessions."
+        case .sorenessCheckIn:
+            return "Get the latest optional soreness check-in with freshness. Pain is omitted unless "
+                + "separate pain-sensitive access is enabled."
+        case .strengthRecoveryContext:
+            return "Get a combined privacy-preserving Strength recovery summary using muscular load, "
+                + "residual load and optional soreness. Pain is never converted into load."
         }
     }
 
@@ -538,6 +566,17 @@ enum CoachTool: String, CaseIterable {
                         "description": "How many days back to total (1–90). Defaults to 7."
                     ]
                 ]
+            ]
+        case .exerciseProgression:
+            return [
+                "type": "object",
+                "properties": [
+                    "exercise_id": [
+                        "type": "string",
+                        "description": "Canonical exercise ID from the local exercise library."
+                    ]
+                ],
+                "required": ["exercise_id"]
             ]
         default:
             return ["type": "object", "properties": [String: Any]()]
@@ -891,6 +930,21 @@ extension AICoachEngine {
         case .zoneMinutes:
             let raw = (input["days"] as? Int) ?? Int(input["days"] as? Double ?? 7)
             return await zoneMinutesTool(days: max(1, min(raw, 90)))
+        case .strengthSummary:
+            return await strengthToolBlock(.summary)
+        case .recentStrengthSessions:
+            return await strengthToolBlock(.recent)
+        case .muscleLoad:
+            return await strengthToolBlock(.load)
+        case .residualMuscleLoad:
+            return await strengthToolBlock(.residual)
+        case .exerciseProgression:
+            return await strengthProgressionTool(
+                exerciseId: (input["exercise_id"] as? String) ?? "")
+        case .sorenessCheckIn:
+            return await strengthToolBlock(.soreness)
+        case .strengthRecoveryContext:
+            return await strengthToolBlock(.recovery)
         }
     }
 }

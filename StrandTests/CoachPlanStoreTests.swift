@@ -59,6 +59,38 @@ final class CoachPlanStoreTests: XCTestCase {
         XCTAssertTrue(store.pending.isEmpty)
     }
 
+    func testStrengthProposalDoesNotStartOrCompleteUntilFinalizedSessionIsLinked() throws {
+        let store = makeStore()
+        let metadata = StrengthPlanMetadata(
+            canonicalActivityId: "strength_training", trainingIntent: .lower,
+            targetRPE: 7.5, templateId: "lower-a", musclesToAvoid: ["calves"])
+        store.propose(PlanProposal(
+            day: "2026-07-29", sport: "Strength Training", intent: .moderate,
+            strength: metadata))
+        let id = try XCTUnwrap(store.proposals.first?.id)
+        XCTAssertEqual(store.proposals[0].status, .proposed)
+        XCTAssertNil(store.proposals[0].strength?.completedSessionId)
+
+        store.accept(id)
+        XCTAssertEqual(store.proposals[0].status, .accepted)
+        XCTAssertNil(store.proposals[0].strength?.completedSessionId,
+                     "accepting must not create or pretend to finish a session")
+
+        store.completeStrength(id, finalizedSessionId: "session-123")
+        XCTAssertEqual(store.proposals[0].status, .completed)
+        XCTAssertEqual(store.proposals[0].strength?.completedSessionId, "session-123")
+    }
+
+    func testOldPlanJSONDecodesWithoutStrengthMetadata() throws {
+        let old = """
+        {"id":"00000000-0000-0000-0000-000000000001","day":"2026-07-29",
+         "sport":"Walk","intent":"easy","rationale":"","status":"proposed",
+         "source":"coachProposed","createdAt":0}
+        """.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(PlanProposal.self, from: old)
+        XCTAssertNil(decoded.strength)
+    }
+
     // MARK: - Dedup: a re-proposal replaces, it doesn't stack (W3)
 
     /// The daily brief could fire propose_plan for the same session repeatedly; without dedup that's N

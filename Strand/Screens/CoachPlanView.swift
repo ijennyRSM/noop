@@ -7,6 +7,8 @@ import StrandDesign
 /// a deliberate tap. Nothing here nags — a proposal you ignore just sits there.
 struct CoachPlanView: View {
     @EnvironmentObject private var coach: AICoachEngine
+    @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var router: NavRouter
     @ObservedObject private var store = CoachPlanStore.shared
     /// The active goals this plan serves — the same store Goal & Journey reads, so the two surfaces show
     /// the same targets rather than looking unsynchronised.
@@ -152,7 +154,15 @@ struct CoachPlanView: View {
                         action("Swap", icon: "arrow.triangle.2.circlepath") { swapping = p }
                     }
                     HStack(spacing: 8) {
-                        action("Done", icon: "checkmark.circle", prominent: true) { store.complete(p.id) }
+                        if p.strength != nil {
+                            action("Start", icon: "play.circle.fill", prominent: true) {
+                                startStrengthPlan(p)
+                            }
+                        } else {
+                            action("Done", icon: "checkmark.circle", prominent: true) {
+                                store.complete(p.id)
+                            }
+                        }
                         // The one-tap reason. A reason you have to type is a reason that never gets
                         // recorded — and then "didn't train" reads as laziness when it was a sore knee.
                         Button { skippingReason = p } label: {
@@ -168,6 +178,27 @@ struct CoachPlanView: View {
                     }
                 }
             }
+        }
+    }
+
+    /// Starting is the first point at which a Strength proposal may create workout state. Accepting
+    /// merely commits the plan; completion remains tied to a successful Strength-session finalization.
+    private func startStrengthPlan(_ proposal: PlanProposal) {
+        guard let strength = proposal.strength, model.activeWorkout == nil else { return }
+        model.startWorkout(sport: proposal.sport)
+        let startedAt = Int(model.activeWorkout?.start.timeIntervalSince1970 ?? Date().timeIntervalSince1970)
+        Task {
+            guard let localStore = await coach.repo.storeHandle() else { return }
+            try? await localStore.upsertStrengthPlanLink(.init(
+                proposalId: proposal.id.uuidString,
+                canonicalActivityId: strength.canonicalActivityId,
+                templateId: strength.templateId,
+                createdAt: startedAt
+            ))
+        }
+        dismiss()
+        DispatchQueue.main.async {
+            router.openActiveWorkout()
         }
     }
 

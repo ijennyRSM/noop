@@ -73,8 +73,8 @@ final class ToolConsentTests: XCTestCase {
 
     func testEveryToolMapsToExactlyOnePurposeCoveringAllPurposes() {
         let coveredPurposes = Set(CoachTool.allCases.map(\.purpose))
-        XCTAssertEqual(coveredPurposes, Set(CoachPurpose.allCases),
-                       "every purpose must be reachable by at least one tool, and vice versa")
+        XCTAssertEqual(coveredPurposes, Set(CoachPurpose.allCases).subtracting([.painSensitive]),
+                       "painSensitive is a secondary field-level gate; every tool purpose must be covered")
     }
 
     func testPatternsPurposeCoversOnlyTheExplicitPatternTools() {
@@ -86,6 +86,20 @@ final class ToolConsentTests: XCTestCase {
         let consent = ToolConsent(enabled: [.workouts])
         XCTAssertTrue(consent.allows(.recentWorkouts))
         XCTAssertFalse(consent.allows(.biometricSummary), "biometricSummary is coreBiometrics, not workouts")
+    }
+
+    func testStrengthToolsNeedStrengthAndPainIsNeverPreset() {
+        let essentials = CoachDataAccessMode.essentials.purposes!
+        let personal = CoachDataAccessMode.personal.purposes!
+        XCTAssertFalse(essentials.contains(.strength))
+        XCTAssertTrue(personal.contains(.strength))
+        XCTAssertFalse(personal.contains(.painSensitive))
+        XCTAssertFalse(CoachDataAccessMode.deepInsights.purposes!.contains(.painSensitive))
+        XCTAssertTrue(ToolConsent(enabled: [.strength]).allows(.residualMuscleLoad))
+        XCTAssertEqual(
+            CoachSemanticMemory.allowedScopes(
+                for: ToolConsent(enabled: [.strength])),
+            [.strength])
     }
 
     func testLongHistoryNeedsItsOwnExplicitGrant() {

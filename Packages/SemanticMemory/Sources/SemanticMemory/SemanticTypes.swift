@@ -23,6 +23,7 @@ public enum SemanticSourceKind: String, Codable, CaseIterable, Sendable {
     case journalNote
     case recommendationFeedback
     case habitHypothesis
+    case strengthSession
 }
 
 public enum SemanticConsentScope: String, Codable, CaseIterable, Sendable {
@@ -30,6 +31,7 @@ public enum SemanticConsentScope: String, Codable, CaseIterable, Sendable {
     case personalLogs
     case sensitiveLogs
     case patterns
+    case strength
 }
 
 public struct SemanticDocument: Equatable, Sendable {

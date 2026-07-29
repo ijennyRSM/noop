@@ -59,6 +59,8 @@ struct CoachSettingsView: View {
     @State private var planReminderDenied: Bool = false
     /// Fine-grained purpose toggles are intentionally secondary to the three simple privacy modes.
     @State private var dataAccessExpertMode = false
+    @State private var donorProfileReview = DonorProfileMigrationCoordinator.pending()
+    @State private var showingDonorProfileReview = false
     /// The Coach is an explicit opt-in feature. It starts off on a new installation, including when no
     /// provider/key has been configured yet; the settings remain reachable so setup is never a dead end.
     @AppStorage(CoachFeaturePrefs.enabledKey) private var coachFeatureEnabled = false
@@ -925,12 +927,49 @@ struct CoachSettingsView: View {
             howItWorksRow
             consentBar
             if coach.dataConsent { dataAccessRow }
+            if let donorProfileReview { donorProfileMigrationCard(donorProfileReview) }
             // Coach Instructions (the actual editable setting) before the explanatory note (#R4) — the
             // settings lead, the rationale follows.
             systemPromptBar
             dataTransparencyNote
         }
         .navigationTitle("Privacy & data")
+        .sheet(isPresented: $showingDonorProfileReview) {
+            if let review = donorProfileReview {
+                DonorProfileReviewSheet(review: review) {
+                    DonorProfileMigrationCoordinator.applyPending()
+                    donorProfileReview = nil
+                    showingDonorProfileReview = false
+                }
+            }
+        }
+    }
+
+    private func donorProfileMigrationCard(
+        _ review: DonorProfileMigrationCoordinator.PendingReview
+    ) -> some View {
+        NoopCard(padding: 14, tint: StrandPalette.statusWarning) {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Review imported Coach profile", systemImage: "person.crop.circle.badge.questionmark")
+                    .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                Text("NOOP found a profile from the earlier Strength build. Goals and limitations will remain pending until you confirm them. Soreness and pain are not copied into permanent memory.")
+                    .font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("\(review.goals.count) goals • \(review.ordinaryMemory.count) preferences • \(review.limitationsNeedingConfirmation.count) limitations")
+                    .font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
+                HStack {
+                    Button("Import for review") {
+                        showingDonorProfileReview = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    Button("Not now", role: .cancel) {
+                        DonorProfileMigrationCoordinator.discardPending()
+                        donorProfileReview = nil
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+        }
     }
 
     /// Entry into `dataAccessSubpage` — per-purpose tool consent (#coach-tool-consent), one level under
@@ -970,6 +1009,8 @@ struct CoachSettingsView: View {
                 coreBiometricsAccessBar
                 longHistoryAccessBar
                 workoutsAccessBar
+                strengthAccessBar
+                painSensitiveAccessBar
                 planningAccessBar
                 stressAccessBar
                 logsAccessBar
@@ -1154,6 +1195,51 @@ struct CoachSettingsView: View {
                 Toggle("", isOn: purposeBinding(.workouts))
                     .labelsHidden().toggleStyle(.switch).tint(StrandPalette.accent)
                     .accessibilityLabel("Let the coach fetch workouts")
+            }
+        }
+    }
+
+    private var strengthAccessBar: some View {
+        NoopCard(padding: 14, tint: StrandPalette.effortColor) {
+            HStack(spacing: 10) {
+                Image(systemName: "dumbbell")
+                    .foregroundStyle(coach.toolConsent.enabled.contains(.strength)
+                                     ? StrandPalette.accent : StrandPalette.textTertiary)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Strength Training")
+                        .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                    Text("Sessions, exercises, muscular load, residual load and soreness.")
+                        .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                Toggle("", isOn: purposeBinding(.strength))
+                    .labelsHidden().toggleStyle(.switch).tint(StrandPalette.accent)
+                    .accessibilityLabel("Let the coach fetch Strength Training summaries")
+            }
+        }
+    }
+
+    private var painSensitiveAccessBar: some View {
+        NoopCard(padding: 14, tint: StrandPalette.statusWarning) {
+            HStack(spacing: 10) {
+                Image(systemName: "cross.case")
+                    .foregroundStyle(coach.toolConsent.enabled.contains(.painSensitive)
+                                     ? StrandPalette.statusWarning : StrandPalette.textTertiary)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Pain-sensitive check-ins")
+                        .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                    Text("Separately allow the coach to read your pain flag and note. Pain never becomes load.")
+                        .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                Toggle("", isOn: purposeBinding(.painSensitive))
+                    .labelsHidden().toggleStyle(.switch).tint(StrandPalette.statusWarning)
+                    .disabled(!coach.toolConsent.enabled.contains(.strength))
+                    .accessibilityLabel("Let the coach read pain-sensitive check-ins")
             }
         }
     }
@@ -2550,5 +2636,59 @@ struct CoachSettingsView: View {
             keyDraft = ""
         }
         coach.connectCustom()
+    }
+}
+
+private struct DonorProfileReviewSheet: View {
+    let review: DonorProfileMigrationCoordinator.PendingReview
+    let confirm: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if !review.goals.isEmpty {
+                    Section("Goals to add") {
+                        ForEach(review.goals, id: \.self) {
+                            Label($0, systemImage: "target")
+                        }
+                    }
+                }
+                if !review.ordinaryMemory.isEmpty {
+                    Section("Preferences to remember") {
+                        ForEach(review.ordinaryMemory, id: \.self) {
+                            Label($0, systemImage: "brain.head.profile")
+                        }
+                    }
+                }
+                if !review.limitationsNeedingConfirmation.isEmpty {
+                    Section("Limitations needing confirmation") {
+                        ForEach(review.limitationsNeedingConfirmation, id: \.self) {
+                            Label($0, systemImage: "exclamationmark.shield")
+                        }
+                        Text("These limitations stay unconfirmed until you review them in Coach Memory. They are never pinned automatically.")
+                            .font(StrandFont.footnote)
+                            .foregroundStyle(StrandPalette.textSecondary)
+                    }
+                }
+                Section {
+                    Text("Soreness and pain are time-sensitive check-ins and will not be copied into permanent Coach Memory.")
+                        .font(StrandFont.footnote)
+                        .foregroundStyle(StrandPalette.textSecondary)
+                }
+            }
+            .navigationTitle("Review Coach profile")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Confirm import", action: confirm)
+                }
+            }
+        }
     }
 }
