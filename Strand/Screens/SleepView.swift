@@ -467,7 +467,7 @@ struct SleepView: View {
     /// navigated night's badge tracks ITS OWN score's provenance, not last night's.
     private func heroSource(for night: Night) -> LocalizedStringKey {
         let wakeDay = Repository.localDayKey(Date(timeIntervalSince1970: TimeInterval(night.session.endTs)))
-        if repo.importedSleep[wakeDay]?.performancePct != nil { return "Whoop" }
+        if repo.importedSleep[wakeDay]?.performancePct != nil { return "WHOOP import" }
         return repo.activeDeviceIsOura ? "Oura" : "On-device"
     }
 
@@ -482,7 +482,7 @@ struct SleepView: View {
     /// carries no sleep into `importedSleep`, so the sleep merge winner is only ever Whoop vs on-device. (C4)
     private func nightSource(_ night: Night) -> String {
         let wakeDay = Repository.localDayKey(Date(timeIntervalSince1970: TimeInterval(night.session.endTs)))
-        if repo.importedSleep[wakeDay] != nil { return String(localized: "Whoop") }
+        if repo.importedSleep[wakeDay] != nil { return String(localized: "WHOOP import") }
         // An Oura ring PROVIDES the night's stages (its own SleepNet hypnogram, banked as the imported
         // session that wins the merge), so name it "Oura" — not the generic "On-device" that implies a
         // NOOP computation. WHOOP import still wins above; only a night surfaced under a live Oura strap
