@@ -1,0 +1,83 @@
+name: WHOOP real reference pack PR
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download public WHOOP reference images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/whoop-real-reference/images
+          fetch() {
+            local name="$1" url="$2"
+            curl --fail --location --retry 4 --retry-delay 2 --connect-timeout 30 --max-time 180 \
+              -A 'Mozilla/5.0 AppleWebKit/537.36 Chrome/126 Safari/537.36' \
+              "$url" -o "build/whoop-real-reference/images/$name"
+            test -s "build/whoop-real-reference/images/$name"
+            file "build/whoop-real-reference/images/$name"
+          }
+
+          fetch '01_google_play_current_01.jpg' 'https://play-lh.googleusercontent.com/lt4bUkBwWdh0ctfEulb_9cwcW4IoEV56cGZnRpmTKzCotTu4p8-_FIlM_gWl_Tlji0ESItVnhU7mtUq8KMgd=w1600-h900-rw'
+          fetch '02_google_play_current_02.jpg' 'https://play-lh.googleusercontent.com/86Ie0UPGO6j1tNfghXJvFw-Bvi9bT1XpheBrWCVgOMLLArCOuFN3_opr5Yjk-YJ1cSv544pb3LSU6fhEFoG2=w1600-h900-rw'
+          fetch '03_google_play_current_03.jpg' 'https://play-lh.googleusercontent.com/7zozxRgiboQ5ZlljXQA5jbnuMmak2Cs4UUoEecqNwd09KNB2OO_6IX4O1RA9BDJ5ckrmyg-HkjeIbe3jh1u9LA=w1600-h900-rw'
+          fetch '04_google_play_current_04.jpg' 'https://play-lh.googleusercontent.com/99GkhSACILup4KqPgPBwKhgl4OmfxJ9tmXOKQ_9LukPtb1TefBoSgmnedpJw0EyBY1SJHgY565qvcHWApcPT=w1600-h900-rw'
+          fetch '05_google_play_current_05.jpg' 'https://play-lh.googleusercontent.com/FeSkCsWi65npqStxON6FDsOji6nF6NLu2qyLsZFoiML3kAUK80rd2OiLAKIi8xqOmINsKAvZKVy0z4cPkHnaK2Y=w1600-h900-rw'
+          fetch '06_google_play_current_06.jpg' 'https://play-lh.googleusercontent.com/R-OTQi6_ibakkQ0QMBKQVBHtCtfNuFuLqtbNncQMKX3vTMyMzZY6PEYRFN5v2-q7QlunOo5lhmtJMtfYAGAKQd0=w1600-h900-rw'
+          fetch '07_google_play_current_07.jpg' 'https://play-lh.googleusercontent.com/o5rQlhEI5G-BLJKBX2Xw-7MQf6OEX7NXdBcMse1UZqQTfhSKgqTMT1lfGKQZOkRhVbFB2q3WPSmvPA3JZnkRYA=w1600-h900-rw'
+          fetch '08_google_play_current_08.jpg' 'https://play-lh.googleusercontent.com/03-vgaR784BQ-ppCirEQ5XZAceWHUAUdRHYTviYqSi8ZI_jUkcjseL9I1SFf4u9n4su1FkLuhBGTngeihUHh=w1600-h900-rw'
+          fetch '09_community_modern_home.jpeg' 'https://canada1.discourse-cdn.com/flex011/uploads/wboston/original/2X/9/95e68522494bbbcbddb3de2d3615e936402904b5.jpeg'
+          fetch '10_official_strength_trainer.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/6d6ykiERWkfRwaLOoD9TSX/a4e2b05e91492b64528d8fb65e985f17/introducing-strength-trainer-a-new-way-to-quantify-the-impact-of-your-strength-training-en.png?fm=webp&q=80&w=2400'
+          fetch '11_official_behavior_insights.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/4g2ttxOsX18teCrPBSALOI/135da800b5322cc00ea75662c9fd4b7e/a-new-way-to-see-insights-on-which-behaviors-affect-your-recovery-en.png?fm=webp&q=80&w=2400'
+          fetch '12_official_2025_features.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/7giqTnw5PWAJhlleoibmcK/fa1f98d4ac557fa136a27c67da442193/1800x1000_Locker_Header-YIR-What_Launched_2025.webp?fm=webp&q=80&w=2400'
+          fetch '13_official_home_three_rings.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/2AbdNah3ZLCk6WnJNrT28Z/ef8c32a78ad2e36aa38f220a035f0bff/All-New-WHOOP-Home-Screen-HEADER-1800x1000.jpg?fm=webp&q=80&w=2400'
+          fetch '14_official_recovery_ranges.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/2Ily7LHAyCbEVqOor7BUDt/3318a5359e15a592b8da1dce1dc9b4cf/Recovery-Dials-1-768x363.png?fm=webp&q=80&w=1600'
+          fetch '15_official_recovery_detail.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/3wYhQu8tdevI6cE1FE82VT/a1f2e3b895729dcbc43d2fb468b346b4/How-does-WHOOP-recovery-wor-INLINE-1000x1000-1__1_.jpg?fm=webp&q=80&w=1600'
+          fetch '16_official_recovery_strain.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/1746IxeV9WZEamrPM3IdFm/12e21fecba58229ffb1fe5de6362a836/How-does-WHOOP-recovery-wor-INLINE-1000x1000-2.jpg?fm=webp&q=80&w=1600'
+          fetch '17_review_home_legacy.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-App-Home-screen.jpg?strip=all'
+          fetch '18_review_monthly_trends.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2023/01/WHOOPs-monthly-trend-feature-1920x1261.jpg?strip=all'
+          fetch '19_review_teams.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-App-Teams-1.jpg?strip=all'
+          fetch '20_review_strain_coach.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2019/08/WHOOP-Strain-Coach.jpg?strip=all'
+          fetch '21_review_haptic_alarm.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-Haptic-Alarm-Settings.jpg?strip=all'
+          fetch '22_review_journal.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2023/01/The-WHOOP-Journal-makes-it-easy-to-correlate-lifestyle-choices-with-sleep-and-recovery-performance.jpg?strip=all'
+          fetch '23_review_sleep_tracking.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-4.0-Sleep-Tracking.jpg?strip=all'
+
+          cat > build/whoop-real-reference/SOURCES.md <<'EOF'
+          # WHOOP real-image reference sources
+
+          Files 01–08 are current Google Play listing screenshots. File 09 is a member screenshot showing the modern Home family. Files 10–16 are official WHOOP editorial visuals. Files 17–23 are older independent review screenshots and should not define current navigation.
+
+          Priority navigation reference is the screenshot supplied by Karn in ChatGPT. It is added locally after artifact download as `00_PRIORITY_latest_navigation_user_reference.png`.
+
+          Sources:
+          - https://play.google.com/store/apps/details?id=com.whoop.android
+          - https://www.community.whoop.com/t/feature-request-edit-strength-workouts-after-logging-them/6727
+          - https://www.whoop.com/us/en/thelocker/introducing-strength-trainer-a-new-way-to-quantify-the-impact-of-your-strength-training/
+          - https://www.whoop.com/us/en/thelocker/a-new-way-to-see-insights-on-which-behaviors-affect-your-recovery/
+          - https://www.whoop.com/us/en/thelocker/everything-whoop-launched-in-2025/
+          - https://www.whoop.com/us/en/thelocker/the-all-new-whoop-home-screen/
+          - https://www.whoop.com/us/en/thelocker/how-does-whoop-recovery-work-101/
+          - https://michaelkummer.com/whoop-review/
+
+          Use these images as private visual references only. Do not ship or commit them to the product. Rebuild the visual language with original SwiftUI components and preserve NOOP backend behavior.
+          EOF
+
+          find build/whoop-real-reference/images -type f -print0 | sort -z | xargs -0 sha256sum > build/whoop-real-reference/SHA256SUMS.txt
+          test "$(find build/whoop-real-reference/images -type f | wc -l | tr -d ' ')" -eq 23
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WHOOP-Real-Web-Reference-Images
+          path: build/whoop-real-reference
+          if-no-files-found: error
+          retention-days: 7
