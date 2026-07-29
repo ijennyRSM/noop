@@ -25,6 +25,7 @@ struct EffortDetailView: View {
                        value: displayedEffort,
                        state: effortBand,
                        tone: .effort,
+                       tint: StrandPalette.effortColor,
                        fraction: effort100.map { min(max($0 / 100, 0), 1) }) {
                 Text(scale == .whoop ? "0–21 display scale" : "0–100 NOOP scale")
                     .font(.footnote)

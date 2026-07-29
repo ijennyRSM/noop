@@ -239,6 +239,7 @@ public struct MetricRing: View {
     private let label: LocalizedStringKey
     private let stateText: LocalizedStringKey?
     private let tone: PerformanceMetricTone
+    private let tint: Color?
     private let lineWidth: CGFloat
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -249,12 +250,14 @@ public struct MetricRing: View {
                 label: LocalizedStringKey,
                 stateText: LocalizedStringKey? = nil,
                 tone: PerformanceMetricTone,
+                tint: Color? = nil,
                 lineWidth: CGFloat = PerformanceTheme.Metrics.ringLineWidth) {
         self.value = value
         self.valueText = valueText
         self.label = label
         self.stateText = stateText
         self.tone = tone
+        self.tint = tint
         self.lineWidth = lineWidth
     }
 
@@ -270,7 +273,8 @@ public struct MetricRing: View {
                     .stroke(PerformanceTheme.subtleDivider, lineWidth: lineWidth)
                 Circle()
                     .trim(from: 0, to: drawnFraction)
-                    .stroke(tone.color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .stroke(tint ?? tone.color,
+                            style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                 VStack(spacing: 1) {
                     Text(valueText)
@@ -331,6 +335,7 @@ public struct MetricHero<Supporting: View>: View {
     private let value: String
     private let state: LocalizedStringKey?
     private let tone: PerformanceMetricTone
+    private let tint: Color?
     private let fraction: Double?
     private let supporting: Supporting
 
@@ -338,12 +343,14 @@ public struct MetricHero<Supporting: View>: View {
                 value: String,
                 state: LocalizedStringKey? = nil,
                 tone: PerformanceMetricTone,
+                tint: Color? = nil,
                 fraction: Double? = nil,
                 @ViewBuilder supporting: () -> Supporting) {
         self.label = label
         self.value = value
         self.state = state
         self.tone = tone
+        self.tint = tint
         self.fraction = fraction
         self.supporting = supporting()
     }
@@ -357,6 +364,7 @@ public struct MetricHero<Supporting: View>: View {
                     label: label,
                     stateText: state,
                     tone: tone,
+                    tint: tint,
                     lineWidth: 12
                 )
                 .frame(maxWidth: 230)

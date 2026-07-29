@@ -559,7 +559,10 @@ struct LiquidTodayView: View {
                index + 1 < args.count,
                args[index + 1].lowercased() == "todayscrolled" {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
-                proxy.scrollTo(Self.demoScrolledAnchorID, anchor: .top)
+                // Keep the visual-review capture clear of the status bar. Production scrolling is
+                // unchanged; centring the activity anchor creates an honest scrolled state without
+                // pinning the My Day heading underneath the Dynamic Island.
+                proxy.scrollTo(Self.demoScrolledAnchorID, anchor: .center)
             }
             #endif
         }

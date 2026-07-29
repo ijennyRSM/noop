@@ -169,6 +169,7 @@ struct CoupledView: View {
                         label: "Charge",
                         stateText: TodayView.readinessWord(readinessLevel).map { LocalizedStringKey($0) },
                         tone: .charge,
+                        tint: recovery.map(StrandPalette.recoveryColor),
                         lineWidth: 11
                     )
                     .frame(width: 190, height: 220)
@@ -208,7 +209,7 @@ struct CoupledView: View {
                 MetricRow("Readiness",
                           value: TodayView.readinessWord(readinessLevel) ?? String(localized: "Building"),
                           detail: isCarryingRecovery ? String(localized: "Latest scored night") : String(localized: "Current"),
-                          symbol: "bolt.heart", tone: .charge)
+                          symbol: "bolt.heart", tone: chargeTone)
                 Divider().overlay(PerformanceTheme.subtleDivider)
                 MetricRow("Suggested Effort",
                           value: Self.optimalStrainRangeText(recovery: recovery),
@@ -220,6 +221,14 @@ struct CoupledView: View {
                           symbol: "figure.run", tone: .neutral)
             }
         }
+    }
+
+    /// Match the detail-card status accent to the same recovery band used by Today's Charge ring.
+    private var chargeTone: PerformanceMetricTone {
+        guard let recovery else { return .neutral }
+        if recovery < 34 { return .critical }
+        if recovery < 67 { return .warning }
+        return .charge
     }
 
     /// The centre stack over the vessel: the recovery % counting up in white over the fluid, a RECOVERY
