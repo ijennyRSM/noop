@@ -323,6 +323,21 @@ jobs:
             cp "build/visual-inputs/before/${screen}.png" "$comparison/before/${screen}.png"
             cp "build/ui-previews/${screen}.png" "$comparison/after/${screen}.png"
           done
+          # Keep the browsable reference/before/after directories, and also publish the exact
+          # flat filenames required by the Milestone 1 visual-review contract.
+          cp "$comparison/reference/00-navigation.png" "$comparison/navigation-reference.png"
+          cp "$comparison/before/root.png" "$comparison/navigation-before.png"
+          cp "$comparison/after/root.png" "$comparison/navigation-after.png"
+          sips -s format png "$comparison/reference/01-home.jpg" \
+            --out "$comparison/today-reference.png" >/dev/null
+          cp "$comparison/before/today.png" "$comparison/today-before.png"
+          cp "$comparison/after/today.png" "$comparison/today-after.png"
+          cp "$comparison/before/todayscrolled.png" "$comparison/today-scrolled-before.png"
+          cp "$comparison/after/todayscrolled.png" "$comparison/today-scrolled-after.png"
+          for screen in charge rest effort; do
+            cp "$comparison/before/${screen}.png" "$comparison/${screen}-before.png"
+            cp "$comparison/after/${screen}.png" "$comparison/${screen}-after.png"
+          done
           cp docs/ui-redesign/VISUAL_FIDELITY_MILESTONE_1.md "$comparison/MEASURED_DIFFERENCES.md"
           {
             echo ""

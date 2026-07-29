@@ -36,6 +36,34 @@ The implementation uses adaptive iPhone-point geometry:
 These values preserve the reference proportions while maintaining useful touch
 targets on compact iPhones.
 
+## Measured implementation geometry
+
+The final seeded capture is 1206 × 2622 pixels (402 × 874 points at 3×).
+The milestone uses the following explicit layout values:
+
+- Today score-ring diameter: approximately 121 pt on that 402 pt canvas,
+  responsive to the available width;
+- Today score-ring stroke: 7 pt;
+- spacing between the three score cells: 4 pt;
+- Today horizontal page gutter: 16 pt;
+- Today initial content inset below the safe area: 12 pt;
+- centred wordmark inset: 12 pt above and 4 pt below;
+- Health/Stress card inner padding: 13 pt;
+- Health/Stress card corner radius: 15 pt;
+- My Day activity-group padding: 16 pt;
+- My Day activity-group corner radius: 16 pt;
+- activity-row padding and radius: 8 pt and 11 pt;
+- synthesis corner radius: 30 pt;
+- detail-screen card inner padding and corner radius: 16 pt and 20 pt;
+- base Today section spacing: 12 pt, with 8 pt added before major sections
+  (approximately 20 pt total);
+- detail-screen section spacing: 24 pt.
+
+Compared with the previous capture, this removes the oversized 66 pt floating
+Coach control, large glow, nested generic tiles, and Liquid metric vessels.
+The resulting geometry is deliberately denser while preserving practical
+iPhone touch targets.
+
 ## Before and after checks
 
 | Surface | Previous implementation | Milestone 1 target |
