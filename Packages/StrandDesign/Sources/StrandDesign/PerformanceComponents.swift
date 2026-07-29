@@ -234,70 +234,90 @@ public struct MetricRow: View {
 // MARK: - Metric hierarchy
 
 public struct MetricRing: View {
-    private let value: Double?
-    private let valueText: String
+    private let style: MetricRingStyle
+    private let metric: PerformanceScoreMetric
+    private let score: Double?
     private let label: LocalizedStringKey
     private let stateText: LocalizedStringKey?
-    private let tone: PerformanceMetricTone
-    private let lineWidth: CGFloat
+    private let maximum: Double
+    private let decimals: Int
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var drawnFraction: Double = 0
 
-    public init(value: Double?,
-                valueText: String,
+    public init(style: MetricRingStyle,
+                metric: PerformanceScoreMetric,
+                score: Double?,
                 label: LocalizedStringKey,
                 stateText: LocalizedStringKey? = nil,
-                tone: PerformanceMetricTone,
-                lineWidth: CGFloat = PerformanceTheme.Metrics.ringLineWidth) {
-        self.value = value
-        self.valueText = valueText
+                maximum: Double? = nil,
+                decimals: Int = 0) {
+        self.style = style
+        self.metric = metric
+        self.score = score
         self.label = label
         self.stateText = stateText
-        self.tone = tone
-        self.lineWidth = lineWidth
+        self.maximum = maximum ?? (metric == .effort ? 21 : 100)
+        self.decimals = decimals
     }
 
     private var fraction: Double {
-        guard let value, value.isFinite else { return 0 }
-        return min(1, max(0, value))
+        guard let score, score.isFinite, maximum > 0 else { return 0 }
+        return min(1, max(0, score / maximum))
+    }
+
+    private var scoreText: PerformanceScoreText {
+        PerformanceScoreFormatter.text(metric: metric, score: score, decimals: decimals)
+    }
+
+    private var valueFontSize: CGFloat {
+        decimals > 0 ? style.decimalValueFontSize : style.integerValueFontSize
     }
 
     public var body: some View {
-        VStack(spacing: PerformanceTheme.Spacing.xs) {
+        VStack(spacing: style == .compact ? 8 : 0) {
             ZStack {
                 Circle()
-                    .stroke(PerformanceTheme.subtleDivider, lineWidth: lineWidth)
+                    .stroke(PerformanceScorePalette.ringTrack, lineWidth: style.strokeWidth)
                 Circle()
                     .trim(from: 0, to: drawnFraction)
-                    .stroke(tone.color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    .stroke(PerformanceScorePalette.color(for: metric, score: score),
+                            style: StrokeStyle(lineWidth: style.strokeWidth, lineCap: .butt))
                     .rotationEffect(.degrees(-90))
-                VStack(spacing: 1) {
-                    Text(valueText)
-                        .font(.system(.title2, design: .rounded, weight: .bold))
-                        .minimumScaleFactor(0.62)
-                        .lineLimit(1)
-                        .monospacedDigit()
-                        .foregroundStyle(PerformanceTheme.primaryText)
-                    if let stateText {
-                        Text(stateText)
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(PerformanceTheme.secondaryText)
-                            .lineLimit(1)
-                    }
-                }
-                .padding(lineWidth + 4)
-            }
-            .aspectRatio(1, contentMode: .fit)
 
-            Text(label)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .textCase(.uppercase)
-                .tracking(0.7)
-                .foregroundStyle(PerformanceTheme.primaryText)
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                if style == .hero {
+                    VStack(spacing: 5) {
+                        Text(label)
+                            .font(.system(size: style.labelFontSize, weight: .bold, design: .rounded))
+                            .textCase(.uppercase)
+                            .tracking(1.15)
+                            .foregroundStyle(PerformanceTheme.secondaryText)
+                        scoreValue
+                        if let stateText {
+                            Text(stateText)
+                                .font(.system(size: style.stateFontSize, weight: .semibold, design: .rounded))
+                                .foregroundStyle(PerformanceTheme.secondaryText)
+                                .lineLimit(1)
+                        }
+                    }
+                    .padding(.horizontal, style.strokeWidth + 14)
+                } else {
+                    scoreValue
+                }
+            }
+            .frame(width: style.diameter, height: style.diameter)
+
+            if style == .compact {
+                Text(label)
+                    .font(.system(size: style.labelFontSize, weight: .bold, design: .rounded))
+                    .textCase(.uppercase)
+                    .tracking(1.05)
+                    .foregroundStyle(PerformanceTheme.primaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
         }
+        .frame(width: style.diameter)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(label))
         .accessibilityValue(accessibilityValue)
@@ -317,34 +337,52 @@ public struct MetricRing: View {
         }
     }
 
+    private var scoreValue: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 1) {
+            Text(scoreText.number)
+                .font(.system(size: valueFontSize, weight: .black, design: .rounded))
+                .minimumScaleFactor(0.62)
+                .lineLimit(1)
+                .monospacedDigit()
+            if let unit = scoreText.unit {
+                Text(unit)
+                    .font(.system(size: style.unitFontSize, weight: .heavy, design: .rounded))
+            }
+        }
+        .foregroundStyle(PerformanceTheme.primaryText)
+    }
+
     private var accessibilityValue: Text {
         if let stateText {
-            return Text(valueText) + Text(", ") + Text(stateText)
+            return Text(scoreText.combined) + Text(", ") + Text(stateText)
         } else {
-            return Text(valueText)
+            return Text(scoreText.combined)
         }
     }
 }
 
 public struct MetricHero<Supporting: View>: View {
+    private let metric: PerformanceScoreMetric
     private let label: LocalizedStringKey
-    private let value: String
+    private let score: Double?
     private let state: LocalizedStringKey?
-    private let tone: PerformanceMetricTone
-    private let fraction: Double?
+    private let maximum: Double?
+    private let decimals: Int
     private let supporting: Supporting
 
-    public init(label: LocalizedStringKey,
-                value: String,
+    public init(metric: PerformanceScoreMetric,
+                score: Double?,
+                label: LocalizedStringKey,
                 state: LocalizedStringKey? = nil,
-                tone: PerformanceMetricTone,
-                fraction: Double? = nil,
+                maximum: Double? = nil,
+                decimals: Int = 0,
                 @ViewBuilder supporting: () -> Supporting) {
+        self.metric = metric
         self.label = label
-        self.value = value
+        self.score = score
         self.state = state
-        self.tone = tone
-        self.fraction = fraction
+        self.maximum = maximum
+        self.decimals = decimals
         self.supporting = supporting()
     }
 
@@ -352,14 +390,14 @@ public struct MetricHero<Supporting: View>: View {
         PerformanceCard {
             VStack(spacing: PerformanceTheme.Spacing.md) {
                 MetricRing(
-                    value: fraction,
-                    valueText: value,
+                    style: .hero,
+                    metric: metric,
+                    score: score,
                     label: label,
                     stateText: state,
-                    tone: tone,
-                    lineWidth: 12
+                    maximum: maximum,
+                    decimals: decimals
                 )
-                .frame(maxWidth: 230)
                 supporting
             }
             .frame(maxWidth: .infinity)
@@ -368,12 +406,14 @@ public struct MetricHero<Supporting: View>: View {
 }
 
 public extension MetricHero where Supporting == EmptyView {
-    init(label: LocalizedStringKey,
-         value: String,
+    init(metric: PerformanceScoreMetric,
+         score: Double?,
+         label: LocalizedStringKey,
          state: LocalizedStringKey? = nil,
-         tone: PerformanceMetricTone,
-         fraction: Double? = nil) {
-        self.init(label: label, value: value, state: state, tone: tone, fraction: fraction) {
+         maximum: Double? = nil,
+         decimals: Int = 0) {
+        self.init(metric: metric, score: score, label: label, state: state,
+                  maximum: maximum, decimals: decimals) {
             EmptyView()
         }
     }
@@ -571,23 +611,23 @@ public struct PerformanceNavigationDock: View {
     }
 
     public var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 1) {
             ForEach(items) { item in
                 button(item)
             }
         }
-        .padding(6)
-        .frame(height: PerformanceTheme.Metrics.navigationHeight)
+        .padding(4)
+        .frame(height: 58)
         .background(
             Capsule(style: .continuous)
                 .fill(.ultraThinMaterial)
-                .overlay(Capsule(style: .continuous).fill(PerformanceTheme.primarySurface.opacity(0.82)))
+                .overlay(Capsule(style: .continuous).fill(PerformanceTheme.primarySurface.opacity(0.94)))
         )
         .overlay(
             Capsule(style: .continuous)
                 .strokeBorder(PerformanceTheme.subtleDivider.opacity(0.9), lineWidth: 0.75)
         )
-        .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
+        .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
         .accessibilityElement(children: .contain)
     }
 
@@ -602,12 +642,12 @@ public struct PerformanceNavigationDock: View {
                 }
             }
         } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 Image(systemName: item.icon)
-                    .font(.system(size: 17, weight: active ? .semibold : .regular))
+                    .font(.system(size: 16, weight: active ? .semibold : .regular))
                     .accessibilityHidden(true)
                 Text(item.title)
-                    .font(.system(size: 9.5, weight: active ? .semibold : .medium, design: .rounded))
+                    .font(.system(size: 9, weight: active ? .semibold : .medium, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.74)
             }
@@ -620,14 +660,14 @@ public struct PerformanceNavigationDock: View {
             .contentShape(RoundedRectangle(cornerRadius: PerformanceTheme.Radius.medium, style: .continuous))
         }
         .buttonStyle(.plain)
-        .frame(minWidth: 54)
+        .frame(minWidth: 50)
         .accessibilityLabel(item.title)
         .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
     }
 }
 
 /// The separate circular action adjacent to the navigation dock. It intentionally
-/// carries the NOOP spark/waveform symbol, not another product's logo.
+/// carries an original NOOP sparkle, not another product's logo.
 public struct CoachFloatingAction: View {
     private let action: () -> Void
 
@@ -639,26 +679,16 @@ public struct CoachFloatingAction: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .fill(.ultraThinMaterial)
+                    .fill(PerformanceTheme.primarySurface.opacity(0.96))
                 Circle()
-                    .fill(PerformanceTheme.primarySurface.opacity(0.86))
-                Circle()
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [PerformanceTheme.coach, PerformanceTheme.effort],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .padding(7)
-                Image(systemName: "waveform.path.ecg")
-                    .font(.system(size: 20, weight: .semibold))
+                    .strokeBorder(PerformanceTheme.coach.opacity(0.9), lineWidth: 1.5)
+                    .padding(5)
+                Image(systemName: "sparkles")
+                    .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(PerformanceTheme.primaryText)
             }
-            .frame(width: PerformanceTheme.Metrics.navigationHeight,
-                   height: PerformanceTheme.Metrics.navigationHeight)
-            .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
+            .frame(width: 58, height: 58)
+            .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .frame(minWidth: PerformanceTheme.Metrics.minimumTapTarget,

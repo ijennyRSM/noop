@@ -60,10 +60,10 @@ struct RootTabView: View {
     @AppStorage(MoreSectionPrefs.storageKey) private var expandedMoreSectionsCSV = MoreSectionPrefs.defaultCSV
     private var expandedMoreSections: Set<String> { MoreSectionPrefs.decode(expandedMoreSectionsCSV) }
 
-    /// The existing authoritative Today state and actions, rendered through the
-    /// shared performance presentation rather than the retired Liquid shell.
+    /// The existing authoritative Today state and actions. `LiquidTodayView`
+    /// is repurposed as the performance presentation; no second Today state exists.
     @ViewBuilder private var todayTabRoot: some View {
-        TodayView()
+        LiquidTodayView()
     }
 
     init() {
@@ -152,7 +152,11 @@ struct RootTabView: View {
             .simultaneousGesture(tabSwipeGesture,
                                  including: tabPaths[selectedTab].isEmpty ? .all : .subviews)
 
-            FloatingTabBar(selection: $selectedTab, onReselect: { tag in
+            FloatingTabBar(
+                selection: $selectedTab,
+                showsCoach: coachFeatureEnabled && coachUIEnabled && coachFloatingButtonEnabled,
+                onCoach: { showCoach = true },
+                onReselect: { tag in
                 // Re-tapping the active tab refreshes that page's data (2026-07-02) and, from a
                 // subpage, pops that tab's stack back to its root (#135) — an animated pop via the
                 // path, not a rebuild. At the root the pop is skipped, so scroll position survives
@@ -163,7 +167,8 @@ struct RootTabView: View {
                 } else {
                     scrollTop[tag] += 1                // already at root: scroll to the top (#198 follow-up)
                 }
-            })
+                }
+            )
             // Measure the bar's own rendered footprint (capsule + its bottom padding) rather than
             // hardcoding a guessed pixel value that would silently drift the day its padding/shadow
             // change. Read via `.floatingTabBarInset` below by anything docked at the bottom of a
@@ -175,11 +180,6 @@ struct RootTabView: View {
                 }
             )
 
-            // Draggable floating Coach button — an alternative entry to the Today banner, honouring the
-            // user's Coach-entry preference. Floats over every tab; a tap opens the chat.
-            if coachFeatureEnabled, coachUIEnabled, coachFloatingButtonEnabled {
-                CoachFloatingButton(isPresented: $showCoach)
-            }
         }
         .coachCover(isPresented: $showCoach, coach: coach)
         .onAppear {
@@ -843,33 +843,38 @@ extension EnvironmentValues {
 
 // MARK: - Floating tab bar
 
-/// The signature bottom bar: two frosted "glass" islands (Today·Trends / Sleep·More) with the gold
-/// action button nested cleanly in the gap between them — no overlap, no glow. Real iOS 26 Liquid
-/// Glass where available, a `.ultraThinMaterial` fallback below. Replaces the hidden native tab bar.
+/// Compact four-item dock with a separate aligned Coach action. Both surfaces
+/// share one layout owner, so the Coach control cannot drift over tab content.
 private struct FloatingTabBar: View {
     @Binding var selection: Int
+    let showsCoach: Bool
+    let onCoach: () -> Void
     /// Fires when the user taps the ALREADY-active tab (2026-07-02: re-tap should refresh).
     var onReselect: (Int) -> Void = { _ in }
 
     var body: some View {
-        // One frosted glass bar, four evenly-spaced tabs. The quick-action "+" now lives in the
-        // top-right of each screen's header (balancing the profile avatar on the left).
-        PerformanceNavigationDock(
-            selection: $selection,
-            items: PerformanceRootDestination.allCases.map {
-                PerformanceNavigationItem(tag: $0.rawValue, title: $0.title, icon: $0.icon)
-            },
-            onReselect: onReselect
-        )
-        // Over the liquid Today the sky ends at ~340pt, so the bar floats on flat opaque surfaceBase —
-        // a blur material has nothing to dissolve and hardens into a solid lozenge (2026-07-02:
-        // "clips into a solid shape"). A faint translucent scrim INSIDE the same Capsule keeps the pill
-        // reading as tinted glass, not a slab, even against dead-flat colour.
-        // Soft top-lit rim instead of one hard hairline, so there's no crisp cut-out edge.
-        // Lighter, wider shadow: real elevation without stamping a dark halo on the flat canvas.
-        .padding(.leading, 18)
-        .padding(.trailing, 92)
-        .padding(.bottom, 4)
+        // The reference proportions are retained while the dock contracts on a compact iPhone.
+        GeometryReader { proxy in
+            let coachWidth: CGFloat = showsCoach ? 58 : 0
+            let gap: CGFloat = showsCoach ? 10 : 0
+            let dockWidth = min(280, max(220, proxy.size.width - coachWidth - gap - 24))
+            HStack(alignment: .center, spacing: gap) {
+                PerformanceNavigationDock(
+                    selection: $selection,
+                    items: PerformanceRootDestination.allCases.map {
+                        PerformanceNavigationItem(tag: $0.rawValue, title: $0.title, icon: $0.icon)
+                    },
+                    onReselect: onReselect
+                )
+                .frame(width: dockWidth)
+                if showsCoach {
+                    CoachFloatingAction(action: onCoach)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .frame(height: 58)
+        .padding(.bottom, 7)
     }
 
 }

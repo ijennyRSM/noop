@@ -345,6 +345,7 @@ struct LiquidTodayView: View {
     /// Scroll-to-top on an at-root Today re-tap (#198 follow-up); default 0 so macOS/other contexts stay inert.
     @Environment(\.scrollToTopSignal) private var scrollToTopSignal
     private static let topAnchorID = "liquidToday.top"
+    private static let demoScrolledAnchorID = "performanceToday.activities"
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -364,6 +365,10 @@ struct LiquidTodayView: View {
 
                 VStack(alignment: .leading, spacing: NoopMetrics.gap) {
                     scene
+                    heroCard
+                    synthesisSection
+                    monitorStrip
+                    myDayHeader
                     // The coach entry is NOT here any more: a full-width row between the wordmark and the
                     // scores both dominated the screen and pushed Charge/Effort/Rest down the page. It is now
                     // a narrow tile beside the Synthesis card (`synthesisSection`), so the hero is the first
@@ -374,12 +379,15 @@ struct LiquidTodayView: View {
                     // and taps straight through to Live. Renders nothing when no workout is active.
                     ActiveWorkoutIndicatorSection()
                     MorningSuggestionCard(showPlan: $showPlan)
+                    todayActivitiesSection.id(Self.demoScrolledAnchorID)
                     // #today-layout (parity with Android): every Today section — the Charge/Effort/Rest hero
                     // and Start-session included — renders in the user's saved order. Reorder via the Arrange
                     // sheet (the header's up/down button; native drag rows); the order persists under the
                     // byte-identical "today.sectionOrder" key Android uses. A gated-off Start-session renders
                     // nothing and keeps its slot in the saved order.
-                    ForEach(sectionOrder) { section in
+                    ForEach(sectionOrder.filter {
+                        ![TodaySection.coach, .hero, .synthesis, .workouts].contains($0)
+                    }) { section in
                         if hiddenSections.contains(section) {
                             // §4: hidden by default, re-addable in the Arrange sheet. Keeps its slot in the
                             // saved order so unhiding restores its position.
@@ -393,9 +401,8 @@ struct LiquidTodayView: View {
                         switch section {
                         // The full-width Coach banner — the reorderable twin of classic Today's
                         // `CoachTodayRow`, independent of the compact header-icon entry (see `scene`).
-                        case .coach:
-                            if coachFeatureEnabled, coachUIEnabled, coachBannerEnabled { coachBanner }
-                        case .hero: heroCard
+                        case .coach, .hero, .synthesis, .workouts:
+                            EmptyView()
                         // Live Sessions (silent guardian) is an OPTIONAL, strap-dependent beta, so it no
                         // longer holds a prominent card between the scores and Synthesis. On iOS it lives in
                         // the "+" quick-action sheet (`QuickActionSheet`, RootTabView); macOS has no such
@@ -409,9 +416,7 @@ struct LiquidTodayView: View {
                             #else
                             EmptyView()
                             #endif
-                        case .synthesis: synthesisSection
                         case .keyMetrics: keyMetricsSection
-                        case .workouts: lastWorkoutsSection
                         case .strengthStatus:
                             if selectedDayOffset == 0 { MuscleBodyMapCard() }
                         case .heartRate: heartRateSection
@@ -437,7 +442,7 @@ struct LiquidTodayView: View {
                     Color.clear.frame(height: 90) // floating tab-bar clearance
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 30) // sit the title lower into the sky, not jammed under the status bar
+                .padding(.top, 12)
             }
             #if os(macOS)
             // Keep the phone-shaped column readable + centred on the wide mac detail pane. The sky is a
@@ -456,7 +461,7 @@ struct LiquidTodayView: View {
                 StrandPalette.surfaceBase
                 // Day-cycle scene (#698): the sky only paints when the toggle is ON; off = the plain
                 // surfaceBase canvas above (parity with Android + the classic TodayView).
-                if showDayCycleBackground {
+                if false && showDayCycleBackground {
                     // Reduce-motion (and low-power) users get the same sky posed still — no twinkle/breath.
                     // Also static until the first data load settles, so launch isn't fighting a live sky too.
                     // "Sky behind cards" (opt-in): fill the whole backdrop with a softer settle so the sky
@@ -473,6 +478,25 @@ struct LiquidTodayView: View {
             }
             .ignoresSafeArea()
         }
+        #if os(iOS)
+        // The root intentionally has no navigation bar. Mask content as it scrolls beneath the status
+        // bar so score labels and cards never compete with the clock, Dynamic Island, or system icons.
+        .overlay(alignment: .top) {
+            LinearGradient(
+                colors: [
+                    StrandPalette.surfaceBase,
+                    StrandPalette.surfaceBase.opacity(0.98),
+                    StrandPalette.surfaceBase.opacity(0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 56)
+            .ignoresSafeArea(edges: .top)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+        #endif
         // Swipe left/right to change DAYS (WHOOP-style). Tab-swipe is disabled on Today in RootTabView so
         // this owns the horizontal gesture here.
         .simultaneousGesture(daySwipeGesture)
@@ -547,6 +571,20 @@ struct LiquidTodayView: View {
         .onChange(of: scrollToTopSignal) { _, _ in
             withAnimation(.easeOut(duration: 0.35)) { proxy.scrollTo(Self.topAnchorID, anchor: .top) }
         }
+        .task {
+            #if DEBUG
+            let args = CommandLine.arguments
+            if let index = args.firstIndex(of: "--demo-screen"),
+               index + 1 < args.count,
+               args[index + 1].lowercased() == "todayscrolled" {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                // Keep the visual-review capture clear of the status bar. Production scrolling is
+                // unchanged; centring the activity anchor creates an honest scrolled state without
+                // pinning the My Day heading underneath the Dynamic Island.
+                proxy.scrollTo(Self.demoScrolledAnchorID, anchor: .center)
+            }
+            #endif
+        }
         #endif
         }
     }
@@ -560,8 +598,20 @@ struct LiquidTodayView: View {
     /// LiveState itself, so it's cheap to re-evaluate as part of the main body. It hands the actual
     /// visibility decision to `LiquidRefreshIndicator` below, which DOES own LiveState.
     private var liquidRefreshIndicator: some View {
-        LiquidRefreshIndicator(pullY: pullY, pullThreshold: pullThreshold, refreshing: refreshing,
-                               liquidHeart: liquidHeart)
+        HStack(spacing: 8) {
+            if refreshing {
+                ProgressView().controlSize(.small)
+                Text("Syncing…")
+            } else if pullY > 4 {
+                Image(systemName: pullY >= pullThreshold ? "arrow.down.circle.fill" : "arrow.down")
+                Text("Sync")
+            }
+        }
+        .font(StrandFont.caption)
+        .foregroundStyle(StrandPalette.textSecondary)
+        .frame(maxWidth: .infinity)
+        .frame(height: refreshing || pullY > 4 ? 34 : 0)
+        .clipped()
     }
 
     /// Arm the refresh once the pull passes the threshold; FIRE it when the finger releases (the pull
@@ -594,6 +644,8 @@ struct LiquidTodayView: View {
 
     private var scene: some View {
         VStack(alignment: .leading, spacing: 0) {
+            compactSceneHeader
+            if false {
             HStack(alignment: .top) {
                 Button { showDayPicker = true } label: {
                     VStack(alignment: .leading, spacing: 2) {
@@ -698,10 +750,57 @@ struct LiquidTodayView: View {
             // #today-layout: the hero + Start-session row moved OUT of the scene into the reorderable
             // section block below. The wordmark's bottom pad (10) + the section VStack's 12 spacing keeps
             // the default hero-under-wordmark gap at the original 22.
+            }
             LiquidWordmark()
-                .padding(.top, 30)
-                .padding(.bottom, 10)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
         }
+    }
+
+    private var compactSceneHeader: some View {
+        HStack {
+            Button { showSettings = true } label: {
+                ProfileAvatarView(imageData: profile.avatarImageData, size: 36)
+                    .frame(width: 36, height: 36)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Profile and settings")
+
+            Spacer()
+
+            HStack(spacing: 7) {
+                Button { changeDay(1) } label: { Image(systemName: "chevron.left") }
+                Text(dayTitle.uppercased())
+                    .font(.system(size: 12, weight: .heavy, design: .rounded))
+                    .tracking(1)
+                    .frame(minWidth: 74)
+                Button { changeDay(-1) } label: { Image(systemName: "chevron.right") }
+                    .disabled(selectedDayOffset == 0)
+                    .opacity(selectedDayOffset == 0 ? 0.35 : 1)
+            }
+            .foregroundStyle(StrandPalette.textPrimary)
+            .padding(.horizontal, 12)
+            .frame(height: 36)
+            .background(Capsule().fill(StrandPalette.surfaceRaised))
+            .buttonStyle(.plain)
+            .onTapGesture { showDayPicker = true }
+
+            Spacer()
+            LiquidBatteryButton()
+        }
+        .popover(isPresented: $showDayPicker) {
+            DatePicker("", selection: dayPickerBinding, in: ...Repository.logicalDay(Date()),
+                       displayedComponents: [.date])
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+                .padding(12)
+                .frame(minWidth: 320, minHeight: 360)
+                .liquidPopoverAdaptation()
+        }
+    }
+
+    private func changeDay(_ delta: Int) {
+        selectedDayOffset = max(0, selectedDayOffset + delta)
     }
 
     /// Consume `router.presentLiveSession`: opens the SAME cover the manual Start-session row does.
@@ -755,56 +854,77 @@ struct LiquidTodayView: View {
     }
 
     private var heroCard: some View {
-        HStack(alignment: .top, spacing: 4) {
+        HStack(alignment: .top, spacing: 10) {
+            todayScoreRing(
+                metric: .rest,
+                label: "Rest",
+                score: restScore,
+                guide: .rest,
+                source: heroSourceLabel
+            )
             // #543 carry: an unscored today shows the last scored night's REAL Charge (labelled as prior by
             // the state pill) rather than an empty vessel, matching the classic Today, the widget/watch/Live
             // Activity (`Repository.widgetAnchor`) and Android. Effort deliberately does NOT carry — it is
             // today's own accumulation, so yesterday's number would be a false statement, not a stale one.
-            HeroScoreCell(label: String(localized: "Charge"), score: chargeDisplay.pct, tint: StrandPalette.chargeColor,
-                          animated: dataLoaded, onGuide: { guideSection = .charge })
+            todayScoreRing(metric: .charge, label: "Charge", score: chargeDisplay.pct, guide: .charge)
             // #45: the hero Effort must honour the user's Effort scale like every other Effort read-out.
             // Show the value on the chosen scale (0–100 or WHOOP 0–21) with the matching vessel max, and
             // one decimal on the compressed 0–21 axis to match the app-wide `effortDisplay` convention
             // (12.6, not a rounded "13"); the 0–100 hero stays a whole number as before.
-            HeroScoreCell(label: String(localized: "Effort"),
-                          score: displayDay?.strain.map { UnitFormatter.effortValue($0, scale: effortScale) },
-                          tint: StrandPalette.effortColor, animated: dataLoaded,
-                          onGuide: { guideSection = .effort },
-                          maxValue: effortScale == .whoop ? 21 : 100,
-                          decimals: effortScale == .whoop ? 1 : 0)
-            // The hero's provenance badge — which device/import actually supplied the inputs, not just
-            // where NOOP ran the calculation. Upstream #778 fixed its accuracy (persisted alongside the
-            // score itself, so it can't drift) and restored its position, centred on the top border and
-            // aligned with the Rest vessel.
-            HeroScoreCell(label: String(localized: "Rest"), score: restScore, tint: StrandPalette.restColor,
-                          animated: dataLoaded, onGuide: { guideSection = .rest })
-                .overlay(alignment: .top) {
-                    if let sourceLabel = heroSourceLabel {
-                        SourceBadge("\(sourceLabel)", tint: StrandPalette.onDarkSecondary)
-                            // Match the badge's trailing edge to the Rest vessel and centre it on the card border.
-                            .fixedSize()
-                            .frame(width: HeroScoreCell.vesselDiameter, alignment: .trailing)
-                            .offset(y: -(NoopMetrics.space4 + NoopMetrics.sourceBadgeHeight / 2))
-                            .allowsHitTesting(false)
-                            .accessibilityLabel(Text("Source: \(sourceLabel)"))
-                    }
-                }
+            todayScoreRing(
+                metric: .effort,
+                label: "Effort",
+                score: displayDay?.strain.map { UnitFormatter.effortValue($0, scale: effortScale) },
+                guide: .effort,
+                maximum: effortScale == .whoop ? 21 : 100,
+                decimals: effortScale == .whoop ? 1 : 0
+            )
         }
-        .padding(.vertical, NoopMetrics.space4)
-        .padding(.horizontal, NoopMetrics.space3)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 0)
         // The ONE content surface that gets real iOS 26 glass (material below 26): it is the screen's
         // headline card and there is exactly one of it, so the blur pass is affordable — unlike the ten
         // metric tiles, which take a lighter fill instead. `heroFill` stays under the glass so the vessels
         // keep the dark backing their on-dark text and colours were tuned against.
         .background(
             RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(heroFill)
-                .liquidGlass(in: RoundedRectangle(cornerRadius: 30, style: .continuous))
+                .fill(Color.clear)
                 .overlay(RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .strokeBorder(.white.opacity(0.14), lineWidth: 1))
-                .shadow(color: .black.opacity(0.6), radius: 30, y: 16)
+                    .strokeBorder(Color.clear, lineWidth: 0))
                 .opacity(cardOpacity)
         )
+    }
+
+    private func todayScoreRing(metric: PerformanceScoreMetric,
+                                label: LocalizedStringKey,
+                                score: Double?,
+                                guide: ScoreSection,
+                                maximum: Double? = nil,
+                                decimals: Int = 0,
+                                source: String? = nil) -> some View {
+        Button {
+            guideSection = guide
+        } label: {
+            MetricRing(
+                style: .compact,
+                metric: metric,
+                score: score,
+                label: label,
+                maximum: maximum,
+                decimals: decimals
+            )
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .top) {
+            if let source {
+                SourceBadge("\(source)", tint: StrandPalette.onDarkSecondary)
+                    .fixedSize()
+                    .offset(y: -(NoopMetrics.space4 + NoopMetrics.sourceBadgeHeight / 2))
+                    .allowsHitTesting(false)
+                    .accessibilityLabel(Text("Source: \(source)"))
+            }
+        }
     }
 
     // MARK: - Card-AI contexts (#R-explain): one small "ask coach" sparkle per "Your cards" row, built
@@ -821,6 +941,197 @@ struct LiquidTodayView: View {
             summary: "\(title): \(value). \(subtitle).",
             suggestions: [String(localized: "What does this mean for me?"),
                           String(localized: "Is this good, or something to watch?")])
+    }
+
+    // MARK: - Performance overview
+
+    private var monitorStrip: some View {
+        HStack(spacing: 10) {
+            monitorCard(route: .health, title: "Health Monitor",
+                        value: healthMonitorStatus, detail: "\(healthMetricCount)/5",
+                        icon: healthMetricCount == 5 ? "checkmark" : "heart.text.square",
+                        tint: healthMonitorTint)
+            monitorCard(route: .stress, title: "Stress Monitor",
+                        value: stressMonitorStatus,
+                        detail: stress.map { String(format: "%.1f", $0) } ?? "–",
+                        icon: "waveform.path.ecg", tint: stressMonitorTint)
+        }
+    }
+
+    private func monitorCard(route: TabRoute, title: String, value: String, detail: String,
+                             icon: String, tint: Color) -> some View {
+        NavigationLink(value: route) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text(LocalizedStringKey(title))
+                        .font(.system(size: 11, weight: .heavy, design: .rounded))
+                        .tracking(0.7).lineLimit(1).minimumScaleFactor(0.72)
+                    Spacer(minLength: 2)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+                HStack(spacing: 8) {
+                    Image(systemName: icon)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(tint)
+                        .frame(width: 28, height: 28)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(tint.opacity(0.16)))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(value.uppercased())
+                            .font(.system(size: 11, weight: .heavy, design: .rounded))
+                            .foregroundStyle(tint).lineLimit(1).minimumScaleFactor(0.7)
+                        Text(detail)
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(StrandPalette.textSecondary)
+                    }
+                }
+            }
+            .padding(13)
+            .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
+            .background(RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(StrandPalette.surfaceRaised))
+        }
+        .buttonStyle(LiquidPressStyle())
+    }
+
+    private var healthMetricCount: Int {
+        [
+            (displayDay?.avgHrv ?? vitalsDay?.avgHrv) != nil,
+            (displayDay?.restingHr ?? vitalsDay?.restingHr) != nil,
+            (displayDay?.respRateBpm ?? vitalsDay?.respRateBpm) != nil,
+            displayDay?.spo2Pct != nil,
+            displayDay?.skinTempDevC != nil
+        ].filter { $0 }.count
+    }
+
+    private var healthMonitorStatus: String {
+        guard healthMetricCount > 0 else { return String(localized: "Building") }
+        switch readiness.level {
+        case .primed, .balanced: return String(localized: "Within range")
+        case .strained, .rundown: return String(localized: "Review")
+        case .insufficient: return String(localized: "Building")
+        }
+    }
+
+    private var healthMonitorTint: Color {
+        switch readiness.level {
+        case .primed, .balanced: return StrandPalette.statusPositive
+        case .strained: return StrandPalette.metricAmber
+        case .rundown: return StrandPalette.metricRose
+        case .insufficient: return StrandPalette.textSecondary
+        }
+    }
+
+    private var stressMonitorStatus: String {
+        guard let stress else { return String(localized: "Calibrating") }
+        if stress < 1 { return String(localized: "Low") }
+        if stress < 2 { return String(localized: "Medium") }
+        return String(localized: "High")
+    }
+
+    private var stressMonitorTint: Color {
+        guard let stress else { return StrandPalette.textSecondary }
+        if stress < 1 { return StrandPalette.statusPositive }
+        if stress < 2 { return StrandPalette.metricAmber }
+        return StrandPalette.metricRose
+    }
+
+    private var myDayHeader: some View {
+        HStack {
+            Text("My Day")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundStyle(StrandPalette.textPrimary)
+            Spacer()
+            Button { showUpdatesInbox = true } label: {
+                Image(systemName: "bell")
+                    .frame(width: 42, height: 42)
+            }
+            Button { showArrangeSheet = true } label: {
+                Image(systemName: "arrow.up.arrow.down")
+                    .frame(width: 42, height: 42)
+            }
+            Button { router.requestQuickActions() } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 21, weight: .semibold))
+                    .foregroundStyle(.black)
+                    .frame(width: 44, height: 44)
+                    .background(RoundedRectangle(cornerRadius: 13).fill(.white))
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var todayActivitiesSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("TODAY’S ACTIVITIES")
+                .font(.system(size: 11, weight: .heavy, design: .rounded))
+                .tracking(1.1)
+
+            NavigationLink(value: TabRoute.sleep) {
+                activityRow(tint: StrandPalette.restColor, icon: "moon.fill",
+                            score: sleepText, title: String(localized: "Sleep"),
+                            start: nil, end: nil)
+            }
+            .buttonStyle(.plain)
+
+            ForEach(Array(workouts.prefix(2)), id: \.startTs) { workout in
+                NavigationLink(value: TabRoute.workoutDetail(startTs: workout.startTs, sport: workout.sport)) {
+                    activityRow(tint: StrandPalette.effortColor, icon: "figure.run",
+                                score: effortText(workout.strain),
+                                title: WorkoutSource.displaySport(workout.sport),
+                                start: activityClock(workout.startTs),
+                                end: activityClock(workout.endTs))
+                }
+                .buttonStyle(.plain)
+            }
+
+            if workouts.isEmpty {
+                Text("No workouts yet")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textTertiary)
+                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    .background(RoundedRectangle(cornerRadius: 11).fill(PerformanceTheme.secondarySurface))
+            }
+        }
+        .padding(16)
+        .background(RoundedRectangle(cornerRadius: 16).fill(PerformanceTheme.primarySurface))
+    }
+
+    private func activityRow(tint: Color, icon: String, score: String, title: String,
+                             start: String?, end: String?) -> some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: icon).font(.system(size: 19, weight: .bold))
+                Text(score).font(.system(size: 16, weight: .heavy, design: .rounded))
+                    .lineLimit(1).minimumScaleFactor(0.65)
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .frame(width: 118, height: 54, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 9).fill(tint))
+            Text(title.uppercased())
+                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                .foregroundStyle(StrandPalette.textPrimary)
+                .lineLimit(1).minimumScaleFactor(0.7)
+            Spacer(minLength: 2)
+            if let start, let end {
+                VStack(alignment: .trailing, spacing: 3) {
+                    Text(start)
+                    Text(end)
+                }
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(StrandPalette.textTertiary)
+            }
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 11).fill(StrandPalette.surfaceRaised))
+    }
+
+    private func activityClock(_ timestamp: Int) -> String {
+        Date(timeIntervalSince1970: TimeInterval(timestamp))
+            .formatted(date: .omitted, time: .shortened)
     }
 
     // MARK: - Heart rate
@@ -1420,15 +1731,36 @@ struct LiquidTodayView: View {
             // hero are the same number, so a carry that reached only one of them would put two answers for
             // Charge on one screen. (#543: one prior row feeds every recovery-derived read-out.) Strain below
             // stays raw, matching the Effort hero, which correctly does not carry.
-            ktile(String(localized: "Recovery"), intText(chargeDisplay.pct), "%", StrandPalette.chargeColor, frac(chargeDisplay.pct), key: "recovery")
+            ktile(
+                String(localized: "Recovery"),
+                intText(chargeDisplay.pct),
+                "%",
+                PerformanceScorePalette.color(for: .charge, score: chargeDisplay.pct),
+                frac(chargeDisplay.pct),
+                key: "recovery"
+            )
         case .effort:
             // #45 parity with the hero: route through effortDisplay so this tile shows the SAME number on
             // the SAME scale as the Effort hero (0–21 WHOOP vs 0–100), instead of always the raw 0–100
             // stored value — the two used to disagree whenever the user picked the WHOOP scale.
             let effortText = displayDay?.strain.map { UnitFormatter.effortDisplay($0, scale: effortScale) } ?? "–"
-            ktile(String(localized: "Strain"), effortText, "%", StrandPalette.effortColor, frac(displayDay?.strain), key: "strain")
+            ktile(
+                String(localized: "Strain"),
+                effortText,
+                "",
+                PerformanceScorePalette.effortBlue,
+                frac(displayDay?.strain),
+                key: "strain"
+            )
         case .rest:
-            ktile(String(localized: "Rest"), intText(restScore), "%", StrandPalette.restColor, frac(restScore), key: "sleep_performance")
+            ktile(
+                String(localized: "Rest"),
+                intText(restScore),
+                "%",
+                PerformanceScorePalette.restBlue,
+                frac(restScore),
+                key: "sleep_performance"
+            )
         case .hrv:
             ktile("HRV", intText(hrv), "ms", StrandPalette.metricCyan, fracOver(hrv, 120), key: "hrv")
         case .restingHr:
@@ -2054,7 +2386,7 @@ private struct LiquidWordmark: View {
 /// COUNTS UP to the value when data lands; tapping the gauge itself splashes (the number is
 /// hit-transparent so the tap reaches the vessel). The label row taps through to the scoring guide.
 private struct HeroScoreCell: View {
-    static let vesselDiameter: CGFloat = 96
+    static let vesselDiameter: CGFloat = 88
 
     let label: String
     let score: Double?            // on whatever scale the caller passes (nil = no data yet)
@@ -2075,8 +2407,13 @@ private struct HeroScoreCell: View {
     var body: some View {
         VStack(spacing: 7) {
             ZStack {
-                LiquidVessel(value: frac, tint: tint, animated: animated)
-                    .frame(width: Self.vesselDiameter, height: Self.vesselDiameter)
+                Circle()
+                    .stroke(StrandPalette.surfaceRaised, lineWidth: 7)
+                Circle()
+                    .trim(from: 0, to: frac ?? 0)
+                    .stroke(tint, style: StrokeStyle(lineWidth: 7, lineCap: .butt))
+                    .rotationEffect(.degrees(-90))
+                    .animation(animated ? .easeOut(duration: 0.8) : nil, value: frac)
                 Group {
                     if score != nil {
                         CountUpNumber(value: shown, font: StrandFont.rounded(26), decimals: decimals)
@@ -2084,8 +2421,7 @@ private struct HeroScoreCell: View {
                         Text("–").font(StrandFont.rounded(26))
                     }
                 }
-                .foregroundStyle(.white)
-                .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
+                .foregroundStyle(StrandPalette.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .allowsHitTesting(false)   // taps fall through to the vessel → splash
@@ -2095,14 +2431,14 @@ private struct HeroScoreCell: View {
                     HStack(spacing: 3) {
                         // #74: one line, shrink-to-fit rather than wrap under large Dynamic Type (mirrors the
                         // score number above) so CHARGE/EFFORT/REST never grow the hero card to two lines.
-                        Text(label.uppercased()).font(StrandFont.overline).tracking(1.6)
+                        Text(label.uppercased()).font(StrandFont.overline).tracking(1.25)
                             .lineLimit(1).minimumScaleFactor(0.7)
                         Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold)).opacity(0.6)
                     }
                     // The hero card fill is pinned dark in BOTH themes, so the CHARGE/EFFORT/REST label must use
                     // the scheme-invariant on-dark token — textSecondary flips to dark ink in Light mode and
                     // went dark-on-near-black here (#1013).
-                    .foregroundStyle(StrandPalette.onDarkSecondary)
+                    .foregroundStyle(StrandPalette.textSecondary)
                 }
                 .buttonStyle(.plain)
             }

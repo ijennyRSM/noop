@@ -16,12 +16,12 @@ public enum PerformanceTheme {
     public static let secondaryText = Color(light: "#4F5B67", dark: "#B9C1C9")
     public static let tertiaryText = Color(light: "#788490", dark: "#7F8A95")
 
-    public static let charge = Color(light: "#178A55", dark: "#22D37F")
-    public static let rest = Color(light: "#3979A5", dark: "#7FB5D8")
-    public static let effort = Color(light: "#0077B8", dark: "#00AEEF")
+    public static let charge = PerformanceScorePalette.goodGreen
+    public static let rest = PerformanceScorePalette.restBlue
+    public static let effort = PerformanceScorePalette.effortBlue
     public static let warning = Color(light: "#A86700", dark: "#F2B134")
     public static let critical = Color(light: "#B52B3A", dark: "#FF5364")
-    public static let coach = Color(light: "#5856C9", dark: "#7A7CFF")
+    public static let coach = PerformanceScorePalette.coachChrome
     public static let muscle = Color(light: "#8D4DCC", dark: "#B77BFF")
 
     public enum Spacing {
@@ -61,6 +61,9 @@ public enum PerformanceTheme {
 
 public enum PerformanceMetricTone: Sendable, Equatable {
     case charge
+    case chargePoor
+    case chargeModerate
+    case chargeGood
     case rest
     case effort
     case muscle
@@ -72,6 +75,9 @@ public enum PerformanceMetricTone: Sendable, Equatable {
     public var color: Color {
         switch self {
         case .charge: PerformanceTheme.charge
+        case .chargePoor: PerformanceScorePalette.poorRed
+        case .chargeModerate: PerformanceScorePalette.moderateYellow
+        case .chargeGood: PerformanceScorePalette.goodGreen
         case .rest: PerformanceTheme.rest
         case .effort: PerformanceTheme.effort
         case .muscle: PerformanceTheme.muscle
@@ -82,4 +88,3 @@ public enum PerformanceMetricTone: Sendable, Equatable {
         }
     }
 }
-

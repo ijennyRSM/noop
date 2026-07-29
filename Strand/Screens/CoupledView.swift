@@ -73,7 +73,17 @@ struct CoupledView: View {
     }
 
     /// The recovery value the ring shows: today's if scored, else the carried prior day's (never fabricated).
-    private var recovery: Double? { day?.recovery ?? carriedRecoveryDay?.recovery }
+    private var recovery: Double? {
+        #if DEBUG
+        let args = CommandLine.arguments
+        if let index = args.firstIndex(of: "--demo-charge-score"),
+           index + 1 < args.count,
+           let score = Double(args[index + 1]) {
+            return score
+        }
+        #endif
+        return day?.recovery ?? carriedRecoveryDay?.recovery
+    }
 
     /// True when the hero is showing the CARRIED prior score rather than today's own, which drives the
     /// dimmed ring + the "Last night · <date>" stamp so an old number is never passed off as new (#543/#779).
@@ -119,28 +129,9 @@ struct CoupledView: View {
     }
 
     private var scaffold: some View {
-        ScreenScaffold(title: "Day", subtitle: subtitleText,
-                       // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends: a fixed,
-                       // full-bleed time-of-day sky behind the scroll content (does not scroll).
-                       topBackground: liquidScaffoldSky()) {
-            ViewThatFits(in: .horizontal) {
-                // Regular width (macOS / iPad): hero left, strain + sleep stacked right in a 2-column grid.
-                HStack(alignment: .top, spacing: NoopMetrics.gap) {
-                    heroCard
-                        .frame(maxWidth: .infinity)
-                    VStack(spacing: NoopMetrics.gap) {
-                        strainCard
-                        sleepCard
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                // Compact (iPhone): the three cards stack full-width.
-                VStack(spacing: NoopMetrics.gap) {
-                    heroCard
-                    strainCard
-                    sleepCard
-                }
-            }
+        ScreenScaffold(title: "Charge", subtitle: subtitleText) {
+            heroCard
+            chargeContextCard
             footerCaption
         }
         .sheet(isPresented: $showChargeBreakdown) { chargeBreakdownSheet }
@@ -179,9 +170,15 @@ struct CoupledView: View {
             showChargeBreakdown = true
         } label: {
             card {
-                VStack(spacing: 14) {
-                    SectionHeader("Recovery", overline: "Coupled read")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(spacing: 16) {
+                    MetricRing(
+                        style: .hero,
+                        metric: .charge,
+                        score: recovery,
+                        label: "Charge",
+                        stateText: TodayView.readinessWord(readinessLevel).map { LocalizedStringKey($0) }
+                    )
+                    if false {
                     ZStack {
                         LiquidVessel(value: recovery.map { max(0, min(1, $0 / 100)) },
                                      tint: StrandPalette.chargeColor, animated: recovery != nil)
@@ -195,6 +192,7 @@ struct CoupledView: View {
                             .allowsHitTesting(false)
                     }
                     .frame(width: 200, height: 200)
+                    }
                     heroCaption
                 }
                 .frame(maxWidth: .infinity)
@@ -205,6 +203,37 @@ struct CoupledView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(heroAccessibilityLabel)
         .accessibilityHint("See what shaped your Charge")
+    }
+
+    private var chargeContextCard: some View {
+        PerformanceCard {
+            VStack(spacing: 0) {
+                PerformanceSectionHeader("Today’s direction", subtitle: "Read the score with its context")
+                    .padding(.bottom, 8)
+                Divider().overlay(PerformanceTheme.subtleDivider)
+                MetricRow("Readiness",
+                          value: TodayView.readinessWord(readinessLevel) ?? String(localized: "Building"),
+                          detail: isCarryingRecovery ? String(localized: "Latest scored night") : String(localized: "Current"),
+                          symbol: "bolt.heart", tone: chargeTone)
+                Divider().overlay(PerformanceTheme.subtleDivider)
+                MetricRow("Suggested Effort",
+                          value: Self.optimalStrainRangeText(recovery: recovery),
+                          detail: String(localized: "Display guidance only"),
+                          symbol: "scope", tone: .effort)
+                Divider().overlay(PerformanceTheme.subtleDivider)
+                MetricRow("Workouts", value: "\(workoutsToday)",
+                          detail: String(localized: "Today"),
+                          symbol: "figure.run", tone: .neutral)
+            }
+        }
+    }
+
+    /// Match the detail-card status accent to the same recovery band used by Today's Charge ring.
+    private var chargeTone: PerformanceMetricTone {
+        guard let recovery else { return .neutral }
+        if recovery < 34 { return .chargePoor }
+        if recovery < 67 { return .chargeModerate }
+        return .chargeGood
     }
 
     /// The centre stack over the vessel: the recovery % counting up in white over the fluid, a RECOVERY

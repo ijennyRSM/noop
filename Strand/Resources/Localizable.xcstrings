@@ -1,6 +1,330 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "0–100 NOOP scale": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "NOOP-Skala 0–100"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Escala NOOP 0–100"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Échelle NOOP 0–100"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Scala NOOP 0–100"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Escala NOOP 0–100"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Шкала NOOP 0–100"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สเกล NOOP 0–100"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "NOOP 0–100 量表"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "NOOP 0–100 量表"}}
+      }
+    },
+    "0–21 display scale": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Anzeigeskala 0–21"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Escala de visualización 0–21"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Échelle d’affichage 0–21"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Scala di visualizzazione 0–21"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Escala de apresentação 0–21"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Шкала отображения 0–21"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สเกลแสดงผล 0–21"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "0–21 显示量表"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "0–21 顯示量表"}}
+      }
+    },
+    "Cardiovascular load accumulated today": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Heute angesammelte kardiovaskuläre Belastung"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Carga cardiovascular acumulada hoy"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Charge cardiovasculaire cumulée aujourd’hui"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Carico cardiovascolare accumulato oggi"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Carga cardiovascular acumulada hoje"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Накопленная сегодня сердечно-сосудистая нагрузка"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระต่อระบบหัวใจและหลอดเลือดที่สะสมในวันนี้"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "今日累计心血管负荷"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "今日累積心血管負荷"}}
+      }
+    },
+    "Contributing workouts": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Beitragende Workouts"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Entrenamientos que contribuyen"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Entraînements contributeurs"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Allenamenti che contribuiscono"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Treinos que contribuem"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Учитываемые тренировки"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การออกกำลังกายที่ส่งผลต่อคะแนน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "计入的训练"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "計入的訓練"}}
+      }
+    },
+    "Current": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Aktuell"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Actual"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Actuel"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Attuale"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Atual"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Текущие"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปัจจุบัน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "当前"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "目前"}}
+      }
+    },
+    "Daily Cardiovascular Effort": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Tägliche kardiovaskuläre Belastung"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Esfuerzo cardiovascular diario"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Effort cardiovasculaire quotidien"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Sforzo cardiovascolare giornaliero"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Esforço cardiovascular diário"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Ежедневная сердечно-сосудистая нагрузка"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระหัวใจและหลอดเลือดรายวัน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "每日心血管负荷"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "每日心血管負荷"}}
+      }
+    },
+    "Display guidance only": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Nur Anzeigeempfehlung"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Solo orientación visual"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Indication d’affichage uniquement"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Solo indicazione visiva"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Apenas orientação visual"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Только рекомендация для отображения"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ใช้เป็นคำแนะนำในการแสดงผลเท่านั้น"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "仅供显示参考"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "僅供顯示參考"}}
+      }
+    },
+    "Duration from workouts with zone data": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Dauer aus Workouts mit Zonendaten"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Duración de entrenamientos con datos de zona"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Durée des entraînements avec données de zone"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Durata degli allenamenti con dati di zona"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Duração de treinos com dados de zona"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Длительность тренировок с данными зон"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระยะเวลาจากการออกกำลังกายที่มีข้อมูลโซน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "含心率区间数据的训练时长"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "含心率區間資料的訓練時長"}}
+      }
+    },
+    "Each bar is one stored daily Effort score.": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Jeder Balken ist ein gespeicherter täglicher Belastungswert."}},
+        "es": {"stringUnit": {"state": "translated", "value": "Cada barra es una puntuación diaria de esfuerzo guardada."}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Chaque barre représente un score d’effort quotidien enregistré."}},
+        "it": {"stringUnit": {"state": "translated", "value": "Ogni barra è un punteggio di sforzo giornaliero salvato."}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Cada barra é uma pontuação diária de esforço guardada."}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Каждый столбец — сохранённая дневная оценка нагрузки."}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แต่ละแท่งคือคะแนนภาระหัวใจและหลอดเลือดที่บันทึกไว้ในแต่ละวัน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "每根柱表示一个已存储的每日负荷分数。"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "每根柱表示一個已儲存的每日負荷分數。"}}
+      }
+    },
+    "Heart-rate zone data is unavailable for these workouts.": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Für diese Workouts sind keine Herzfrequenzzonendaten verfügbar."}},
+        "es": {"stringUnit": {"state": "translated", "value": "No hay datos de zonas de frecuencia cardíaca para estos entrenamientos."}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Les données de zones cardiaques ne sont pas disponibles pour ces entraînements."}},
+        "it": {"stringUnit": {"state": "translated", "value": "I dati delle zone cardiache non sono disponibili per questi allenamenti."}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Os dados das zonas cardíacas não estão disponíveis para estes treinos."}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Для этих тренировок данные пульсовых зон недоступны."}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลโซนอัตราการเต้นหัวใจสำหรับการออกกำลังกายเหล่านี้"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "这些训练没有心率区间数据。"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "這些訓練沒有心率區間資料。"}}
+      }
+    },
+    "Heart-rate zones": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Herzfrequenzzonen"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Zonas de frecuencia cardíaca"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Zones de fréquence cardiaque"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Zone di frequenza cardiaca"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Zonas de frequência cardíaca"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Пульсовые зоны"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "โซนอัตราการเต้นหัวใจ"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "心率区间"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "心率區間"}}
+      }
+    },
+    "Latest scored night": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Letzte bewertete Nacht"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Última noche puntuada"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Dernière nuit évaluée"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Ultima notte valutata"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Última noite pontuada"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Последняя ночь с оценкой"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คืนล่าสุดที่มีคะแนน"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "最近有评分的一晚"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "最近有評分的一晚"}}
+      }
+    },
+    "Past 7 days": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Letzte 7 Tage"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Últimos 7 días"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "7 derniers jours"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Ultimi 7 giorni"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Últimos 7 dias"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Последние 7 дней"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 วันที่ผ่านมา"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "过去 7 天"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "過去 7 天"}}
+      }
+    },
+    "Read the score with its context": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Wert im Kontext lesen"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Interpreta la puntuación en contexto"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Interprétez le score dans son contexte"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Leggi il punteggio nel suo contesto"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Interprete a pontuação no contexto"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Оценка с учётом контекста"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ดูคะแนนพร้อมบริบทประกอบ"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "结合背景解读分数"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "結合背景解讀分數"}}
+      }
+    },
+    "Sessions already included in daily Effort": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Bereits in der täglichen Belastung enthaltene Einheiten"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Sesiones ya incluidas en el esfuerzo diario"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Séances déjà incluses dans l’effort quotidien"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Sessioni già incluse nello sforzo giornaliero"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Sessões já incluídas no esforço diário"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Тренировки, уже учтённые в дневной нагрузке"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซสชันที่รวมอยู่ในภาระหัวใจและหลอดเลือดรายวันแล้ว"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "已计入每日负荷的训练"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "已計入每日負荷的訓練"}}
+      }
+    },
+    "Suggested Effort": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Empfohlene Belastung"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Esfuerzo sugerido"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Effort suggéré"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Sforzo suggerito"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Esforço sugerido"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Рекомендуемая нагрузка"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระหัวใจและหลอดเลือดที่แนะนำ"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "建议负荷"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "建議負荷"}}
+      }
+    },
+    "Strenuous": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Anstrengend"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Intenso"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Intense"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Impegnativo"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Intenso"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Высокая"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หนัก"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "高强度"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "高強度"}}
+      }
+    },
+    "Today’s direction": {
+      "localizations": {
+        "de": {"stringUnit": {"state": "translated", "value": "Ausrichtung für heute"}},
+        "es": {"stringUnit": {"state": "translated", "value": "Orientación para hoy"}},
+        "fr": {"stringUnit": {"state": "translated", "value": "Orientation du jour"}},
+        "it": {"stringUnit": {"state": "translated", "value": "Indicazione per oggi"}},
+        "pt-PT": {"stringUnit": {"state": "translated", "value": "Orientação para hoje"}},
+        "ru": {"stringUnit": {"state": "translated", "value": "Ориентир на сегодня"}},
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แนวทางสำหรับวันนี้"
+          }
+        },
+        "zh-Hans": {"stringUnit": {"state": "translated", "value": "今日方向"}},
+        "zh-Hant": {"stringUnit": {"state": "translated", "value": "今日方向"}}
+      }
+    },
     "": {
       "localizations": {
         "de": {

@@ -390,8 +390,8 @@ enum DemoScreens {
         guard let i = args.firstIndex(of: "--demo-screen"), i + 1 < args.count else { return nil }
         switch args[i + 1].lowercased() {
         case "root":     return AnyView(RootTabView())
-        case "today":    return AnyView(TodayView())
-        case "todayscrolled": return AnyView(TodayView())
+        case "today":    return AnyView(LiquidTodayView())
+        case "todayscrolled": return AnyView(LiquidTodayView())
         // The DEFAULT iOS Today (`noop.liquidTodayEnabled` ships true), so it needs its own entry — plain
         // "today" renders the CLASSIC screen, which is exactly the screen whose behaviour Liquid was found
         // to have diverged from. Without this, the default Today was the one screen the harness could not
@@ -400,7 +400,7 @@ enum DemoScreens {
         case "trends":   return AnyView(TrendsView())
         case "charge":   return AnyView(CoupledView())
         case "rest":     return AnyView(SleepView())
-        case "effort":   return AnyView(TrendsView())
+        case "effort":   return AnyView(EffortDetailView())
         case "healthmonitor": return AnyView(HealthView())
         case "sleep":    return AnyView(SleepView())
         case "live":     return AnyView(LiveView())

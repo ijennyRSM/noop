@@ -34,7 +34,7 @@ struct PerformanceHealthHubView: View {
                         subtitle: "Cardiovascular load and zones",
                         symbol: "figure.run",
                         tone: .effort,
-                        route: .trends
+                        route: .effortDetail
                     )
                     scoreLink(
                         title: "Health Monitor",
