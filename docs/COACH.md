@@ -954,3 +954,12 @@ Good first contributions:
 
 Three earlier entries are done and gone: streaming + tool-calling beyond Anthropic, a first-class
 OpenRouter provider, and the token-budgeted history window.
+# NOOP AI Full Strength integration
+
+The Full Beta integration adds read-only Strength tools under the existing DX consent architecture.
+Strength access is off in Essentials, on in Personal and Deep Insights, and independently configurable in
+Expert. Pain-sensitive check-ins are never enabled by a preset. Pain is stored separately from soreness
+and cannot affect muscular-load calculations.
+
+For canonical day-key, duration, migration, backup, and test contracts, see
+`docs/integration/NOOP_AI_FULL_IMPLEMENTATION.md`.
