@@ -54,20 +54,34 @@ MUSCLES = {
 }
 
 ALIASES = {
-    "barbell_squat": ["Back Squat", "Barbell Squat"],
+    "barbell_squat": [
+        "Back Squat", "Barbell Squat", "แบ็กสควอตด้วยบาร์เบล", "สควอตด้วยบาร์เบล",
+    ],
     "romanian_deadlift_with_dumbbells": ["Dumbbell RDL", "Romanian DL"],
-    "romanian_deadlift": ["RDL", "Romanian DL"],
+    "romanian_deadlift": ["RDL", "Romanian DL", "โรมาเนียนเดดลิฟต์"],
     "stiff_legged_barbell_deadlift": ["Stiff-Leg Deadlift", "SLDL"],
-    "barbell_deadlift": ["Deadlift", "Conventional Deadlift"],
-    "barbell_bench_press_medium_grip": ["Barbell Bench Press", "Bench Press"],
-    "dumbbell_bench_press": ["DB Bench Press"],
-    "pullups": ["Pull-Up", "Pull Ups"],
-    "chin_up": ["Chin-Up", "Chin Ups"],
-    "wide_grip_lat_pulldown": ["Lat Pulldown"],
-    "seated_cable_rows": ["Seated Cable Row", "Cable Row"],
-    "standing_military_press": ["Overhead Press", "Military Press"],
-    "side_lateral_raise": ["Lateral Raise", "Side Raise"],
-    "face_pull": ["Cable Face Pull"],
+    "barbell_deadlift": [
+        "Deadlift", "Conventional Deadlift", "เดดลิฟต์ด้วยบาร์เบล", "เดดลิฟต์แบบมาตรฐาน",
+    ],
+    "barbell_bench_press_medium_grip": [
+        "Barbell Bench Press", "Bench Press", "เบนช์เพรสด้วยบาร์เบล", "เบนช์เพรส",
+    ],
+    "dumbbell_bench_press": ["DB Bench Press", "เบนช์เพรสด้วยดัมเบล"],
+    "pullups": ["Pull-Up", "Pull Ups", "ดึงข้อ", "พูลอัป"],
+    "chin_up": ["Chin-Up", "Chin Ups", "ชินอัป", "ดึงข้อหงายมือ"],
+    "wide_grip_lat_pulldown": ["Lat Pulldown", "ลาตพูลดาวน์", "ดึงบาร์ลง"],
+    "seated_cable_rows": [
+        "Seated Cable Row", "Cable Row", "ซีทเต็ดเคเบิลโรว์", "ดึงเคเบิลท่านั่ง",
+    ],
+    "standing_military_press": [
+        "Overhead Press", "Military Press", "โอเวอร์เฮดเพรส", "มิลิทารีเพรส",
+    ],
+    "side_lateral_raise": [
+        "Lateral Raise", "Side Raise", "ยกแขนด้านข้าง", "ลาเทอรัลเรส",
+    ],
+    "face_pull": ["Cable Face Pull", "เฟซพูล", "ดึงเชือกเข้าหาใบหน้า"],
+    "leg_press": ["เลกเพรส", "ดันขาด้วยเครื่อง"],
+    "standing_calf_raises": ["ยืนเขย่งน่อง", "คาล์ฟเรสท่ายืน"],
     "barbell_hip_thrust": ["Hip Thrust"],
     "bulgarian_split_squat": ["Rear-Foot-Elevated Split Squat", "RFESS"],
 }

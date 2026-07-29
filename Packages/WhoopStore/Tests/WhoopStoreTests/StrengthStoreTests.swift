@@ -12,6 +12,8 @@ final class StrengthStoreTests: XCTestCase {
         XCTAssertEqual(second, first)
         let rdl = try await store.searchExercises(query: "RDL", limit: 20)
         XCTAssertTrue(rdl.contains { $0.canonicalName.localizedCaseInsensitiveContains("Romanian") })
+        let thaiSquat = try await store.searchExercises(query: "สควอตด้วยบาร์เบล", limit: 20)
+        XCTAssertTrue(thaiSquat.contains { $0.id == "barbell_squat" })
     }
 
     func testEveryBundledExerciseHasValidIdentityMusclesAndLicense() async throws {

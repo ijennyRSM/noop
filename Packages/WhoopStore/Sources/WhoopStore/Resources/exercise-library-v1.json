@@ -1492,7 +1492,9 @@
       "canonicalName": "Barbell Back Squat",
       "aliases": [
         "Back Squat",
-        "Barbell Squat"
+        "Barbell Squat",
+        "แบ็กสควอตด้วยบาร์เบล",
+        "สควอตด้วยบาร์เบล"
       ],
       "equipment": [
         "barbell"
@@ -1540,7 +1542,9 @@
       "canonicalName": "Barbell Bench Press - Medium Grip",
       "aliases": [
         "Barbell Bench Press",
-        "Bench Press"
+        "Bench Press",
+        "เบนช์เพรสด้วยบาร์เบล",
+        "เบนช์เพรส"
       ],
       "equipment": [
         "barbell"
@@ -1633,7 +1637,9 @@
       "canonicalName": "Barbell Deadlift",
       "aliases": [
         "Deadlift",
-        "Conventional Deadlift"
+        "Conventional Deadlift",
+        "เดดลิฟต์ด้วยบาร์เบล",
+        "เดดลิฟต์แบบมาตรฐาน"
       ],
       "equipment": [
         "barbell"
@@ -4973,7 +4979,9 @@
       "canonicalName": "Chin-Up",
       "aliases": [
         "Chin-Up",
-        "Chin Ups"
+        "Chin Ups",
+        "ชินอัป",
+        "ดึงข้อหงายมือ"
       ],
       "equipment": [
         "bodyweight"
@@ -6500,7 +6508,8 @@
       "id": "dumbbell_bench_press",
       "canonicalName": "Dumbbell Bench Press",
       "aliases": [
-        "DB Bench Press"
+        "DB Bench Press",
+        "เบนช์เพรสด้วยดัมเบล"
       ],
       "equipment": [
         "dumbbell"
@@ -7397,7 +7406,9 @@
       "id": "face_pull",
       "canonicalName": "Face Pull",
       "aliases": [
-        "Cable Face Pull"
+        "Cable Face Pull",
+        "เฟซพูล",
+        "ดึงเชือกเข้าหาใบหน้า"
       ],
       "equipment": [
         "cable"
@@ -7428,7 +7439,10 @@
     {
       "id": "farmers_walk",
       "canonicalName": "Farmer's Walk",
-      "aliases": [],
+      "aliases": [
+        "เลกเพรส",
+        "ดันขาด้วยเครื่อง"
+      ],
       "equipment": [
         "other"
       ],
@@ -11600,7 +11614,9 @@
       "canonicalName": "Pullups",
       "aliases": [
         "Pull-Up",
-        "Pull Ups"
+        "Pull Ups",
+        "ดึงข้อ",
+        "พูลอัป"
       ],
       "equipment": [
         "bodyweight"
@@ -12108,7 +12124,8 @@
       "canonicalName": "Romanian Deadlift",
       "aliases": [
         "RDL",
-        "Romanian DL"
+        "Romanian DL",
+        "โรมาเนียนเดดลิฟต์"
       ],
       "equipment": [
         "barbell"
@@ -12216,7 +12233,9 @@
       "canonicalName": "Seated Cable Row",
       "aliases": [
         "Seated Cable Row",
-        "Cable Row"
+        "Cable Row",
+        "ซีทเต็ดเคเบิลโรว์",
+        "ดึงเคเบิลท่านั่ง"
       ],
       "equipment": [
         "cable"
@@ -12459,7 +12478,9 @@
       "canonicalName": "Side Lateral Raise",
       "aliases": [
         "Lateral Raise",
-        "Side Raise"
+        "Side Raise",
+        "ยกแขนด้านข้าง",
+        "ลาเทอรัลเรส"
       ],
       "equipment": [
         "dumbbell"
@@ -12485,7 +12506,10 @@
     {
       "id": "side_leg_raises",
       "canonicalName": "Side Leg Raises",
-      "aliases": [],
+      "aliases": [
+        "ยืนเขย่งน่อง",
+        "คาล์ฟเรสท่ายืน"
+      ],
       "equipment": [
         "bodyweight"
       ],
@@ -13212,7 +13236,9 @@
       "canonicalName": "Standing Military Press",
       "aliases": [
         "Overhead Press",
-        "Military Press"
+        "Military Press",
+        "โอเวอร์เฮดเพรส",
+        "มิลิทารีเพรส"
       ],
       "equipment": [
         "barbell"
@@ -13854,7 +13880,9 @@
       "id": "wide_grip_lat_pulldown",
       "canonicalName": "Wide-Grip Lat Pulldown",
       "aliases": [
-        "Lat Pulldown"
+        "Lat Pulldown",
+        "ลาตพูลดาวน์",
+        "ดึงบาร์ลง"
       ],
       "equipment": [
         "cable"

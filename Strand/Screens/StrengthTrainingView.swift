@@ -3,6 +3,19 @@ import StrandAnalytics
 import StrandDesign
 import WhoopStore
 
+private extension ExerciseDefinition {
+    var strengthDisplayName: String {
+        guard Locale.current.language.languageCode?.identifier == "th" else {
+            return canonicalName
+        }
+        return aliases.first(where: { alias in
+            alias.unicodeScalars.contains { scalar in
+                (0x0E00...0x0E7F).contains(scalar.value)
+            }
+        }) ?? canonicalName
+    }
+}
+
 @MainActor
 final class StrengthTrainingViewModel: ObservableObject {
     @Published var session: StrengthSessionRecord?
@@ -41,8 +54,8 @@ final class StrengthTrainingViewModel: ObservableObject {
             let lhsRecent = recentRank[lhs.id] ?? Int.max
             let rhsRecent = recentRank[rhs.id] ?? Int.max
             if lhsRecent != rhsRecent { return lhsRecent < rhsRecent }
-            return lhs.canonicalName.localizedCaseInsensitiveCompare(
-                rhs.canonicalName) == .orderedAscending
+            return lhs.strengthDisplayName.localizedCaseInsensitiveCompare(
+                rhs.strengthDisplayName) == .orderedAscending
         }
     }
 
@@ -71,6 +84,7 @@ final class StrengthTrainingViewModel: ObservableObject {
                 session = draft
                 try await store.saveStrengthSession(draft)
             }
+            if let session { try await cacheDefinitions(for: session) }
             favorites = try await store.favoriteExerciseIds()
             recentIds = try await store.recentExerciseIds()
             templates = try await store.workoutTemplates()
@@ -100,6 +114,7 @@ final class StrengthTrainingViewModel: ObservableObject {
         do {
             try await store.ensureExerciseLibrarySeeded()
             session = try await store.strengthSession(id: sessionId)
+            if let session { try await cacheDefinitions(for: session) }
             favorites = try await store.favoriteExerciseIds()
             templates = try await store.workoutTemplates()
             templateNames = Dictionary(uniqueKeysWithValues:
@@ -109,6 +124,10 @@ final class StrengthTrainingViewModel: ObservableObject {
             await recalculate()
         } catch { errorMessage = error.localizedDescription }
         loading = false
+    }
+
+    func displayName(for exercise: StrengthSessionExerciseRecord) -> String {
+        exerciseCache[exercise.exerciseId]?.strengthDisplayName ?? exercise.snapshotName
     }
 
     func search() async {
@@ -505,6 +524,15 @@ final class StrengthTrainingViewModel: ObservableObject {
         await CurrentMuscleResidualService.shared.invalidate(deviceId: session.deviceId)
     }
 
+    private func cacheDefinitions(for session: StrengthSessionRecord) async throws {
+        guard let store else { return }
+        for exercise in session.exercises where exerciseCache[exercise.exerciseId] == nil {
+            if let definition = try await store.exerciseDefinition(id: exercise.exerciseId) {
+                exerciseCache[exercise.exerciseId] = definition
+            }
+        }
+    }
+
     private func completeLinkedPlanIfNeeded(
         session: StrengthSessionRecord,
         store: WhoopStore
@@ -604,7 +632,7 @@ struct StrengthWorkoutLogger: View {
         NoopCard(padding: 14, tint: StrandPalette.metricCyan) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text(exercise.snapshotName)
+                    Text(viewModel.displayName(for: exercise))
                         .font(StrandFont.headline)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Spacer()
@@ -619,7 +647,9 @@ struct StrengthWorkoutLogger: View {
                         Image(systemName: "ellipsis.circle")
                             .frame(width: 44, height: 44)
                     }
-                    .accessibilityLabel("Exercise actions for \(exercise.snapshotName)")
+                    .accessibilityLabel(
+                        "Exercise actions for \(viewModel.displayName(for: exercise))"
+                    )
                 }
                 setHeader
                 ForEach(exercise.sets) { set in
@@ -931,7 +961,7 @@ private struct ExercisePicker: View {
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(exercise.canonicalName)
+                                Text(exercise.strengthDisplayName)
                                     .foregroundStyle(StrandPalette.textPrimary)
                                 Text(exercise.equipment.joined(separator: " · ")
                                      + " · "
@@ -948,7 +978,7 @@ private struct ExercisePicker: View {
                                       ? "star.fill" : "star")
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Favorite \(exercise.canonicalName)")
+                            .accessibilityLabel("Favorite \(exercise.strengthDisplayName)")
                         }
                     }
                     .buttonStyle(.plain)
@@ -1067,6 +1097,7 @@ struct StrengthHistoryView: View {
     @State private var sessions: [StrengthSessionRecord] = []
     @State private var selected: StrengthSessionRecord?
     @State private var muscleLoads: [String: [DailyMuscleLoadRecord]] = [:]
+    @State private var exerciseNames: [String: String] = [:]
 
     var body: some View {
         NavigationStack {
@@ -1097,7 +1128,7 @@ struct StrengthHistoryView: View {
                                         .font(StrandFont.footnote)
                                         .foregroundStyle(StrandPalette.textSecondary)
                                 }
-                                Text(session.exercises.map(\.snapshotName)
+                                Text(session.exercises.map(displayName)
                                     .prefix(3).joined(separator: " · "))
                                     .font(StrandFont.subhead)
                                     .foregroundStyle(StrandPalette.textSecondary)
@@ -1160,6 +1191,17 @@ struct StrengthHistoryView: View {
                 sessionId: session.id)) ?? []
         }
         muscleLoads = loads
+        let exerciseIds = Set(sessions.flatMap(\.exercises).map(\.exerciseId))
+        var names: [String: String] = [:]
+        for id in exerciseIds {
+            guard let definition = try? await store.exerciseDefinition(id: id) else { continue }
+            names[id] = definition.strengthDisplayName
+        }
+        exerciseNames = names
+    }
+
+    private func displayName(_ exercise: StrengthSessionExerciseRecord) -> String {
+        exerciseNames[exercise.exerciseId] ?? exercise.snapshotName
     }
 
     private func workingSets(_ session: StrengthSessionRecord) -> Int {
@@ -1245,7 +1287,8 @@ struct StrengthCompletedEditor: View {
                             NoopCard(tint: StrandPalette.metricCyan) {
                                 VStack(alignment: .leading, spacing: 10) {
                                     HStack {
-                                        Text(exercise.snapshotName).font(StrandFont.headline)
+                                        Text(viewModel.displayName(for: exercise))
+                                            .font(StrandFont.headline)
                                         Spacer()
                                         Button("History") {
                                             historyExercise = exercise
@@ -1345,7 +1388,7 @@ struct StrengthCompletedEditor: View {
             }
             .sheet(item: $historyExercise) { exercise in
                 ExerciseHistorySheet(exerciseId: exercise.exerciseId,
-                                     exerciseName: exercise.snapshotName)
+                                     exerciseName: viewModel.displayName(for: exercise))
                     .environmentObject(repository)
                     .strengthSheetPresentation(largeFirst: true)
             }
