@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "NOOP AI ฟูลเบต้า";
+"NSHealthShareUsageDescription" = "NOOP อ่านอัตราการเต้นหัวใจจากเซนเซอร์ Apple Watch เพื่อแสดงค่าปัจจุบันบนข้อมือ ข้อมูลจะอยู่ในอุปกรณ์ของคุณ";
+"NSHealthUpdateUsageDescription" = "NOOP บันทึกเซสชันการออกกำลังกายพื้นฐานบน Apple Watch เพื่อให้อ่านอัตราการเต้นหัวใจได้ละเอียดขึ้น เซสชันจะอยู่ในอุปกรณ์ของคุณ";
