@@ -13,20 +13,20 @@ struct EffortDetailView: View {
     private var scale: EffortScale { UnitPrefs.resolveEffortScale(effortScaleRaw) }
     private var today: DailyMetric? { repo.today }
     private var effort100: Double? { today?.strain }
-    private var displayedEffort: String {
-        effort100.map { UnitFormatter.effortDisplay($0, scale: scale) } ?? "–"
+    private var displayedEffort: Double? {
+        effort100.map { UnitFormatter.effortValue($0, scale: scale) }
     }
     private var scaleMaximum: Double { scale == .whoop ? 21 : 100 }
 
     var body: some View {
         ScreenScaffold(title: "Effort", subtitle: "Cardiovascular load accumulated today",
                        onRefresh: { await repo.refresh() }) {
-            MetricHero(label: "Effort",
-                       value: displayedEffort,
+            MetricHero(metric: .effort,
+                       score: displayedEffort,
+                       label: "Effort",
                        state: effortBand,
-                       tone: .effort,
-                       tint: StrandPalette.effortColor,
-                       fraction: effort100.map { min(max($0 / 100, 0), 1) }) {
+                       maximum: scaleMaximum,
+                       decimals: scale == .whoop ? 1 : 0) {
                 Text(scale == .whoop ? "0–21 display scale" : "0–100 NOOP scale")
                     .font(.footnote)
                     .foregroundStyle(PerformanceTheme.secondaryText)
@@ -62,7 +62,7 @@ struct EffortDetailView: View {
                             GeometryReader { proxy in
                                 let fraction = min(max((day.strain ?? 0) / 100, 0), 1)
                                 RoundedRectangle(cornerRadius: 3)
-                                    .fill(StrandPalette.effortColor.opacity(day.strain == nil ? 0.12 : 0.85))
+                                    .fill(PerformanceScorePalette.effortBlue.opacity(day.strain == nil ? 0.12 : 0.85))
                                     .frame(height: max(3, proxy.size.height * fraction))
                                     .frame(maxHeight: .infinity, alignment: .bottom)
                             }
@@ -100,7 +100,7 @@ struct EffortDetailView: View {
                                 LocalizedStringKey(WorkoutSource.displaySport(workout.sport)),
                                 subtitle: LocalizedStringKey(workoutDuration(workout)),
                                 icon: "figure.run",
-                                tint: StrandPalette.effortColor
+                                tint: PerformanceScorePalette.effortBlue
                             ) {
                                 Text(workout.strain.map { UnitFormatter.effortDisplay($0, scale: scale) } ?? "–")
                                     .font(.system(.body, design: .rounded, weight: .bold))

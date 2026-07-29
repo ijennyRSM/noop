@@ -13,6 +13,22 @@ passed the visual-fidelity correction.
 The reference images are used only by the ephemeral Actions comparison
 artifact. They are not copied to an asset catalog or application bundle.
 
+## Sampled score colors
+
+Colors were measured from the supplied files rather than estimated from memory.
+Dominant saturated arc samples (small compression differences occur across pixels)
+were:
+
+- Rest in `13_official_home_three_rings.webp`: approximately `#80A6C0`;
+- Effort in the same image: approximately `#0295EB`;
+- Charge good in images 13–15: approximately `#18EE05`;
+- Charge moderate in `14_official_recovery_ranges.webp`: approximately `#FDE000`;
+- Charge poor in image 14: approximately `#FE0127`.
+
+`PerformanceScorePalette` owns those fixed presentation tokens plus the
+`#313A41` track and cool-cyan Coach chrome. It is deliberately independent of
+`ChartStyle`, the general `StrandPalette` theme, sleep stages, and HR zones.
+
 ## Measured navigation target
 
 The supplied navigation crop is 326 × 74 pixels. Its visible proportions are:
@@ -41,10 +57,14 @@ targets on compact iPhones.
 The final seeded capture is 1206 × 2622 pixels (402 × 874 points at 3×).
 The milestone uses the following explicit layout values:
 
-- Today score-ring diameter: approximately 121 pt on that 402 pt canvas,
-  responsive to the available width;
-- Today score-ring stroke: 7 pt;
-- spacing between the three score cells: 4 pt;
+- Today score-ring diameter: an explicit 92 pt;
+- Today score-ring stroke: 6 pt;
+- spacing between the three score cells: 10 pt;
+- Today score number: 34 pt black rounded, with an 18 pt percent sign;
+- detail score-ring diameter: an explicit 248 pt;
+- detail score-ring stroke: 9.5 pt;
+- detail integer score: 76 pt black rounded, with a 34 pt percent sign;
+- detail decimal Effort score: 68 pt black rounded, without a percent sign;
 - Today horizontal page gutter: 16 pt;
 - Today initial content inset below the safe area: 12 pt;
 - centred wordmark inset: 12 pt above and 4 pt below;
@@ -59,10 +79,11 @@ The milestone uses the following explicit layout values:
   (approximately 20 pt total);
 - detail-screen section spacing: 24 pt.
 
-Compared with the previous capture, this removes the oversized 66 pt floating
-Coach control, large glow, nested generic tiles, and Liquid metric vessels.
-The resulting geometry is deliberately denser while preserving practical
-iPhone touch targets.
+Compared with the rejected capture, the rings can no longer expand with their
+parent cards, the value dominates the ring centre, and Today/detail screens
+resolve color through one fixed semantic API. Rest is blue-gray, Effort is
+bright blue, and Charge uses inclusive discrete bands (0–33 poor, 34–66
+moderate, 67–100 good). Chart themes cannot recolor these primary scores.
 
 ## Before and after checks
 
@@ -93,7 +114,11 @@ The workflow captures exactly:
 - `charge.png`
 - `rest.png`
 - `effort.png`
+- `charge-poor-20.png`
+- `charge-moderate-50.png`
+- `charge-good-85.png`
 
-The comparison artifact contains `reference/`, `before/`, and `after/`
-directories plus this report. No later screen should be redesigned until these
-six simulator captures have been reviewed.
+The comparison artifact contains the supplied ring references, the rejected
+capture, corrected captures, and browsable `reference/`, `before/`, and
+`after/` directories plus this report. No later screen should be redesigned
+until this ring/color gate has been reviewed.

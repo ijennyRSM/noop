@@ -854,46 +854,33 @@ struct LiquidTodayView: View {
     }
 
     private var heroCard: some View {
-        HStack(alignment: .top, spacing: 4) {
-            HeroScoreCell(label: String(localized: "Rest"), score: restScore, tint: StrandPalette.restColor,
-                          animated: dataLoaded, onGuide: { guideSection = .rest })
+        HStack(alignment: .top, spacing: 10) {
+            todayScoreRing(
+                metric: .rest,
+                label: "Rest",
+                score: restScore,
+                guide: .rest,
+                source: heroSourceLabel
+            )
             // #543 carry: an unscored today shows the last scored night's REAL Charge (labelled as prior by
             // the state pill) rather than an empty vessel, matching the classic Today, the widget/watch/Live
             // Activity (`Repository.widgetAnchor`) and Android. Effort deliberately does NOT carry — it is
             // today's own accumulation, so yesterday's number would be a false statement, not a stale one.
-            HeroScoreCell(label: String(localized: "Charge"), score: chargeDisplay.pct,
-                          tint: chargeDisplay.pct.map(StrandPalette.recoveryColor) ?? StrandPalette.chargeColor,
-                          animated: dataLoaded, onGuide: { guideSection = .charge })
+            todayScoreRing(metric: .charge, label: "Charge", score: chargeDisplay.pct, guide: .charge)
             // #45: the hero Effort must honour the user's Effort scale like every other Effort read-out.
             // Show the value on the chosen scale (0–100 or WHOOP 0–21) with the matching vessel max, and
             // one decimal on the compressed 0–21 axis to match the app-wide `effortDisplay` convention
             // (12.6, not a rounded "13"); the 0–100 hero stays a whole number as before.
-            HeroScoreCell(label: String(localized: "Effort"),
-                          score: displayDay?.strain.map { UnitFormatter.effortValue($0, scale: effortScale) },
-                          tint: StrandPalette.effortColor, animated: dataLoaded,
-                          onGuide: { guideSection = .effort },
-                          maxValue: effortScale == .whoop ? 21 : 100,
-                          decimals: effortScale == .whoop ? 1 : 0)
-            // The hero's provenance badge — which device/import actually supplied the inputs, not just
-            // where NOOP ran the calculation. Upstream #778 fixed its accuracy (persisted alongside the
-            // score itself, so it can't drift) and restored its position, centred on the top border and
-            // aligned with the Rest vessel.
-            HeroScoreCell(label: String(localized: "Rest"), score: restScore, tint: StrandPalette.restColor,
-                          animated: dataLoaded, onGuide: { guideSection = .rest })
-                .overlay(alignment: .top) {
-                    if let sourceLabel = heroSourceLabel {
-                        SourceBadge("\(sourceLabel)", tint: StrandPalette.onDarkSecondary)
-                            // Match the badge's trailing edge to the Rest vessel and centre it on the card border.
-                            .fixedSize()
-                            .frame(width: HeroScoreCell.vesselDiameter, alignment: .trailing)
-                            .offset(y: -(NoopMetrics.space4 + NoopMetrics.sourceBadgeHeight / 2))
-                            .allowsHitTesting(false)
-                            .accessibilityLabel(Text("Source: \(sourceLabel)"))
-                    }
-                }
-                .frame(width: 0)
-                .opacity(0)
+            todayScoreRing(
+                metric: .effort,
+                label: "Effort",
+                score: displayDay?.strain.map { UnitFormatter.effortValue($0, scale: effortScale) },
+                guide: .effort,
+                maximum: effortScale == .whoop ? 21 : 100,
+                decimals: effortScale == .whoop ? 1 : 0
+            )
         }
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
         .padding(.horizontal, 0)
         // The ONE content surface that gets real iOS 26 glass (material below 26): it is the screen's
@@ -907,6 +894,37 @@ struct LiquidTodayView: View {
                     .strokeBorder(Color.clear, lineWidth: 0))
                 .opacity(cardOpacity)
         )
+    }
+
+    private func todayScoreRing(metric: PerformanceScoreMetric,
+                                label: LocalizedStringKey,
+                                score: Double?,
+                                guide: ScoreSection,
+                                maximum: Double? = nil,
+                                decimals: Int = 0,
+                                source: String? = nil) -> some View {
+        Button {
+            guideSection = guide
+        } label: {
+            MetricRing(
+                style: .compact,
+                metric: metric,
+                score: score,
+                label: label,
+                maximum: maximum,
+                decimals: decimals
+            )
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .top) {
+            if let source {
+                SourceBadge("\(source)", tint: StrandPalette.onDarkSecondary)
+                    .fixedSize()
+                    .offset(y: -(NoopMetrics.space4 + NoopMetrics.sourceBadgeHeight / 2))
+                    .allowsHitTesting(false)
+                    .accessibilityLabel(Text("Source: \(source)"))
+            }
+        }
     }
 
     // MARK: - Card-AI contexts (#R-explain): one small "ask coach" sparkle per "Your cards" row, built

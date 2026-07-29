@@ -228,6 +228,15 @@ jobs:
           printf '%s' "$NAV_REFERENCE_B64" | /usr/bin/base64 -D \
             > build/visual-inputs/reference-pack/images/00_PRIORITY_latest_navigation_user_reference.png
 
+      - name: Test fixed performance score palette and ring geometry
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          swift test \
+            --package-path Packages/StrandDesign \
+            --filter PerformanceScorePaletteTests 2>&1 \
+            | tee build/performance-score-tests.log
+
       - name: Bootstrap model and build simulator app
         run: |
           set -euo pipefail
@@ -303,7 +312,18 @@ jobs:
             sleep 8
             xcrun simctl io "$UDID" screenshot "build/ui-previews/${screen}.png"
           done
-          expected="${#screens[@]}"
+          for score_spec in poor-20:20 moderate-50:50 good-85:85; do
+            name="${score_spec%%:*}"
+            score="${score_spec##*:}"
+            xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
+            xcrun simctl launch "$UDID" "$bundle_id" \
+              --demo-seed --demo-hour 14 --demo-screen charge \
+              --demo-charge-score "$score" \
+              -AppleLanguages "(th)" -AppleLocale th_TH
+            sleep 8
+            xcrun simctl io "$UDID" screenshot "build/ui-previews/charge-${name}.png"
+          done
+          expected="$((${#screens[@]} + 3))"
           actual="$(find build/ui-previews -maxdepth 1 -type f -name '*.png' | wc -l | tr -d ' ')"
           [[ "$actual" == "$expected" ]] || {
             echo "::error::Expected $expected screenshots; captured $actual"
@@ -319,9 +339,19 @@ jobs:
             "$comparison/reference/00-navigation.png"
           cp build/visual-inputs/reference-pack/images/01_google_play_current_01.jpg \
             "$comparison/reference/01-home.jpg"
+          cp build/visual-inputs/reference-pack/images/13_official_home_three_rings.webp \
+            "$comparison/reference/13-three-rings.webp"
+          cp build/visual-inputs/reference-pack/images/14_official_recovery_ranges.webp \
+            "$comparison/reference/14-charge-bands.webp"
+          cp build/visual-inputs/reference-pack/images/15_official_recovery_detail.webp \
+            "$comparison/reference/15-detail-ring.webp"
           for screen in root today todayscrolled charge rest effort; do
             cp "build/visual-inputs/before/${screen}.png" "$comparison/before/${screen}.png"
             cp "build/ui-previews/${screen}.png" "$comparison/after/${screen}.png"
+          done
+          for name in poor-20 moderate-50 good-85; do
+            cp "build/ui-previews/charge-${name}.png" \
+              "$comparison/after/charge-${name}.png"
           done
           # Keep the browsable reference/before/after directories, and also publish the exact
           # flat filenames required by the Milestone 1 visual-review contract.
@@ -338,14 +368,21 @@ jobs:
             cp "$comparison/before/${screen}.png" "$comparison/${screen}-before.png"
             cp "$comparison/after/${screen}.png" "$comparison/${screen}-after.png"
           done
+          cp "$comparison/reference/14-charge-bands.webp" "$comparison/charge-bands-reference.webp"
+          cp "$comparison/before/charge.png" "$comparison/charge-bands-rejected.png"
+          for name in poor-20 moderate-50 good-85; do
+            cp "$comparison/after/charge-${name}.png" \
+              "$comparison/charge-${name}-corrected.png"
+          done
           cp docs/ui-redesign/VISUAL_FIDELITY_MILESTONE_1.md "$comparison/MEASURED_DIFFERENCES.md"
           {
             echo ""
             echo "## Build identity"
             echo ""
             echo "- SHA: \`${GITHUB_SHA}\`"
-            echo "- Reference priority: 00 navigation, then 01 home"
+            echo "- Ring references: 13 three rings, 14 charge bands, 15 detail ring"
             echo "- Captured screens: root, today, todayscrolled, charge, rest, effort"
+            echo "- Charge band captures: 20 (poor), 50 (moderate), 85 (good)"
           } >> "$comparison/MEASURED_DIFFERENCES.md"
 
       - name: Upload Thai Milestone 1 preview set
@@ -372,5 +409,6 @@ jobs:
           path: |
             build/preview-xcodebuild.log
             build/performance-navigation-tests.log
+            build/performance-score-tests.log
           if-no-files-found: ignore
           retention-days: 14
