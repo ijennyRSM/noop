@@ -26,6 +26,7 @@ enum TodaySection: String, CaseIterable, Identifiable {
     case synthesis
     case keyMetrics
     case workouts
+    case strengthStatus
     case heartRate
     case recoveryVitals
     case yourCards
@@ -43,6 +44,7 @@ enum TodaySection: String, CaseIterable, Identifiable {
         case .synthesis:      return String(localized: "Synthesis")
         case .keyMetrics:     return String(localized: "Key Metrics")
         case .workouts:       return String(localized: "Workouts")
+        case .strengthStatus: return String(localized: "Strength status")
         case .heartRate:      return String(localized: "Heart Rate")
         case .recoveryVitals: return String(localized: "Recovery Vitals")
         case .yourCards:      return String(localized: "Your Cards")
@@ -55,7 +57,8 @@ enum TodaySection: String, CaseIterable, Identifiable {
     /// widget (#656) sits above the data-sources card, which is last. Coach leads the list — the same spot
     /// its full-width banner has always held on classic Today, before the hero scores.
     static let defaultOrder: [TodaySection] = [
-        .coach, .hero, .liveSession, .synthesis, .keyMetrics, .workouts, .heartRate, .recoveryVitals,
+        .coach, .hero, .liveSession, .synthesis, .keyMetrics, .workouts, .strengthStatus,
+        .heartRate, .recoveryVitals,
         .yourCards, .journal, .dataSources,
     ]
 

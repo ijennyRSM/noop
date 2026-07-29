@@ -63,8 +63,7 @@ private final class MuscleBodyMapModel: ObservableObject {
             recovery: .init(
                 sleepHours: repository.today?.totalSleepMin.map { $0 / 60 },
                 charge: repository.today?.recovery
-            ),
-            checkIn: LocalCoachPreferences.loadCheckIn()
+            )
         )
         let sessions = (try? await store.strengthSessions(deviceId: repository.deviceId, limit: 30)) ?? []
 

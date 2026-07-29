@@ -396,6 +396,12 @@ enum DemoScreens {
         case "explore":  return AnyView(MetricExplorerView())
         case "compare":  return AnyView(CompareView())
         case "settings": return AnyView(SettingsView())
+        case "strength": return AnyView(StrengthHistoryView())
+        case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
+        case "bodymap": return AnyView(BodyMapDemoHost())
+        case "coach": return AnyView(CoachView())
+        case "goalplan": return AnyView(CoachGoalJourneyScreen())
+        case "privacy": return AnyView(CoachSettingsView())
         case "chargebreakdown": return AnyView(ChargeBreakdownDemoHost())
         case "devices":  return AnyView(DevicesView())
         case "devicescatalog": return AnyView(DeviceCardCatalog())
@@ -427,6 +433,34 @@ enum DemoScreens {
 private struct AddWizardDemoHost: View {
     @EnvironmentObject var live: LiveState
     var body: some View { AddDeviceWizard(live: live, onClose: {}) }
+}
+
+private struct StrengthLoggerDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+
+    var body: some View {
+        ScrollView {
+            StrengthWorkoutLogger(viewModel: viewModel)
+                .padding()
+        }
+        .task {
+            await viewModel.load(
+                repository: repository,
+                deviceId: repository.deviceId,
+                startedAt: Date().addingTimeInterval(-38 * 60),
+                bodyweightKg: ProfileStore().weightKg)
+        }
+    }
+}
+
+private struct BodyMapDemoHost: View {
+    var body: some View {
+        ScrollView {
+            MuscleBodyMapCard()
+                .padding()
+        }
+    }
 }
 
 /// DEBUG-only host so `--demo-screen ouraonboarding` renders the Add-device wizard deep-linked to the
