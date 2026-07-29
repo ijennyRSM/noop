@@ -226,9 +226,10 @@ final class StrengthStoreTests: XCTestCase {
 
         let daily = try await store.dailyMuscleLoads(
             deviceId: "test", from: "2023-11-14", to: "2023-11-14")
+        let residual = try await store.latestResidualLoads(deviceId: "test")
         XCTAssertEqual(daily.first?.rawStimulus, 900)
         XCTAssertEqual(daily.first?.normalizedLoad, 58)
-        XCTAssertTrue(try await store.latestResidualLoads(deviceId: "test").isEmpty)
+        XCTAssertTrue(residual.isEmpty)
     }
 
     func testDerivedCommitRelabelsDetectedWorkoutAtomically() async throws {
@@ -304,12 +305,16 @@ final class StrengthStoreTests: XCTestCase {
         try await store.saveSorenessCheckIn(soreness)
         try await store.savePainCheckIn(pain)
 
-        XCTAssertEqual(try await store.latestSorenessCheckIn(deviceId: "test"), soreness)
-        XCTAssertEqual(try await store.latestPainCheckIn(deviceId: "test"), pain)
+        let storedSoreness = try await store.latestSorenessCheckIn(deviceId: "test")
+        let storedPain = try await store.latestPainCheckIn(deviceId: "test")
+        XCTAssertEqual(storedSoreness, soreness)
+        XCTAssertEqual(storedPain, pain)
 
         try await store.deleteSorenessCheckIn(id: soreness.id)
-        XCTAssertNil(try await store.latestSorenessCheckIn(deviceId: "test"))
-        XCTAssertEqual(try await store.latestPainCheckIn(deviceId: "test"), pain,
+        let deletedSoreness = try await store.latestSorenessCheckIn(deviceId: "test")
+        let retainedPain = try await store.latestPainCheckIn(deviceId: "test")
+        XCTAssertNil(deletedSoreness)
+        XCTAssertEqual(retainedPain, pain,
                        "deleting soreness must not delete or rewrite pain")
     }
 
@@ -340,7 +345,8 @@ final class StrengthStoreTests: XCTestCase {
             canonicalActivityId: "strength_training",
             createdAt: 1_700_000_000, completedAt: 1_700_003_000
         ))
-        let linked = try XCTUnwrap(try await store.strengthPlanLink(proposalId: proposal))
+        let storedLink = try await store.strengthPlanLink(proposalId: proposal)
+        let linked = try XCTUnwrap(storedLink)
         XCTAssertEqual(linked.sessionId, session.id)
         XCTAssertEqual(linked.completedAt, 1_700_003_000)
     }
