@@ -669,11 +669,16 @@ struct StrengthWorkoutLogger: View {
         if let end = viewModel.restEndsAt {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 let remaining = max(0, Int(end.timeIntervalSince(context.date)))
+                let timerValue = String(
+                    format: "%d:%02d",
+                    remaining / 60,
+                    remaining % 60
+                )
                 HStack {
                     Image(systemName: "timer")
                     Text(remaining > 0
                          ? String(localized: "Rest") + " "
-                            + "\(remaining / 60):\(String(format: "%02d", remaining % 60))"
+                            + timerValue
                          : String(localized: "Rest complete"))
                         .monospacedDigit()
                     Spacer()
@@ -709,7 +714,7 @@ struct StrengthWorkoutLogger: View {
         switch value {
         case 75...: StrandPalette.metricRose
         case 50..<75: StrandPalette.statusWarning
-        case 25..<50: StrandPalette.sleepColor
+        case 25..<50: StrandPalette.sleepLight
         default: StrandPalette.accent
         }
     }

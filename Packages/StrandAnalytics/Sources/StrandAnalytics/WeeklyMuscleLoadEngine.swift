@@ -27,7 +27,7 @@ public enum WeeklyMuscleLoadEngine {
 
     public static func aggregate(rows: [MuscleTrainingLoadRecord],
                                  now: Date,
-                                 calendar: Calendar = .current,
+                                 calendar: Calendar = CanonicalDay.calendar(),
                                  coldStartReference: Double = 1_800) -> [Output] {
         let today = calendar.startOfDay(for: now)
         guard let currentStart = calendar.date(byAdding: .day, value: -6, to: today),
