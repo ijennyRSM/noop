@@ -133,15 +133,19 @@ struct SleepView: View {
             Group {
                 if let resolved {
                     // Each top-level section fades + rises in sequence on first appear (Reduce-Motion safe).
+                    // Order (redesign §6): score hero, then the sleep balance directly under it (the most
+                    // important number), the stage breakdown, night-detail tiles, stage comparison and the
+                    // 30-night trend. Sleep marks / naps are an INPUT, not a read-out, so they sink to the
+                    // bottom (they were second from the top).
                     VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                         if let sleepUndo { sleepUndoBanner(sleepUndo) }
                         restHero(resolved).staggeredAppear(index: 0)
-                        SleepMarkCard().staggeredAppear(index: 1)
+                        sleepDebtLedger(resolved).staggeredAppear(index: 1)
                         hero(resolved).staggeredAppear(index: 2)
                         metricGrid(resolved).staggeredAppear(index: 3)
-                        sleepDebtLedger(resolved).staggeredAppear(index: 4)
-                        stagesVsTypical(resolved).staggeredAppear(index: 5)
-                        durationTrend(resolved).staggeredAppear(index: 6)
+                        stagesVsTypical(resolved).staggeredAppear(index: 4)
+                        durationTrend(resolved).staggeredAppear(index: 5)
+                        SleepMarkCard().staggeredAppear(index: 6)
                     }
                 } else {
                     emptyState
@@ -377,7 +381,9 @@ struct SleepView: View {
         let night = heroNight(model)
         let score = performanceScore(for: night)
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep performance", overline: nightRelativeLabel, trailing: String(localized: "Rest"))
+            // The sleep score is named ONCE here ("Sleep performance"); the old trailing "Rest" chip and the
+            // duplicate "Rest" night-detail tile showed the same number under a second name (redesign bug §1).
+            SectionHeader("Sleep performance", overline: nightRelativeLabel)
             // A subtle night atmosphere sits behind the sleep hero ONLY (the Rest world's whisper:
             // faint indigo wash + crescent moon over the near-black canvas, no glow), clipped to the
             // card. Replaces the now-flat ScenicHeroBackground here.
@@ -429,7 +435,7 @@ struct SleepView: View {
                     .padding(.vertical, NoopMetrics.space5)
                     .accessibilityElement(children: .combine)
                 }
-                SourceBadge(score != nil ? heroSource(for: night) : "On-device", tint: StrandPalette.restColor)
+                SourceBadge(score != nil ? heroSource(for: night) : (repo.activeDeviceIsOura ? "Oura" : "On-device"), tint: StrandPalette.restColor)
             }
             .padding(NoopMetrics.cardInnerPadding + NoopMetrics.space1)
             .frame(maxWidth: .infinity)
@@ -448,13 +454,14 @@ struct SleepView: View {
         }
     }
 
-    /// Whether a SPECIFIC night's sleep-performance score is WHOOP's own imported figure or NOOP's
-    /// on-device approximation — so the hero is honest about provenance, like Today's badges. Keyed
-    /// by the night's wake-day (matching `performanceScore(for:)`) so a navigated night's badge
-    /// tracks ITS OWN score's provenance, not last night's. LocalizedStringKey to match `SourceBadge`.
+    /// Whether a SPECIFIC night's sleep-performance score is WHOOP's own imported figure, an Oura
+    /// ring-provided figure, or NOOP's on-device approximation — so the hero is honest about provenance,
+    /// like Today's badges. Keyed by the night's wake-day (matching `performanceScore(for:)`) so a
+    /// navigated night's badge tracks ITS OWN score's provenance, not last night's.
     private func heroSource(for night: Night) -> LocalizedStringKey {
         let wakeDay = Repository.localDayKey(Date(timeIntervalSince1970: TimeInterval(night.session.endTs)))
-        return repo.importedSleep[wakeDay]?.performancePct != nil ? "Whoop" : "On-device"
+        if repo.importedSleep[wakeDay]?.performancePct != nil { return "Whoop" }
+        return repo.activeDeviceIsOura ? "Oura" : "On-device"
     }
 
     // MARK: - Provenance for the displayed night (COMPONENT 4, spec 2026-06-20)
@@ -468,7 +475,13 @@ struct SleepView: View {
     /// carries no sleep into `importedSleep`, so the sleep merge winner is only ever Whoop vs on-device. (C4)
     private func nightSource(_ night: Night) -> String {
         let wakeDay = Repository.localDayKey(Date(timeIntervalSince1970: TimeInterval(night.session.endTs)))
-        return repo.importedSleep[wakeDay] != nil ? String(localized: "Whoop") : String(localized: "On-device")
+        if repo.importedSleep[wakeDay] != nil { return String(localized: "Whoop") }
+        // An Oura ring PROVIDES the night's stages (its own SleepNet hypnogram, banked as the imported
+        // session that wins the merge), so name it "Oura" — not the generic "On-device" that implies a
+        // NOOP computation. WHOOP import still wins above; only a night surfaced under a live Oura strap
+        // reaches here as "Oura".
+        if repo.activeDeviceIsOura { return String(localized: "Oura") }
+        return String(localized: "On-device")
     }
 
     // MARK: - 0b. SLEEP MARKS — tap to log "going to sleep" / "I'm awake" (#461, Phase 1)
@@ -666,8 +679,14 @@ struct SleepView: View {
     private func stageCard(_ night: Night, intervals: [SleepInterval]) -> some View {
         let s = night.stages
         let isPersisted = (night.realSegments?.count ?? 0) >= 2
+        // An Oura night's stages are the ring's RAW on-device SleepNet classification (decoded off the 0x49
+        // phase stream), NOT a NOOP approximation — so it gets its own honest caption instead of the
+        // "stages approximate (on-device)" one that describes NOOP's own sparse-motion staging.
+        let stageCaption = repo.activeDeviceIsOura
+            ? String(localized: "raw on-device stages")
+            : String(localized: "stages approximate (on-device)")
         let subtitle = isPersisted
-            ? String(localized: "\(durationText(night.timeInBed)) in bed · \(efficiencyText(night)) efficiency · stages approximate (on-device)")
+            ? String(localized: "\(durationText(night.timeInBed)) in bed · \(efficiencyText(night)) efficiency · \(stageCaption)")
             : String(localized: "\(durationText(night.timeInBed)) in bed · \(efficiencyText(night)) efficiency")
         VStack(alignment: .leading, spacing: NoopMetrics.space2) {
             if intervals.count >= 2 {
@@ -710,6 +729,12 @@ struct SleepView: View {
             // SAME engine call the daily pass uses — so the badge can never disagree with the score.
             if stageStagingIsLowConfidence(night) {
                 stageLowConfidenceNote
+            }
+            // For an Oura-provided night, say plainly that this split is the ring's RAW on-device
+            // classification — so the larger Awake / smaller Deep+REM here isn't misread as the polished
+            // numbers the Oura app shows for the same night (the app post-processes the same stream).
+            if repo.activeDeviceIsOura {
+                ouraRawStagesNote
             }
         }
         // WHOOP top-chart data (ryanAtriumAi #988): 1-min sleeping-HR buckets for THIS night, reloaded
@@ -804,6 +829,23 @@ struct SleepView: View {
         .padding(.horizontal, 2)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Low confidence staging. This night scored high efficiency but very little deep or REM, more likely an estimate miss than a real restorative shortfall.")
+    }
+
+    /// Honest caveat for an Oura-provided night: the stage split shown here is the ring's RAW on-device
+    /// SleepNet classification, read straight off the BLE phase stream — NOT the adjusted stages the Oura
+    /// app displays. The app post-processes the same night, so its Deep/REM run higher and its Awake lower;
+    /// cross-checks put our Awake well above the app's. Surfaced so the breakdown isn't taken for the app's.
+    private var ouraRawStagesNote: some View {
+        HStack(alignment: .top, spacing: 8) {
+            SourceBadge("Raw on-device stages", tint: StrandPalette.restColor)
+            Text("This split is the ring's raw on-device classification read over Bluetooth, not the adjusted stages the Oura app shows. Expect more Awake and less Deep/REM here than in the Oura app for the same night.")
+                .font(StrandFont.footnote)
+                .foregroundStyle(StrandPalette.textTertiary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Raw on-device stages. This split is the ring's raw on-device classification read over Bluetooth, not the adjusted stages the Oura app shows. Expect more awake and less deep or REM here than in the Oura app for the same night.")
     }
 
     /// The night's clock window — when you fell asleep and when you woke — as its own clearly
@@ -1430,9 +1472,9 @@ struct SleepView: View {
     @ViewBuilder
     private func metricGrid(_ model: SleepModel) -> some View {
         // Per-tile latest value + history series (for the sparkline) + typical mean.
-        // All seven series are computed ONCE in the model build (each is a full pass over
-        // repo.days/repo.sleeps) — here we only read the memoized results.
-        let perf  = model.performance
+        // All series are computed ONCE in the model build (each is a full pass over
+        // repo.days/repo.sleeps) — here we only read the memoized results. (Sleep performance is NOT a
+        // tile here — it's the hero; see redesign bug §1.)
         let eff   = model.efficiency
         let cons  = model.consistency
         let need  = model.hoursVsNeeded
@@ -1442,15 +1484,24 @@ struct SleepView: View {
 
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
             SectionHeader("Night detail", overline: "Metrics", trailing: String(localized: "vs typical"))
+
+            #if os(iOS)
+            // On iOS, Sleep Debt is the actionable summary for the section, so it leads at the
+            // full two-column width. The remaining six peer metrics keep the established 2 × 3 grid.
+            StatTile(
+                label: "Sleep Debt",
+                value: debt.latest.map { durationText($0) } ?? "—",
+                caption: debtCaption(debt.latest),
+                accent: debtColor(debt.latest),
+                sparkline: spark(debt.series),
+                sparkColor: StrandPalette.metricRose)
+                .frame(maxWidth: .infinity)
+            #endif
+
             LazyVGrid(columns: tileColumns, alignment: .leading, spacing: NoopMetrics.gap) {
 
-                StatTile(
-                    label: "Rest",
-                    value: pctValue(perf.latest),
-                    caption: vsTypical(perf.latest, perf.typical, suffix: "%"),
-                    accent: perf.latest.map { StrandPalette.recoveryColor($0) } ?? StrandPalette.textPrimary,
-                    sparkline: spark(perf.series),
-                    sparkColor: StrandPalette.restColor)
+                // No "Rest" tile here — that repeated the hero's Sleep-performance score (redesign bug §1,
+                // "one value, one place"). The score lives in the hero above; the tiles are its components.
 
                 StatTile(
                     label: "Efficiency",
@@ -1492,14 +1543,24 @@ struct SleepView: View {
                     sparkline: spark(resp.series),
                     sparkColor: StrandPalette.metricPurple)
 
+                // Last night's shortfall vs need — named distinctly from the 14-night running "Sleep
+                // balance" ledger below, which both used to be called "sleep debt" (redesign bug §1).
+                // Kept on ALL platforms (the fork's redesigned iOS layout uses it); upstream's #743
+                // wrapped this in `#if !os(iOS)` for its own compact layout, which this fork doesn't adopt.
                 StatTile(
-                    label: "Sleep Debt",
+                    label: "Last night's deficit",
                     value: debt.latest.map { durationText($0) } ?? "—",
                     caption: debtCaption(debt.latest),
                     accent: debtColor(debt.latest),
                     sparkline: spark(debt.series),
                     sparkColor: StrandPalette.metricRose)
             }
+            // A low Consistency shows red without saying why (redesign bug §1) — one line explains it, so
+            // a 0 % reads as "irregular bedtimes", not a broken number.
+            Text("Consistency compares your recent bedtimes — a wide spread scores low, even after a good night.")
+                .font(StrandFont.footnote)
+                .foregroundStyle(StrandPalette.textTertiary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -1514,7 +1575,7 @@ struct SleepView: View {
     private func sleepDebtLedger(_ model: SleepModel) -> some View {
         let ledger = model.sleepDebtLedger
         VStack(alignment: .leading, spacing: NoopMetrics.gap) {
-            SectionHeader("Sleep-debt ledger", overline: "Last 14 nights",
+            SectionHeader("Sleep balance", overline: "Last 14 nights",
                           trailing: String(localized: "running balance"))
             NoopCard(tint: StrandPalette.restColor) {
                 if ledger.nightCount == 0 {
@@ -1856,9 +1917,13 @@ struct SleepView: View {
     /// the analytics rollup; nil keeps the cold-start overnight-band bonus. (#525 / #547 / #561)
     static func mainNightSession(_ sessions: [CachedSleepSession],
                                  habitualMidsleepSec: Int? = nil) -> CachedSleepSession? {
-        SleepStageTotals.mainNightIndex(
-            sessions.map { SleepStageTotals.NightBlock(start: $0.effectiveStartTs, end: $0.endTs) },
-            offsetSec: tzOffsetSec, habitualMidsleepSec: habitualMidsleepSec).map { sessions[$0] }
+        let result = SleepPeriodClassifier.classify(
+            sessions.map { .init(start: $0.effectiveStartTs, end: $0.endTs) },
+            offsetSec: tzOffsetSec,
+            habitualMidsleepSec: habitualMidsleepSec
+        )
+        guard let index = result.winningIndex else { return nil }
+        return sessions[index]
     }
 
     /// The day's MAIN-night GROUP — the winning block PLUS any adjacent fragments bridged into it (a wake
@@ -1870,10 +1935,12 @@ struct SleepView: View {
     /// identical. Returns ascending by effective onset. (#561 / #555)
     static func mainNightGroup(_ sessions: [CachedSleepSession],
                                habitualMidsleepSec: Int? = nil) -> [CachedSleepSession] {
-        guard let idx = SleepStageTotals.mainNightGroupIndices(
-            sessions.map { SleepStageTotals.NightBlock(start: $0.effectiveStartTs, end: $0.endTs) },
-            offsetSec: tzOffsetSec, habitualMidsleepSec: habitualMidsleepSec) else { return [] }
-        return idx.map { sessions[$0] }.sorted { $0.effectiveStartTs < $1.effectiveStartTs }
+        let result = SleepPeriodClassifier.classify(
+            sessions.map { .init(start: $0.effectiveStartTs, end: $0.endTs) },
+            offsetSec: tzOffsetSec,
+            habitualMidsleepSec: habitualMidsleepSec
+        )
+        return result.mainIndices.map { sessions[$0] }
     }
 
     /// The day's main-night bridged SPAN (onset → wake), the same window `mainNightGroup` bridges into
@@ -2265,13 +2332,17 @@ struct SleepView: View {
         metric { $0.respRateBpm }
     }
 
-    /// Sleep debt (minutes): the imported sleep_debt_min when the export carried it; else
-    /// the APPROXIMATE per-night need − asleep, floored at 0 (no "credit").
+    /// Sleep debt (minutes): the imported sleep_debt_min when the export carried it, except a manually
+    /// corrected night must use its rebuilt sleep duration; otherwise the APPROXIMATE per-night need −
+    /// asleep, floored at 0 (no "credit").
     private var sleepDebtSeries: Metric {
         let imported = repo.importedSleep
         let need = sleepNeedMin
+        let editedDays = Repository.userEditedDays(repo.sleeps)
         let series = repo.days.compactMap { d -> Double? in
-            if let debt = imported[d.day]?.debtMin { return debt }   // minutes, export-verbatim
+            if !editedDays.contains(d.day), let debt = imported[d.day]?.debtMin {
+                return debt   // minutes, export-verbatim
+            }
             guard let asleep = d.totalSleepMin, asleep > 0, need > 0 else { return nil }
             return Swift.max(0, need - asleep)   // APPROXIMATE fallback
         }

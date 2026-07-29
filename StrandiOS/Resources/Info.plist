@@ -6,12 +6,13 @@
 	<string>$(APP_GROUP_ID)</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.noopapp.noop.debugexport</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).debugexport</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).semanticmemory</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>NOOP</string>
+	<string>NOOP AI</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -80,6 +81,7 @@
 		<string>bluetooth-central</string>
 		<string>location</string>
 		<string>fetch</string>
+		<string>processing</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>

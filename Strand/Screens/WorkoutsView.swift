@@ -32,6 +32,7 @@ struct WorkoutsView: View {
     @EnvironmentObject var model: AppModel
     @State private var showLiveWorkout = false
     @State private var showStartSport = false
+    @State private var showStrengthHistory = false
 
     // Imperial/Metric display preference (D#103). Workout distances are stored in metres; the toggle
     // re-labels them to miles/yards. Display-only — nothing on disk changes.
@@ -77,6 +78,11 @@ struct WorkoutsView: View {
     /// The read-only detail screen target — a tapped session. Drives a `.sheet(item:)` separate from
     /// the add/edit sheet so a primary tap (detail) and the ••• menu (edit) never collide. (#410)
     @State private var detail: WorkoutDetailTarget?
+
+    /// A specific workout's natural key (`selectionKey`) to auto-open on arrival, threaded from
+    /// `TabRoute.workoutDetail` — Today's "Latest Workouts" tiles push straight to one session instead
+    /// of landing on the bare list. Consumed (and cleared) the first time `allRows` loads.
+    @State private var pendingDetailKey: String?
 
     /// A transient one-line note shown after a manual save / relabel for a sport that already has a
     /// solid/building ActivityCost entry — "Sessions like this usually …" (#439). Auto-clears.
@@ -126,12 +132,13 @@ struct WorkoutsView: View {
         let id = UUID()
     }
 
-    init(previewRows: [WorkoutRow]? = nil) {
+    init(previewRows: [WorkoutRow]? = nil, openDetailKey: String? = nil) {
         _allRows = State(initialValue: previewRows ?? [])
         _loaded = State(initialValue: previewRows != nil)
         // Preview-seeded rows are treated as the full history (nil window) so the preview path never pages.
         _loadedWindowDays = State(initialValue: previewRows != nil ? nil : Self.firstPaintWindowDays)
         usesPreviewRows = previewRows != nil
+        _pendingDetailKey = State(initialValue: openDetailKey)
     }
 
     var body: some View {
@@ -151,7 +158,11 @@ struct WorkoutsView: View {
                         ? "No workouts yet. They come from your WHOOP and Apple Health history. Import in Data Sources to bring them in, or add one you tracked elsewhere."
                         : "Loading your sessions…")
                     if loaded {
-                        HStack(spacing: NoopMetrics.rowSpacing) { startLiveWorkoutButton; addWorkoutButton }
+                        HStack(spacing: NoopMetrics.rowSpacing) {
+                            startLiveWorkoutButton
+                            strengthHistoryButton
+                            addWorkoutButton
+                        }
                     }
                 }
             } else {
@@ -166,7 +177,11 @@ struct WorkoutsView: View {
                 let groups = sportGroups(from: windowRows)
                 let zonesSummary = WorkoutZones.summary(from: windowRows)
 
-                HStack { startLiveWorkoutButton; Spacer() }
+                HStack {
+                    startLiveWorkoutButton
+                    strengthHistoryButton
+                    Spacer()
+                }
                 rangeBar(rows: windowRows, effectiveRange: resolved)
                 if let postLogNote { postLogBanner(postLogNote) }
                 effortHero(rows: windowRows, effectiveRange: resolved, groups: groups)
@@ -189,6 +204,10 @@ struct WorkoutsView: View {
             if !wasLoaded {
                 range = defaultRange(for: r)
                 seededInitialRange = true
+            }
+            if let key = pendingDetailKey {
+                if let row = r.first(where: { selectionKey($0) == key }) { openDetail(row) }
+                pendingDetailKey = nil
             }
         }
         .onAppear {
@@ -231,6 +250,7 @@ struct WorkoutsView: View {
             NavigationStack {
                 WorkoutDetailView(row: target.row)
                     .environmentObject(repo)
+                    .environmentObject(model)
             }
             #if os(iOS)
             .noopSheetPresentation(largeFirst: true)
@@ -253,6 +273,12 @@ struct WorkoutsView: View {
                 model.startWorkout(sport: name)
                 showLiveWorkout = true
             }
+        }
+        .sheet(isPresented: $showStrengthHistory) {
+            StrengthHistoryView()
+                .environmentObject(repo)
+                .environmentObject(model)
+                .strengthSheetPresentation(largeFirst: true)
         }
         // #64: name the merged session when every selected row is a bare detected bout (there's no sport
         // to inherit). Reuses the "Start a workout" named-sport picker.
@@ -304,7 +330,8 @@ struct WorkoutsView: View {
         for row in recoveryTrendRows {
             if Task.isCancelled { return }
             if let result = await repo.workoutHeartRateRecovery(
-                from: row.startTs, to: row.endTs, maxHR: Double(model.profile.hrMax)) {
+                from: row.startTs, to: row.endTs, maxHR: Double(model.profile.hrMax),
+                source: row.source) {
                 built.append(WorkoutRecoveryTrendPoint(startTs: row.startTs, result: result))
             }
         }
@@ -597,6 +624,13 @@ struct WorkoutsView: View {
             else { showLiveWorkout = true }
         }
         .accessibilityLabel(model.activeWorkout == nil ? "Start a workout" : "View the active workout")
+    }
+
+    private var strengthHistoryButton: some View {
+        NoopButton("Strength history", systemImage: "dumbbell", kind: .secondary) {
+            showStrengthHistory = true
+        }
+        .accessibilityLabel("Open strength training history")
     }
 
     /// The latest session start (anchors every window — windows are relative to the

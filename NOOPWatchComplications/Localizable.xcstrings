@@ -15,18 +15,6 @@
             "value": "%@ %lld"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ %lld"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ %lld"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -39,7 +27,37 @@
             "value": "%1$@ %2$lld"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
+        },
         "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
+        },
+        "zh-Hant": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ %lld"
@@ -61,18 +79,6 @@
             "value": "%@ calibrating"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ a calibrar"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ калибруется"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -85,10 +91,40 @@
             "value": "Étalonnage %1$@"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ a calibrar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ калибруется"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "กำลังปรับเทียบ %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ calibrating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ calibrating"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ calibrating"
           }
         }
       }
@@ -107,18 +143,6 @@
             "value": "%@ unavailable"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ indisponível"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ недоступно"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -131,10 +155,40 @@
             "value": "%1$@ non disponible"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ indisponível"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ недоступно"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ ไม่พร้อมใช้งาน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ unavailable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ unavailable"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ unavailable"
           }
         }
       }
@@ -173,7 +227,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Carga"
           }
         },
@@ -181,6 +235,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Заряд"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว"
           }
         },
         "zh-Hans": {
@@ -193,12 +253,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "能量"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พลังฟื้นตัว"
           }
         }
       }
@@ -217,18 +271,6 @@
             "value": "Charge %lld out of 100"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga %lld de 100"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд %lld из 100"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -241,10 +283,40 @@
             "value": "Chargez %1$lld sur 100"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregue %lld de 100"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд %lld из 100"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว %lld จาก 100"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld out of 100"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld out of 100"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld out of 100"
           }
         }
       }
@@ -263,18 +335,6 @@
             "value": "Charge %lld · %lld bpm%@"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga %lld · %lld bpm%@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд %lld · %lld уд/мин%@"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -287,10 +347,40 @@
             "value": "Charger %1$lld · %2$lld bpm%3$@"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregar %lld · %lld bpm%@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд %lld · %lld уд/мин%@"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว %lld · %lld bpm%@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld · %lld bpm%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld · %lld bpm%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld · %lld bpm%@"
           }
         }
       }
@@ -309,18 +399,6 @@
             "value": "Charge %lld%@"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga %lld%@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд %lld%@"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -333,10 +411,40 @@
             "value": "Charger %1$lld%2$@"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregar %lld%@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд %lld%@"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว %lld%@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld%@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge %lld%@"
           }
         }
       }
@@ -355,18 +463,6 @@
             "value": "Charge calibrating"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga a calibrar"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд калибруется"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -379,10 +475,40 @@
             "value": "Étalonnage des charges"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibração de carga"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд калибруется"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "การปรับเทียบพลังฟื้นตัว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating"
           }
         }
       }
@@ -401,18 +527,6 @@
             "value": "Charge calibrating, needs more data"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga a calibrar, precisa de mais dados"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд калибруется, нужно больше данных"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -425,10 +539,40 @@
             "value": "Étalonnage de charge, besoin de plus de données"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calibração de carga, necessita de mais dados"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд калибруется, нужно больше данных"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "การปรับเทียบพลังฟื้นตัว ต้องการข้อมูลเพิ่มเติม"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating, needs more data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating, needs more data"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge calibrating, needs more data"
           }
         }
       }
@@ -447,18 +591,6 @@
             "value": "Charge out of date, last synced %@. Open NOOP on iPhone."
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga desatualizada, última sincronização %@. Abre o NOOP no iPhone."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд устарел, последняя синхронизация %@. Откройте NOOP на iPhone."
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -471,10 +603,40 @@
             "value": "Charge hors date, dernière synchronisation %1$@. Ouvrez NOOP sur iPhone."
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga desatualizada, última sincronização %@. Abra o NOOP no iPhone."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд устарел, последняя синхронизация %@. Откройте NOOP на iPhone."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "ข้อมูลพลังฟื้นตัวเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge out of date, last synced %@. Open NOOP on iPhone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge out of date, last synced %@. Open NOOP on iPhone."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge out of date, last synced %@. Open NOOP on iPhone."
           }
         }
       }
@@ -493,18 +655,6 @@
             "value": "Charge stale · %@"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga desatualizada · %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд устарел · %@"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -517,10 +667,40 @@
             "value": "Intervalle de charge · %1$@"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga obsoleta · %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд устарел · %@"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัวข้อมูลเก่า · %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge stale · %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge stale · %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge stale · %@"
           }
         }
       }
@@ -539,18 +719,6 @@
             "value": "Charge unavailable"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga indisponível"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд недоступен"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -563,10 +731,40 @@
             "value": "Frais non disponibles"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga indisponível"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд недоступен"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "ไม่มีข้อมูลพลังฟื้นตัว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge unavailable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge unavailable"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge unavailable"
           }
         }
       }
@@ -585,18 +783,6 @@
             "value": "Charge · %@"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga · %@"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд · %@"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -609,10 +795,40 @@
             "value": "Charge · %1$@"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cobrar · %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд · %@"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว · %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · %@"
           }
         }
       }
@@ -631,18 +847,6 @@
             "value": "Charge · cal"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga · cal"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд · кал"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -655,10 +859,40 @@
             "value": "Charge"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregar · cal"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд · кал"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว · ปรับเทียบ"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · cal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · cal"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge · cal"
           }
         }
       }
@@ -677,18 +911,6 @@
             "value": "Charge –"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Carga –"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Заряд –"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -701,10 +923,40 @@
             "value": "Frais –"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cobrar -"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заряд –"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "พลังฟื้นตัว –"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge –"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge –"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge –"
           }
         }
       }
@@ -743,7 +995,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Esforço"
           }
         },
@@ -751,6 +1003,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Усилие"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
           }
         },
         "zh-Hans": {
@@ -764,11 +1022,63 @@
             "state": "translated",
             "value": "消耗"
           }
-        },
+        }
+      }
+    },
+    "NOOP": {
+      "localizations": {
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ภาระร่างกาย"
+            "value": "NOOP"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
           }
         }
       }
@@ -793,6 +1103,12 @@
             "value": "Carga de NOOP"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge NOOP"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -801,7 +1117,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Carga NOOP"
           }
         },
@@ -809,6 +1125,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP Заряд"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว NOOP"
           }
         },
         "zh-Hans": {
@@ -821,18 +1143,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP 能量"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Charge NOOP"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พลังฟื้นตัว NOOP"
           }
         }
       }
@@ -851,18 +1161,6 @@
             "value": "NOOP · open on iPhone"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "NOOP · abre no iPhone"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NOOP · откройте на iPhone"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -875,10 +1173,40 @@
             "value": "NOOP · ouvert sur iPhone"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · abrir no iPhone"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · откройте на iPhone"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "NOOP · เปิดบน iPhone"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · open on iPhone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · open on iPhone"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · open on iPhone"
           }
         }
       }
@@ -897,18 +1225,6 @@
             "value": "NOOP. %@, %@, %@."
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "NOOP. %@, %@, %@."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NOOP. %@, %@, %@."
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -921,10 +1237,40 @@
             "value": "- Oui. %1$@, %2$@, %3$@."
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NÃO. %@, %@, %@."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. %@, %@, %@."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "NOOP: %@, %@, %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. %@, %@, %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. %@, %@, %@."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. %@, %@, %@."
           }
         }
       }
@@ -943,18 +1289,6 @@
             "value": "NOOP. No data yet, open NOOP on your iPhone to sync."
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "NOOP. Sem dados ainda, abre o NOOP no iPhone para sincronizar."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NOOP. Данных пока нет, откройте NOOP на iPhone для синхронизации."
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -967,10 +1301,40 @@
             "value": "- Oui. Pas encore de données, ouvrez NOOP sur votre iPhone pour synchroniser."
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NÃO. Ainda não há dados, abra o NOOP no teu iPhone para tincronizar."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. Данных пока нет, откройте NOOP на iPhone для синхронизации."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "NOOP: ยังไม่มีข้อมูล โปรดเปิด NOOP บน iPhone เพื่อซิงค์"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. No data yet, open NOOP on your iPhone to sync."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. No data yet, open NOOP on your iPhone to sync."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. No data yet, open NOOP on your iPhone to sync."
           }
         }
       }
@@ -989,18 +1353,6 @@
             "value": "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh."
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "NOOP. Pontuações desatualizadas, última sincronização %@. Abre o NOOP no iPhone para atualizar."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NOOP. Показатели устарели, последняя синхронизация %@. Откройте NOOP на iPhone, чтобы обновить."
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1013,10 +1365,40 @@
             "value": "- Oui. Les scores sont dépassés, le dernier %1$@ synchronisé. Ouvrez NOOP sur iPhone pour vous rafraîchir."
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NÃO. Pontuações desatualizadas, última sincronização %@. Abra o NOOP no iPhone para atualizar."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. Показатели устарели, последняя синхронизация %@. Откройте NOOP на iPhone, чтобы обновить."
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "NOOP: คะแนนเป็นข้อมูลเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone เพื่อรีเฟรช"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP. Scores out of date, last synced %@. Open NOOP on iPhone to refresh."
           }
         }
       }
@@ -1035,18 +1417,6 @@
             "value": "No data, open NOOP on iPhone"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Sem dados, abre o NOOP no iPhone"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Нет данных, откройте NOOP на iPhone"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1059,10 +1429,40 @@
             "value": "Pas de données, ouvrir NOOP sur iPhone"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem dados, abra o NOOP no iPhone"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет данных, откройте NOOP на iPhone"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "ไม่มีข้อมูล เปิด NOOP บน iPhone"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data, open NOOP on iPhone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data, open NOOP on iPhone"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data, open NOOP on iPhone"
           }
         }
       }
@@ -1081,18 +1481,6 @@
             "value": "Open NOOP"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "Abrir NOOP"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Открыть NOOP"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1105,10 +1493,40 @@
             "value": "Ouvrir NOOP"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir NOOP"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть NOOP"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "เปิด NOOP"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open NOOP"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open NOOP"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open NOOP"
           }
         }
       }
@@ -1147,7 +1565,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Descanso"
           }
         },
@@ -1155,6 +1573,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Отдых"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การพักผ่อน"
           }
         },
         "zh-Hans": {
@@ -1167,12 +1591,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "休息"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การพักผ่อน"
           }
         }
       }
@@ -1197,6 +1615,12 @@
             "value": "Tu Carga (recuperación) en la esfera del reloj, con Esfuerzo y Descanso en la tarjeta rectangular."
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre charge (récupération) sur le cadran, avec l'effort et le repos dans la carte rectangulaire."
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1205,14 +1629,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "A tua Carga (recuperação) no mostrador, com Esforço e Descanso no cartão retangular."
+            "state": "translated",
+            "value": "A tua Carga (recuperação) no mostrador do relógio, com Esforço e Descanso no cartão rectangular."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Ваш заряд (восстановление) на циферблате, с показателями «Усилие» и «Отдых» в прямоугольной карточке."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัวของคุณ (การฟื้นตัว) บนหน้าปัดนาฬิกา พร้อมภาระร่างกายและการพักผ่อนในการ์ดสี่เหลี่ยม"
           }
         },
         "zh-Hans": {
@@ -1225,18 +1655,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "錶面上顯示你的能量（恢復），矩形卡片中則是消耗與休息。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Votre charge (récupération) sur le cadran, avec l'effort et le repos dans la carte rectangulaire."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พลังฟื้นตัวของคุณ (การฟื้นตัว) บนหน้าปัดนาฬิกา พร้อมภาระร่างกายและการพักผ่อนในการ์ดสี่เหลี่ยม"
           }
         }
       }
@@ -1255,18 +1673,6 @@
             "value": "a while ago"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "há algum tempo"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "некоторое время назад"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1279,10 +1685,40 @@
             "value": "Il y a longtemps"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há um tempo atrás"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "некоторое время назад"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "สักพักแล้ว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a while ago"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a while ago"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a while ago"
           }
         }
       }
@@ -1301,18 +1737,6 @@
             "value": "cal"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "cal"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "кал"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1325,10 +1749,40 @@
             "value": "cal"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "кал"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "ปรับเทียบ"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
           }
         }
       }
@@ -1347,18 +1801,6 @@
             "value": "old"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "desatualizado"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "устарело"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1371,10 +1813,40 @@
             "value": "vieux"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "old"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "устарело"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "เก่า"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "old"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "old"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "old"
           }
         }
       }
@@ -1393,18 +1865,6 @@
             "value": "open iPhone"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "abrir iPhone"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "открыть iPhone"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1417,10 +1877,40 @@
             "value": "Ouvrir un iPhone"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "abra o iPhone"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "открыть iPhone"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "เปิดบน iPhone"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "open iPhone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "open iPhone"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "open iPhone"
           }
         }
       }
@@ -1439,18 +1929,6 @@
             "value": "stale"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "desatualizado"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "устарело"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -1463,10 +1941,40 @@
             "value": "Stable"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "устарело"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "ข้อมูลเก่า"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stale"
           }
         }
       }

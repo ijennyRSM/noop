@@ -474,6 +474,21 @@ Schema lives in `Packages/WhoopStore/Sources/WhoopStore/Database.swift` as a **v
   add metric caches (`sleepSession`, `dailyMetric`, `metricSeries`), cursors, and more. Follow the
   same shape and naming.
 - Add a `MigrationTests` case proving the migration applies cleanly on top of the prior version.
+- **Update `schema_oracle.json` in the same PR.** Room (Android) and GRDB (iOS) must agree on the
+  resulting schema, and that agreement is pinned by a shared fixture committed in two byte-identical
+  copies (`Packages/WhoopStore/Tests/WhoopStoreTests/Resources/` and `android/app/src/test/resources/`).
+  `SchemaOracleTests.swift` compares it to GRDB's `PRAGMA table_info`; `SchemaOracleTest.kt` compares it
+  to the schema Room's KSP processor exports. Both fail on a column added to one side only, a column
+  ORDER difference, a type/nullability/DEFAULT change, a primary-key change, an index change, or a new
+  unpinned table — so a migration cannot land until the twin lands with it. A divergence that is
+  deliberate must be written into the fixture's `divergenceReasons` with the reason and what closing it
+  would cost; the suites also fail on a ledger entry that has stopped being true, so the list can only
+  shrink on purpose. Extend the oracle rather than adding a parallel mechanism (same idiom as
+  `decoder_oracle.json`).
+- **GRDB migration identifiers are `v<N>[-slug]`, strictly sequential.** GRDB keys migrations by NAME
+  and applies them in registration order, so two open PRs that both add a `v31` produce two migrations
+  claiming one number (and an exact name collision makes GRDB silently skip the second body). The
+  oracle test asserts the numbers run 1…N with no gaps or repeats: renumber when you rebase.
 
 ---
 
@@ -540,21 +555,16 @@ Contributions toward these are welcome — open an issue to coordinate first.
   `WhoopProtocol/Resources/whoop_protocol.json` and the framing/CRC rules are language-agnostic, so
   the wire behavior is portable; the work is a Windows BLE stack + UI re-implementation that matches
   the shared packages' behavior.
-- **Android (shipped).** A full, native Kotlin/Gradle client lives under `android/`, re-implementing
-  the same wire protocol against Android's BLE stack — it pairs, offloads, persists and scores
-  on-device, and imports WHOOP / Apple Health / Health Connect. Pre-built APKs are in
-  [Releases](https://github.com/ryanbr/noop/releases). Continued real-hardware testing across more devices is always welcome
-  (an emulator can't reach a physical strap).
-- **iOS (build-from-source target on `main`).** iOS was folded into `main` in v1.94 as a first-class
-  build-from-source target — the `NOOPiOS` and `NOOPiOSWidgets` schemes (app target plus widgets, a
-  Live Activity, and HealthKit), built against current code in Xcode, with CI compiling both macOS and
-  iOS on every change. It is **build-it-yourself only, intentionally not shipped:** iOS has no
-  anonymous distribution path (the App Store and TestFlight both require a real Apple Developer
-  identity), which is at odds with NOOP staying anonymous, so there are no pre-built downloads. Every
-  package declares `.iOS(.v16)` and guards UI-framework code with `#if canImport(UIKit)/AppKit`, so
-  the shared core and analytics run unmodified — results match macOS. It is newer and less
-  battle-tested than macOS/Android (live BLE on a real iPhone isn't fully validated yet), so
-  on-hardware testing is especially welcome; [`IOS.md`](IOS.md) is the detailed guide.
+- **Android (distribution in progress).** A full, native Kotlin/Gradle client lives under `android/`,
+  re-implementing the same wire protocol against Android's BLE stack — it pairs, offloads, persists
+  and scores on-device, and imports WHOOP / Apple Health / Health Connect. Its source version is kept
+  aligned with the Apple beta; a fork-owned public APK follows in a later rollout. Continued
+  real-hardware testing across more devices is always welcome (an emulator can't reach a physical strap).
+- **iOS (unsigned beta on `main`).** iOS is a first-class target — the `NOOPiOS` and
+  `NOOPiOSWidgets` schemes (app target plus widgets, a Live Activity, and HealthKit), built against
+  current code in Xcode. The fork publishes an intentionally unsigned IPA for AltStore and SideStore:
+  the sideloader signs it with each user's own Apple ID, keeping the project free of an App Store,
+  TestFlight, or project-owned Apple Developer identity. See [IOS.md](IOS.md) for the source URL.
 
 ### Deferred ideas
 

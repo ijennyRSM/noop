@@ -21,6 +21,12 @@
             "value": "%@ resp/min"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ resp/min"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -29,14 +35,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ resp/min"
+            "state": "translated",
+            "value": "%@ br/min"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ вдохов/мин"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ครั้ง/นาที"
           }
         },
         "zh-Hans": {
@@ -49,18 +61,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 次/分"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ resp/min"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ ครั้ง/นาที"
           }
         }
       }
@@ -85,6 +85,12 @@
             "value": "Ritmo %@"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allure %@"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -93,14 +99,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Ritmo %@"
+            "state": "translated",
+            "value": "%@ ritmo"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ темп"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพซ %@"
           }
         },
         "zh-Hans": {
@@ -113,18 +125,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "配速 %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allure %@"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เพซ %@"
           }
         }
       }
@@ -149,6 +149,12 @@
             "value": "%@ · %@s inhala / %@s exhala"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@s inspire / %@s expire"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -157,14 +163,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "%@ · %@s inspira / %@s expira"
+            "state": "translated",
+            "value": "%@ · %@ entra / %@ sai"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %@с вдох / %@с выдох"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · เข้า %@ วินาที / ออก %@ วินาที"
           }
         },
         "zh-Hans": {
@@ -177,18 +189,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · 吸 %@ 秒 / 呼 %@ 秒"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · %@s inspire / %@s expire"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ · เข้า %@ วินาที / ออก %@ วินาที"
           }
         }
       }
@@ -213,6 +213,12 @@
             "value": "%@ · %lld kcal"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld kcal"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -221,7 +227,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%@ · %lld kcal"
           }
         },
@@ -229,6 +235,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %lld ккал"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld kcal"
           }
         },
         "zh-Hans": {
@@ -242,17 +254,63 @@
             "state": "translated",
             "value": "%@ · %lld kcal"
           }
+        }
+      }
+    },
+    "%lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · %lld kcal"
+            "value": "%lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · %lld kcal"
+            "value": "%lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         }
       }
@@ -277,6 +335,12 @@
             "value": "%lld respiraciones · %@"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld respirations · %@"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -285,7 +349,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%lld respirações · %@"
           }
         },
@@ -293,6 +357,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld вдохов · %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ลมหายใจ · %@"
           }
         },
         "zh-Hans": {
@@ -305,18 +375,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld 次呼吸 · %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld respirations · %@"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld ลมหายใจ · %@"
           }
         }
       }
@@ -341,6 +399,12 @@
             "value": "%lld segundos restantes en %@"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld secondes restantes dans %2$@"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -349,7 +413,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "%1$lld segundos restantes em %2$@"
           }
         },
@@ -357,6 +421,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Осталось %1$lld секунд, %2$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เหลือ %lld วินาทีในช่วง %@"
           }
         },
         "zh-Hans": {
@@ -370,17 +440,63 @@
             "state": "translated",
             "value": "%2$@ 還剩 %1$lld 秒"
           }
+        }
+      }
+    },
+    "/ %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld secondes restantes dans %2$@"
+            "value": "/ %lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/%lld"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "เหลือ %lld วินาทีในช่วง %@"
+            "value": "/ %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
           }
         }
       }
@@ -405,6 +521,12 @@
             "value": "Permitir acceso"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser l'accès"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -413,14 +535,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Permitir acesso"
+            "state": "translated",
+            "value": "Permitir o acesso"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Разрешить доступ"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อนุญาตให้เข้าถึง"
           }
         },
         "zh-Hans": {
@@ -433,18 +561,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "允許存取"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autoriser l'accès"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "อนุญาตให้เข้าถึง"
           }
         }
       }
@@ -469,6 +585,12 @@
             "value": "Cuadrada"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carré"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -477,7 +599,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Caixa"
           }
         },
@@ -485,6 +607,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Квадрат"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แบบสี่เหลี่ยม"
           }
         },
         "zh-Hans": {
@@ -497,18 +625,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "箱式"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Carré"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "แบบสี่เหลี่ยม"
           }
         }
       }
@@ -547,7 +663,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Respirar"
           }
         },
@@ -555,6 +671,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Дыхание"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฝึกหายใจ"
           }
         },
         "zh-Hans": {
@@ -567,12 +689,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "呼吸"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ฝึกหายใจ"
           }
         }
       }
@@ -597,6 +713,12 @@
             "value": "Inhala"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inspirez"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -605,14 +727,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Inspira"
+            "state": "translated",
+            "value": "Inspire"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Вдох"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจเข้า"
           }
         },
         "zh-Hans": {
@@ -625,18 +753,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "吸氣"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inspirez"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หายใจเข้า"
           }
         }
       }
@@ -661,6 +777,12 @@
             "value": "Inhala durante %lld segundos"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inspirez pendant %lld secondes"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -669,14 +791,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Inspira durante %lld segundos"
+            "state": "translated",
+            "value": "Inspire durante %lld segundos"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Вдох на %lld секунд"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจเข้า %lld วินาที"
           }
         },
         "zh-Hans": {
@@ -689,18 +817,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "吸氣 %lld 秒"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inspirez pendant %lld secondes"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หายใจเข้า %lld วินาที"
           }
         }
       }
@@ -725,6 +841,12 @@
             "value": "Exhala"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expirez"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -733,14 +855,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Expira"
+            "state": "translated",
+            "value": "Expire"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Выдох"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจออก"
           }
         },
         "zh-Hans": {
@@ -753,18 +881,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "吐氣"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Expirez"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หายใจออก"
           }
         }
       }
@@ -789,6 +905,12 @@
             "value": "Exhala durante %lld segundos"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expirez pendant %lld secondes"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -797,14 +919,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Expira durante %lld segundos"
+            "state": "translated",
+            "value": "Expire durante %lld segundos"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Выдох на %lld секунд"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจออกเป็นเวลา %lld วินาที"
           }
         },
         "zh-Hans": {
@@ -817,18 +945,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "吐氣 %lld 秒"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Expirez pendant %lld secondes"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หายใจออกเป็นเวลา %lld วินาที"
           }
         }
       }
@@ -867,7 +983,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Carga"
           }
         },
@@ -875,6 +991,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Заряд"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว"
           }
         },
         "zh-Hans": {
@@ -887,12 +1009,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "能量"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พลังฟื้นตัว"
           }
         }
       }
@@ -917,6 +1033,12 @@
             "value": "Coherencia"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cohérence"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -925,7 +1047,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Coerência"
           }
         },
@@ -933,6 +1055,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Когерентность"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แบบสอดคล้อง"
           }
         },
         "zh-Hans": {
@@ -945,18 +1073,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "諧振"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cohérence"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "แบบสอดคล้อง"
           }
         }
       }
@@ -981,6 +1097,12 @@
             "value": "LISTO"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TERMINÉ"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -989,7 +1111,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "CONCLUÍDO"
           }
         },
@@ -997,6 +1119,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ГОТОВО"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จแล้ว"
           }
         },
         "zh-Hans": {
@@ -1009,18 +1137,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TERMINÉ"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เสร็จแล้ว"
           }
         }
       }
@@ -1045,6 +1161,12 @@
             "value": "Listo"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1053,7 +1175,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Concluído"
           }
         },
@@ -1061,6 +1183,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Готово"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จสิ้น"
           }
         },
         "zh-Hans": {
@@ -1073,18 +1201,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "完成"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminé"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เสร็จสิ้น"
           }
         }
       }
@@ -1123,7 +1239,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Esforço"
           }
         },
@@ -1131,6 +1247,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Усилие"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
           }
         },
         "zh-Hans": {
@@ -1143,12 +1265,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "消耗"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ภาระร่างกาย"
           }
         }
       }
@@ -1173,6 +1289,12 @@
             "value": "Finalizar"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminer"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1181,14 +1303,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Terminar"
+            "state": "translated",
+            "value": "Fim"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Завершить"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จบ"
           }
         },
         "zh-Hans": {
@@ -1201,18 +1329,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "結束"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminer"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "จบ"
           }
         }
       }
@@ -1237,6 +1353,12 @@
             "value": "Finalizar entrenamiento"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminer l'entraînement"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1245,7 +1367,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Terminar treino"
           }
         },
@@ -1253,6 +1375,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Завершить тренировку"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สิ้นสุดการออกกำลังกาย"
           }
         },
         "zh-Hans": {
@@ -1265,18 +1393,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "結束鍛鍊"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminer l'entraînement"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "สิ้นสุดการออกกำลังกาย"
           }
         }
       }
@@ -1301,6 +1417,12 @@
             "value": "Fuerza funcional"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renforcement fonctionnel"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1309,7 +1431,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Força funcional"
           }
         },
@@ -1317,6 +1439,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Функциональная сила"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ความแข็งแกร่งในการใช้งาน"
           }
         },
         "zh-Hans": {
@@ -1329,18 +1457,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "功能性肌力"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Renforcement fonctionnel"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ความแข็งแกร่งในการใช้งาน"
           }
         }
       }
@@ -1365,6 +1481,12 @@
             "value": "Conceder acceso a Salud"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autoriser l'accès à Santé"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1373,14 +1495,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Conceder acesso à Saúde"
+            "state": "translated",
+            "value": "Conceder acesso à saúde"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Разрешить доступ к Health"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ให้สิทธิ์การเข้าถึงด้านสุขภาพ"
           }
         },
         "zh-Hans": {
@@ -1393,18 +1521,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "授予「健康」存取權"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autoriser l'accès à Santé"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ให้สิทธิ์การเข้าถึงด้านสุขภาพ"
           }
         }
       }
@@ -1443,7 +1559,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "FREQUÊNCIA CARDÍACA"
           }
         },
@@ -1451,6 +1567,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ПУЛЬС"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจ"
           }
         },
         "zh-Hans": {
@@ -1463,12 +1585,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "心率"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "อัตราการเต้นหัวใจ"
           }
         }
       }
@@ -1493,6 +1609,12 @@
             "value": "FC no disponible"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FC non disponible"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1501,14 +1623,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "FC indisponível"
+            "state": "translated",
+            "value": "RH indisponível"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "ЧСС недоступна"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
           }
         },
         "zh-Hans": {
@@ -1521,18 +1649,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "無法取得心率"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "FC non disponible"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
           }
         }
       }
@@ -1557,6 +1673,12 @@
             "value": "Frecuencia cardíaca y energía en vivo, registradas en tu muñeca. Se queda en el dispositivo."
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fréquence cardiaque et énergie en direct, enregistrées à votre poignet. Reste sur l'appareil."
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1565,14 +1687,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Frequência cardíaca e energia em tempo real, registadas no pulso. Ficam no dispositivo."
+            "state": "translated",
+            "value": "Frequência cardíaca e energia em direto, registadas no teu pulso. Permanece no dispositivo."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Пульс и энергия в реальном времени, записанные на запястье. Остаются на устройстве."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกอัตราการเต้นหัวใจและพลังงานแบบเรียลไทม์จากข้อมือ โดยข้อมูลอยู่ในอุปกรณ์เท่านั้น"
           }
         },
         "zh-Hans": {
@@ -1585,18 +1713,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "即時心率和能量消耗，記錄在你的手腕上。留在裝置上。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fréquence cardiaque et énergie en direct, enregistrées à votre poignet. Reste sur l'appareil."
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "บันทึกอัตราการเต้นหัวใจและพลังงานแบบเรียลไทม์จากข้อมือ โดยข้อมูลอยู่ในอุปกรณ์เท่านั้น"
           }
         }
       }
@@ -1621,6 +1737,12 @@
             "value": "Abre NOOP en tu iPhone para sincronizar"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez NOOP sur votre iPhone pour synchroniser"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1629,14 +1751,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Abre o NOOP no iPhone para sincronizar"
+            "state": "translated",
+            "value": "Abra o NOOP no teu iPhone para tincronizar"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Откройте NOOP на iPhone для синхронизации"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิด NOOP บน iPhone ของคุณเพื่อซิงค์"
           }
         },
         "zh-Hans": {
@@ -1649,18 +1777,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "在你的 iPhone 上打開 NOOP 以同步"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrez NOOP sur votre iPhone pour synchroniser"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เปิด NOOP บน iPhone ของคุณเพื่อซิงค์"
           }
         }
       }
@@ -1685,6 +1801,12 @@
             "value": "EN PAUSA"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EN PAUSE"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1693,14 +1815,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "EM PAUSA"
+            "state": "translated",
+            "value": "PAUSADO"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "ПАУЗА"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดชั่วคราว"
           }
         },
         "zh-Hans": {
@@ -1713,18 +1841,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "已暫停"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EN PAUSE"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หยุดชั่วคราว"
           }
         }
       }
@@ -1763,14 +1879,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Pausar"
+            "state": "translated",
+            "value": "Pausa"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Пауза"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดชั่วคราว"
           }
         },
         "zh-Hans": {
@@ -1783,12 +1905,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "暫停"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หยุดชั่วคราว"
           }
         }
       }
@@ -1813,6 +1929,12 @@
             "value": "GRABANDO"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ENREGISTREMENT"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1821,14 +1943,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "A GRAVAR"
+            "state": "translated",
+            "value": "GRAVAÇÃO"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "ЗАПИСЬ"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังบันทึก"
           }
         },
         "zh-Hans": {
@@ -1841,18 +1969,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "記錄中"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ENREGISTREMENT"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "กำลังบันทึก"
           }
         }
       }
@@ -1877,6 +1993,12 @@
             "value": "DESCANSO"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "REPOS"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1885,7 +2007,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "DESCANSO"
           }
         },
@@ -1893,6 +2015,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ОТДЫХ"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พัก"
           }
         },
         "zh-Hans": {
@@ -1905,18 +2033,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "休息"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "REPOS"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พัก"
           }
         }
       }
@@ -1941,6 +2057,12 @@
             "value": "Listo para respirar"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêt à respirer"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -1949,7 +2071,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Pronto para respirar"
           }
         },
@@ -1957,6 +2079,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Готовы к дыханию"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พร้อมจะหายใจ"
           }
         },
         "zh-Hans": {
@@ -1969,18 +2097,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "準備好呼吸"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prêt à respirer"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "พร้อมจะหายใจ"
           }
         }
       }
@@ -2005,6 +2121,12 @@
             "value": "Relájate"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détente"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2013,14 +2135,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Relaxa"
+            "state": "translated",
+            "value": "Descontrair"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Расслабьтесь"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ผ่อนคลาย"
           }
         },
         "zh-Hans": {
@@ -2033,18 +2161,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "放鬆"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Détente"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ผ่อนคลาย"
           }
         }
       }
@@ -2083,7 +2199,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Repor"
           }
         },
@@ -2091,6 +2207,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сбросить"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รีเซ็ต"
           }
         },
         "zh-Hans": {
@@ -2103,12 +2225,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "重設"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "รีเซ็ต"
           }
         }
       }
@@ -2147,7 +2263,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Descanso"
           }
         },
@@ -2155,6 +2271,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Отдых"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การพักผ่อน"
           }
         },
         "zh-Hans": {
@@ -2167,12 +2289,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "休息"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การพักผ่อน"
           }
         }
       }
@@ -2211,7 +2327,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Reiniciar"
           }
         },
@@ -2219,6 +2335,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Перезапустить"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มใหม่"
           }
         },
         "zh-Hans": {
@@ -2231,12 +2353,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "重新啟動"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เริ่มใหม่"
           }
         }
       }
@@ -2261,6 +2377,12 @@
             "value": "Reanudar"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reprendre"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2269,7 +2391,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Retomar"
           }
         },
@@ -2277,6 +2399,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Продолжить"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำต่อ"
           }
         },
         "zh-Hans": {
@@ -2289,18 +2417,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "繼續"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reprendre"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ทำต่อ"
           }
         }
       }
@@ -2325,6 +2441,12 @@
             "value": "Ronda %lld de %lld"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycle %lld sur %lld"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2333,7 +2455,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Ronda %lld de %lld"
           }
         },
@@ -2341,6 +2463,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Раунд %lld из %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รอบ %lld ของ %lld"
           }
         },
         "zh-Hans": {
@@ -2353,18 +2481,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "第 %lld 輪，共 %lld 輪"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cycle %lld sur %lld"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "รอบ %lld ของ %lld"
           }
         }
       }
@@ -2389,6 +2505,12 @@
             "value": "SEG"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SEC"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2397,14 +2519,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "SEG"
+            "state": "translated",
+            "value": "SEC"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "СЕК"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วินาที"
           }
         },
         "zh-Hans": {
@@ -2417,18 +2545,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "秒"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SEC"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "วินาที"
           }
         }
       }
@@ -2453,6 +2569,12 @@
             "value": "Sesión terminada"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Séance terminée"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2461,7 +2583,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Sessão concluída"
           }
         },
@@ -2469,6 +2591,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сессия завершена"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซสชันเสร็จสิ้น"
           }
         },
         "zh-Hans": {
@@ -2481,18 +2609,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "工作階段結束"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Séance terminée"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เซสชันเสร็จสิ้น"
           }
         }
       }
@@ -2531,7 +2647,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Iniciar"
           }
         },
@@ -2539,6 +2655,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Старт"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่ม"
           }
         },
         "zh-Hans": {
@@ -2551,12 +2673,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "開始"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เริ่ม"
           }
         }
       }
@@ -2595,7 +2711,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Iniciar sessão"
           }
         },
@@ -2603,6 +2719,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Начать сессию"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มเซสชัน"
           }
         },
         "zh-Hans": {
@@ -2615,12 +2737,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "開始工作階段"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "เริ่มเซสชัน"
           }
         }
       }
@@ -2645,6 +2761,12 @@
             "value": "Detener"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2653,7 +2775,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Parar"
           }
         },
@@ -2661,6 +2783,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Стоп"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุด"
           }
         },
         "zh-Hans": {
@@ -2673,18 +2801,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "停止"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arrêter"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หยุด"
           }
         }
       }
@@ -2723,7 +2839,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "Parar sessão"
           }
         },
@@ -2731,6 +2847,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Остановить сессию"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดเซสชัน"
           }
         },
         "zh-Hans": {
@@ -2743,12 +2865,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "停止工作階段"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "หยุดเซสชัน"
           }
         }
       }
@@ -2773,6 +2889,12 @@
             "value": "TRABAJO"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TRAVAIL"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2781,7 +2903,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "TRABALHO"
           }
         },
@@ -2789,6 +2911,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "РАБОТА"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออกแรง"
           }
         },
         "zh-Hans": {
@@ -2801,18 +2929,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "運動"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TRAVAIL"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ออกแรง"
           }
         }
       }
@@ -2837,6 +2953,12 @@
             "value": "Entrenamiento"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entraînement"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2845,14 +2967,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Treino"
+            "state": "translated",
+            "value": "Treinar"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Тренировка"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การออกกำลังกาย"
           }
         },
         "zh-Hans": {
@@ -2865,18 +2993,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "鍛鍊"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entraînement"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การออกกำลังกาย"
           }
         }
       }
@@ -2901,6 +3017,12 @@
             "value": "Entrenamiento guardado"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entraînement enregistré"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2909,14 +3031,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "Treino guardado"
+            "state": "translated",
+            "value": "Treino salvo"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "Тренировка сохранена"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกการออกกำลังกายแล้ว"
           }
         },
         "zh-Hans": {
@@ -2929,18 +3057,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "運動已保存"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entraînement enregistré"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "บันทึกการออกกำลังกายแล้ว"
           }
         }
       }
@@ -2965,6 +3081,12 @@
             "value": "a fecha de %@"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "au %@"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -2973,14 +3095,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "em %@"
+            "state": "translated",
+            "value": "a partir de %@"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "на %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูล ณ %@"
           }
         },
         "zh-Hans": {
@@ -2993,18 +3121,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "截至 %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "au %@"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ข้อมูล ณ %@"
           }
         }
       }
@@ -3043,7 +3159,7 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
+            "state": "translated",
             "value": "bpm"
           }
         },
@@ -3053,6 +3169,12 @@
             "value": "уд/мин"
           }
         },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bpm"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -3060,12 +3182,6 @@
           }
         },
         "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "bpm"
-          }
-        },
-        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "bpm"
@@ -3087,18 +3203,6 @@
             "value": "cal"
           }
         },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "cal"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "кал"
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
@@ -3111,10 +3215,40 @@
             "value": "cal"
           }
         },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "кал"
+          }
+        },
         "th": {
           "stringUnit": {
             "state": "translated",
             "value": "แคลอรี"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cal"
           }
         }
       }
@@ -3139,6 +3273,12 @@
             "value": "desactualizado · %@"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "obsolète · %@"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
@@ -3147,14 +3287,20 @@
         },
         "pt-PT": {
           "stringUnit": {
-            "state": "needs_review",
-            "value": "desatualizado · %@"
+            "state": "translated",
+            "value": "obsoleto · %@"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
             "value": "устарело · %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลเก่า · %@"
           }
         },
         "zh-Hans": {
@@ -3168,73 +3314,121 @@
             "state": "translated",
             "value": "過時 · %@"
           }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "obsolète · %@"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ข้อมูลเก่า · %@"
-          }
         }
       }
     },
-    "%lld": {
+    "–": {
       "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "–"
+          }
+        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld"
+            "value": "–"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld"
+            "value": "–"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld"
+            "value": "–"
           }
         },
-        "th": {
+        "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld"
+            "value": "–"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "–"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "–"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "–"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "–"
           }
         }
       }
     },
-    "/ %lld": {
+    "✓": {
       "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓"
+          }
+        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "/ %lld"
+            "value": "✓"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "/ %lld"
+            "value": "✓"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "/ %lld"
+            "value": "✓"
           }
         },
-        "th": {
+        "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "/ %lld"
+            "value": "✓"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓"
           }
         }
       }

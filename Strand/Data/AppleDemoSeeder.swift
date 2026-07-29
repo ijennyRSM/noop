@@ -228,10 +228,79 @@ enum AppleDemoSeeder {
         _ = try await store.upsertAppleDaily(appleRows, deviceId: apple)
         if !workouts.isEmpty { _ = try await store.upsertWorkouts(workouts, deviceId: whoop) }
         if !journal.isEmpty { _ = try await store.upsertJournal(journal, deviceId: whoop) }
+        try await seedStrength(into: store, calendar: cal, formatter: isoFmt)
         NSLog("AppleDemoSeeder: seeded \(daily.count) days, \(workouts.count) workouts.")
     }
 
     // MARK: - helpers
+
+    /// Seed finalized Strength sessions and per-muscle raw stimulus so the Strength Home and all three
+    /// Body Map modes exercise real database paths in screenshot workflows. Values are synthetic.
+    private static func seedStrength(
+        into store: WhoopStore,
+        calendar: Calendar,
+        formatter: DateFormatter
+    ) async throws {
+        try await store.ensureExerciseLibrarySeeded()
+        let sessions: [(daysAgo: Int, title: String, exercise: String, name: String,
+                        muscles: [(String, Double, Double)])] = [
+            (0, "เวทช่วงบน", "barbell_bench_press_medium_grip",
+             "Barbell Bench Press - Medium Grip",
+             [("pectorals", 1_420, 78), ("triceps", 820, 62), ("anterior_deltoids", 610, 55)]),
+            (2, "เวทช่วงล่าง", "barbell_squat", "Barbell Back Squat",
+             [("quadriceps", 1_680, 84), ("glutes", 1_220, 72), ("hamstrings", 720, 58)]),
+            (4, "เวทท่าดึง", "pullups", "Pullups",
+             [("lats", 1_260, 74), ("biceps", 780, 61), ("upper_back", 690, 57)]),
+            (6, "เวททั่วร่างกาย", "barbell_deadlift", "Barbell Deadlift",
+             [("hamstrings", 1_090, 69), ("glutes", 1_030, 68), ("erector_spinae", 760, 59)]),
+        ]
+        for item in sessions {
+            let date = calendar.date(
+                byAdding: .day, value: -item.daysAgo,
+                to: calendar.startOfDay(for: Date())) ?? Date()
+            let startedAt = Int(date.timeIntervalSince1970) + 18 * 3_600
+            let exercise = StrengthSessionExerciseRecord(
+                exerciseId: item.exercise,
+                snapshotName: item.name,
+                orderIndex: 0,
+                sets: [
+                    .init(setIndex: 0, weightKg: 60, reps: 8, rpe: 7, completed: true),
+                    .init(setIndex: 1, weightKg: 60, reps: 8, rpe: 8, completed: true),
+                    .init(setIndex: 2, weightKg: 60, reps: 7, rpe: 8.5, completed: true),
+                ])
+            let session = StrengthSessionRecord(
+                id: "demo-strength-\(item.daysAgo)",
+                deviceId: whoop,
+                startedAt: startedAt,
+                endedAt: startedAt + 52 * 60,
+                title: item.title,
+                status: StrengthSessionStatus.completed.rawValue,
+                source: "demo",
+                sessionRPE: 8,
+                confidence: StrengthConfidence.high.rawValue,
+                cardiovascularEffort: 52,
+                muscularLoad: item.muscles.map { $0.2 }.max(),
+                totalTrainingLoad: 66,
+                exercises: [exercise])
+            try await store.saveStrengthSession(session)
+            let day = formatter.string(from: date)
+            let loads = item.muscles.map {
+                DailyMuscleLoadRecord(
+                    day: day,
+                    muscleId: $0.0,
+                    rawStimulus: $0.1,
+                    normalizedLoad: $0.2,
+                    workingSets: 3,
+                    confidence: StrengthConfidence.high.rawValue)
+            }
+            try await store.replaceSessionMuscleLoads(
+                sessionId: session.id,
+                deviceId: whoop,
+                day: day,
+                trainedAt: startedAt,
+                rows: loads)
+        }
+    }
 
     private static func round1(_ x: Double) -> Double { (x * 10).rounded() / 10 }
     private static func round2(_ x: Double) -> Double { (x * 100).rounded() / 100 }

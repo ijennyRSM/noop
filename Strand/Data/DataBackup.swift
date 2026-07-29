@@ -138,7 +138,8 @@ enum DataBackup {
         if let complaint = DatabaseIntegrity.quickCheckFailure(atPath: dbURL.path) {
             throw ExportIntegrityFailure(complaint: complaint)
         }
-        try writeBackupZip(dbURL: dbURL, to: dest, settingsJSON: settingsJSON)
+        try writeBackupZip(dbURL: dbURL, to: dest, settingsJSON: settingsJSON,
+                           includeUnifiedState: true)
     }
 
     /// Write the live SQLite at `dbURL` into a fresh deflate ZIP at `dest`: the DB under the canonical
@@ -148,18 +149,25 @@ enum DataBackup {
     /// entry) and deflate compression match the Android exporter byte-for-byte at the container level,
     /// so a `.noopbak` produced on either platform imports on the other. `settingsJSON == nil` writes
     /// the legacy single-entry ZIP. Mirrors the `Archive` idiom in `WhoopCsvExporter`.
-    private static func writeBackupZip(dbURL: URL, to dest: URL, settingsJSON: Data?) throws {
+    private static func writeBackupZip(dbURL: URL, to dest: URL, settingsJSON: Data?,
+                                       includeUnifiedState: Bool = false) throws {
         let archive = try Archive(url: dest, accessMode: .create)
         try archive.addEntry(with: backupEntryName, fileURL: dbURL, compressionMethod: .deflate)
-        guard let settingsJSON else { return }
-        // Stage the JSON through a temp file so the settings entry uses the exact same file-URL
-        // addEntry idiom as the DB entry (one container code path, no provider-API variant to drift).
-        let fm = FileManager.default
-        let tmpJSON = fm.temporaryDirectory
-            .appendingPathComponent("noop-settings-\(UUID().uuidString).json")
-        try settingsJSON.write(to: tmpJSON)
-        defer { try? fm.removeItem(at: tmpJSON) }
-        try archive.addEntry(with: BackupSettings.entryName, fileURL: tmpJSON, compressionMethod: .deflate)
+        if let settingsJSON {
+            // Stage the JSON through a temp file so the settings entry uses the exact same file-URL
+            // addEntry idiom as the DB entry (one container code path, no provider-API variant to drift).
+            let fm = FileManager.default
+            let tmpJSON = fm.temporaryDirectory
+                .appendingPathComponent("noop-settings-\(UUID().uuidString).json")
+            try settingsJSON.write(to: tmpJSON)
+            defer { try? fm.removeItem(at: tmpJSON) }
+            try archive.addEntry(with: BackupSettings.entryName, fileURL: tmpJSON,
+                                 compressionMethod: .deflate)
+        }
+        if includeUnifiedState {
+            try UnifiedBackupV2.addEntries(to: archive, databaseURL: dbURL,
+                                           settingsJSON: settingsJSON)
+        }
     }
 
     /// This device's whitelisted profile/display settings (see `BackupSettings.whitelist`) as the
@@ -205,11 +213,13 @@ enum DataBackup {
     /// legacy single-entry ZIP — tests cover both shapes. Not used by app code; production goes
     /// through `writeBackup(checkpoint:to:)`.
     static func writeBackupForTesting(databaseAt dbURL: URL, to dest: URL,
-                                      settings: [String: Any]? = nil) throws {
+                                      settings: [String: Any]? = nil,
+                                      includeUnifiedState: Bool = false) throws {
         let fm = FileManager.default
         if fm.fileExists(atPath: dest.path) { try fm.removeItem(at: dest) }
         try writeBackupZip(dbURL: dbURL, to: dest,
-                           settingsJSON: settings.flatMap { BackupSettings.encode($0) })
+                           settingsJSON: settings.flatMap { BackupSettings.encode($0) },
+                           includeUnifiedState: includeUnifiedState)
     }
 
     // MARK: - Import
@@ -307,6 +317,13 @@ enum DataBackup {
             extractedDir = nil
         }
         defer { if let d = extractedDir { try? fm.removeItem(at: d) } }
+        let unifiedValidation = extractedDir.flatMap {
+            UnifiedBackupV2.validateExtracted(directory: $0)
+        }
+        if unifiedValidation == false {
+            return .failure(String(localized: "This NOOP backup failed its checksum or manifest validation. Your current data was left untouched."))
+        }
+        let isUnifiedV2 = unifiedValidation == true
 
         // Validate: must be a real SQLite database (magic header "SQLite format 3\0").
         guard isSQLiteFile(at: source) else {
@@ -412,14 +429,36 @@ enum DataBackup {
             // and plain-SQLite backups have no `settings.json` (extractedDir nil / entry absent) and
             // restore exactly as before — no settings, no error. A malformed settings entry degrades
             // to "fewer keys applied" inside BackupSettings.decode; it can never fail the restore.
-            if let extractedDir {
+            if let extractedDir, !isUnifiedV2 {
                 let settingsURL = extractedDir.appendingPathComponent(BackupSettings.entryName)
                 if let data = try? Data(contentsOf: settingsURL) {
                     BackupSettings.apply(BackupSettings.decode(data), to: settingsDefaults)
                 }
             }
+            if let extractedDir, isUnifiedV2 {
+                let previousSettings: [(String, Any?)] = BackupSettings.appleDefaultsKey.values.map {
+                    ($0, settingsDefaults.object(forKey: $0))
+                }
+                let settingsURL = extractedDir.appendingPathComponent(BackupSettings.entryName)
+                if let data = try? Data(contentsOf: settingsURL) {
+                    BackupSettings.apply(BackupSettings.decode(data), to: settingsDefaults)
+                }
+                guard UnifiedBackupV2.restoreCoachState(
+                    from: extractedDir, defaults: settingsDefaults) else {
+                    removeIfPresent(dbURL)
+                    if sidecar != dbURL, fm.fileExists(atPath: sidecar.path) {
+                        try? fm.copyItem(at: sidecar, to: dbURL)
+                    }
+                    for (key, old) in previousSettings {
+                        if let old { settingsDefaults.set(old, forKey: key) }
+                        else { settingsDefaults.removeObject(forKey: key) }
+                    }
+                    return .failure(String(localized: "The Coach portion of this backup could not be restored. The database was rolled back and your previous data is unchanged."))
+                }
+            }
             // #57 debug: record when a restore swapped the DB, so the export can correlate a restore with a
             // later write stall (a restore not followed by a relaunch is the #57 failure).
+            StrengthDerivedRestore.markRequired(defaults: settingsDefaults)
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "backup.lastRestoreAt")
             return .imported(sidecar: sidecar)
         } catch {
@@ -535,6 +574,8 @@ enum DataBackup {
                 limit = maxBackupSQLiteBytes
             case BackupSettings.entryName:
                 limit = maxBackupSettingsBytes
+            case UnifiedBackupV2.manifestEntry, UnifiedBackupV2.coachStateEntry:
+                limit = UnifiedBackupV2.maxJSONBytes
             default:
                 continue
             }

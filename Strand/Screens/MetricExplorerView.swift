@@ -128,6 +128,12 @@ enum ExploreRange: Int, CaseIterable, Identifiable, Hashable {
     /// Trailing days the window spans (nil = everything).
     var days: Int? { self == .all ? nil : rawValue }
 
+    /// The windows OFFERED in the segmented control. Eight pills (W/2W/3W/M/3M/6M/1Y/ALL) are too tight
+    /// on a 390 pt phone (redesign bug §1), so the control shows four — W / M / 6M / ALL. The full set of
+    /// cases stays intact for the gating/widening math (`widening`, `ExploreRangeGating`); this only
+    /// curates what's drawn. A stored selection outside this set still resolves — it just highlights no pill.
+    static let displayCases: [ExploreRange] = [.week, .month, .half, .all]
+
     /// This range plus every LARGER range, ascending — the auto-expand search order
     /// when the selected window holds zero points. ALW always terminates the chain.
     var widening: [ExploreRange] {
@@ -228,6 +234,9 @@ struct MetricExplorerView: View {
     /// hint in the header, never gating the rows: the catalog is static, so every row's label/icon/unit
     /// must paint immediately even before any series read returns (#199).
     @State private var probing = true
+    /// Shared zoom namespace (iOS 18+, no-op elsewhere) so a tapped metric row visually grows into its
+    /// detail instead of sliding up from nowhere — the Liquid Glass tile→detail language.
+    @Namespace private var zoom
 
     var body: some View {
         #if os(macOS)
@@ -297,6 +306,7 @@ struct MetricExplorerView: View {
                                     // flashed then popped straight back (#38).
                                     NavigationLink {
                                         MetricDetailView(metric: metric)
+                                            .zoomDestination(id: "metric.zoom.\(metric.id)", namespace: zoom)
                                     } label: {
                                         MetricRow(metric: metric,
                                                   isEmpty: emptyByID[metric.id] ?? false)
@@ -305,6 +315,8 @@ struct MetricExplorerView: View {
                                     // LiquidPressStyle (a transform, so it works edge-to-edge with dividers
                                     // between, no corner radius to match). Matches Today's tappable rows.
                                     .buttonStyle(LiquidPressStyle())
+                                    // The row visually grows into the detail (Liquid Glass tile→detail).
+                                    .zoomSource(id: "metric.zoom.\(metric.id)", namespace: zoom)
                                     #if os(iOS)
                                     // Light selection tick on tap; the simultaneousGesture leaves the
                                     // NavigationLink push intact.
@@ -469,8 +481,8 @@ struct MetricDetailView: View {
     /// when the setting is on, the plain canvas when off — so a Key-Metrics tile tap doesn't jar from the
     /// liquid Today's sky to a flat page. Same keys TodayView/LiquidTodayView gate on; "Sky behind cards"
     /// extends the sky to the full viewport (softer settle) so the transparent cards reveal it throughout.
-    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = true
-    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = true
+    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = false
+    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = false
     // Profile basics for the Fitness Age not-ready countdown (age/sex gate its readiness lead). Injected
     // app-wide at the root; previews supply their own. Only read on the fitness_age empty-state path.
     @EnvironmentObject var profile: ProfileStore
@@ -493,6 +505,12 @@ struct MetricDetailView: View {
     private var effortScale: EffortScale { UnitPrefs.resolveEffortScale(effortScaleRaw) }
     private func fmt(_ v: Double) -> String {
         metric.format(v, system: unitSystem, temperature: temperatureUnit, effortScale: effortScale)
+    }
+    /// True when the category overline would just echo the title (e.g. metric "Charge" in category
+    /// "Charge") — the header suppresses the overline in that case so the same word isn't shown twice.
+    private var categoryEchoesTitle: Bool {
+        MetricCatalog.categoryDisplayName(metric.category).compare(
+            metric.title, options: .caseInsensitive) == .orderedSame
     }
 
     @State private var range: ExploreRange = .month
@@ -766,14 +784,19 @@ struct MetricDetailView: View {
                 // Category + title on their OWN full-width row so a long title ("Heart Rate Variability")
                 // is never crushed into a letter-per-line column by the range pill (2026-07-02).
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(MetricCatalog.categoryDisplayName(metric.category).uppercased()).strandOverline()
+                    // Suppress the category overline when it would just repeat the title (e.g. the Charge
+                    // metric in the Charge category) — that's the "CHARGE / Charge" doubling (redesign bug §1).
+                    if !categoryEchoesTitle {
+                        Text(MetricCatalog.categoryDisplayName(metric.category).uppercased()).strandOverline()
+                    }
                     Text(metric.title)
                         .font(StrandFont.title2)
                         .foregroundStyle(StrandPalette.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 // Range control on its own row beneath the title.
-                SegmentedPillControl(ExploreRange.allCases, selection: selectionBinding,
+                SegmentedPillControl(ExploreRange.displayCases, selection: selectionBinding,
+                                     adaptsToAvailableWidth: true,
                                      isEnabled: isUnlocked) { $0.label }
 
                 // The headline read-out in the liquid language: for a 0–100 score, the signature
@@ -877,17 +900,20 @@ struct MetricDetailView: View {
                                    windowed: windowed,
                                    windowFellBack: windowFellBack)
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 2) {
+            // Upstream #743 moved the range control off the title row onto its own full-width row below;
+            // the fork keeps its `!categoryEchoesTitle` overline suppression and its curated `displayCases`.
+            VStack(alignment: .leading, spacing: 2) {
+                if !categoryEchoesTitle {
                     Text(MetricCatalog.categoryDisplayName(metric.category).uppercased()).strandOverline()
-                    Text(metric.title)
-                        .font(StrandFont.title2)
-                        .foregroundStyle(StrandPalette.textPrimary)
                 }
-                Spacer()
-                SegmentedPillControl(ExploreRange.allCases, selection: selectionBinding,
-                                     isEnabled: isUnlocked) { $0.label }
+                Text(metric.title)
+                    .font(StrandFont.title2)
+                    .foregroundStyle(StrandPalette.textPrimary)
             }
+            SegmentedPillControl(ExploreRange.displayCases, selection: selectionBinding,
+                                 adaptsToAvailableWidth: true,
+                                 isEnabled: isUnlocked) { $0.label }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             Text(caption)
                 .font(StrandFont.footnote)
                 .foregroundStyle(windowFellBack ? StrandPalette.statusWarning : StrandPalette.textTertiary)
@@ -972,6 +998,38 @@ struct MetricDetailView: View {
         let deltaCaption = hasDelta ? String(localized: "vs prev \(effectiveRange.name)")
             : (effectiveRange == .all ? String(localized: "all history") : String(localized: "no prior \(effectiveRange.name)"))
 
+        #if os(iOS)
+        return VStack(alignment: .leading, spacing: NoopMetrics.gap) {
+            // On iOS, Average summarizes the selected range, so it leads at the full
+            // two-column width.
+            StatTile(label: "Average", value: fmt(s.mean),
+                     caption: s.n == 1 ? String(localized: "1 day") : String(localized: "\(s.n) days"),
+                     accent: accent,
+                     sparkline: windowValues.count > 1 ? windowValues : nil,
+                     sparkColor: accent)
+                .frame(maxWidth: .infinity)
+
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 168), spacing: NoopMetrics.gap)],
+                alignment: .leading,
+                spacing: NoopMetrics.gap
+            ) {
+                StatTile(label: "Min", value: fmt(s.min),
+                         accent: StrandPalette.textPrimary)
+                StatTile(label: "Max", value: fmt(s.max),
+                         accent: StrandPalette.textPrimary)
+                StatTile(label: "Δ vs prev", value: deltaText ?? "—",
+                         caption: deltaCaption, accent: StrandPalette.textPrimary,
+                         delta: cmp.pctChange.map { "\($0 >= 0 ? "+" : "")\(String(format: "%.1f", $0))%" },
+                         deltaColor: deltaColor)
+                StatTile(label: "Latest", value: latest.map { fmt($0.value) } ?? "—",
+                         caption: latestCaption, accent: accent)
+            }
+        }
+        #else
+        // macOS keeps its adaptive multi-column dashboard. Promoting one tile to the
+        // unbounded screen width would turn a phone-specific hierarchy into an oversized
+        // desktop card and could leave the remaining adaptive row uneven.
         return LazyVGrid(
             columns: [GridItem(.adaptive(minimum: 168), spacing: NoopMetrics.gap)],
             alignment: .leading,
@@ -993,6 +1051,7 @@ struct MetricDetailView: View {
                      delta: cmp.pctChange.map { "\($0 >= 0 ? "+" : "")\(String(format: "%.1f", $0))%" },
                      deltaColor: deltaColor)
         }
+        #endif
     }
 
     private var latestCaption: String? {
@@ -1012,7 +1071,10 @@ struct MetricDetailView: View {
         let readings = windowed.map {
             VitalReading(day: $0.day, value: $0.value, source: sourceByDay[$0.day] ?? metric.source)
         }
-        let rows = vitalReadingRows(readings: readings, unit: metric.unit,
+        // `fmt` already yields the fully-formatted, unit-included (and unit-converted, e.g. kg→lb,
+        // 0–100→0–21 Effort) display string, so the row must NOT append `metric.unit` again — doing so
+        // produced "85 % %" for Charge and "3.5 /21 /100" for Effort (redesign bug §1). Pass an empty unit.
+        let rows = vitalReadingRows(readings: readings, unit: "",
                                     strapDeviceId: repo.deviceId, format: fmt)
         if !rows.isEmpty {
             NoopCard {

@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.noop.R
+import com.noop.ui.AlertInbox
 import com.noop.ui.NotifPrefs
 import com.noop.ui.appLaunchIntent
 
@@ -35,9 +36,12 @@ object InactivityNotifier {
         } else {
             "Time to move. You've been seated a while."
         }
+        runCatching {
+            AlertInbox.post(context, AlertInbox.Kind.INACTIVITY, "Move reminder", body)
+        }
         // Defensive: never let a notify() throw (revoked POST_NOTIFICATIONS, OEM quirk) crash the offload.
         runCatching {
-            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
+            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return@runCatching
             ensureChannel(context)
             val openApp = PendingIntent.getActivity(
                 context, 5,
@@ -46,7 +50,7 @@ object InactivityNotifier {
             )
             val n = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_heart)
-                .setContentTitle("Move reminder")
+                .setContentTitle(context.getString(R.string.inactivity_title))
                 .setContentText(body)
                 .setContentIntent(openApp)
                 .setAutoCancel(true)

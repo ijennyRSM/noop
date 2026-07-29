@@ -262,6 +262,28 @@ final class AppModel: ObservableObject {
                                               charging: self.live.charging,
                                               enabled: self.behavior.batteryAlerts
                                                     && self.behavior.batteryPredictiveAlerts)
+            // ESCALATION (both independent of the two latching gates above). The 15% alert and the
+            // 24 h predictive alert each fire ONCE per discharge cycle and then latch, so a strap that
+            // keeps draining goes silent exactly when the news gets worse — measured: a user got both
+            // alerts, then nothing across the final ~3 h to the ~10% cutoff, and lost the night.
+            //
+            // 1. Critical SoC: a second, lower crossing with its own persisted gate.
+            BatteryNotifier.onCriticalBattery(pct: Int(pct.rounded()),
+                                              charging: self.live.charging,
+                                              enabled: self.behavior.batteryAlerts)
+            // 2. Bedtime night-guard: near the LEARNED habitual bedtime, does the strap actually clear
+            //    tonight? Uses the cutoff-aware runtime (the raw estimate is time-to-0%, and the strap
+            //    dies ~10% above that — ~6 h of phantom runway at this user's drain). Cold-start (no
+            //    learned midsleep / too few nights) → the policy returns silent, no fabricated bedtime.
+            //    Rides the predictive toggle: it IS a prediction.
+            BatteryNotifier.onBedtimeRunway(
+                nowSecOfDay: Self.localSecOfDayNow(),
+                habitualMidsleepSec: self.habitualMidsleepCache,
+                typicalSleepHours: BatteryEstimator.typicalSleepHours(
+                    nightlyHours: self.repo.days.compactMap { $0.totalSleepMin.map { $0 / 60.0 } }),
+                usableRemainingHours: self.live.batteryEstimate.map(BatteryEstimator.usableRemainingHours),
+                charging: self.live.charging,
+                enabled: self.behavior.batteryAlerts && self.behavior.batteryPredictiveAlerts)
         }
         // HR-zone haptic coaching watches the smoothed bpm.
         $bpm.sink { [weak self] hr in self?.coachZone(hr) }.store(in: &hrCancellables)
@@ -269,6 +291,8 @@ final class AppModel: ObservableObject {
         repo.$days.sink { [weak self] days in
             self?.evaluateIllness(days)
             self?.evaluateStrainTarget()
+            // Keep the battery night-guard's learned bedtime warm off the same signal (throttled inside).
+            self?.refreshHabitualMidsleep()
         }.store(in: &hrCancellables)
         // Re-arm the strap's firmware alarm once the connection has SETTLED — not the instant it (re)bonds.
         // A smart-alarm time changed while the strap was away never reached it , the send is gated on bond
@@ -286,8 +310,14 @@ final class AppModel: ObservableObject {
         // `connectSettled` only bumps once that channel is confirmed live, so the readback (and the arm
         // itself) always goes out on a link that's actually ready. `dropFirst()` skips the initial
         // published value (0) at subscribe time, so this doesn't fire on app launch before any connection.
+        // #730: ALSO re-run when a DISARM was dropped. `applySmartAlarm()` branches internally (enabled →
+        // arm, disabled → disarm), but gating purely on `smartAlarmEnabled` meant a user who turned the
+        // alarm OFF while disconnected had the disarm swallowed by `send` and never retried — the strap
+        // kept the old firmware alarm and still buzzed, while the app logged "Alarm: disarmed".
+        // `disarmPending` latches exactly that dropped write, so this stays a no-op for the many users who
+        // never armed one (re-running unconditionally would put a DISABLE_ALARM on every connect).
         live.$connectSettled.dropFirst().sink { [weak self] _ in
-            guard let self, self.behavior.smartAlarmEnabled else { return }
+            guard let self, self.behavior.smartAlarmEnabled || self.ble.disarmPending else { return }
             self.applySmartAlarm()
         }.store(in: &hrCancellables)
         // The firmware alarm is a single absolute instant with no recurrence, and was re-armed ONLY on
@@ -353,6 +383,12 @@ final class AppModel: ObservableObject {
         // actor; no-op on macOS for the Inbox part.
         Task.detached { AppModel.purgeImportInbox(); AppModel.purgeImportTemp() }
 
+        // Let the coach read the live illness signal without holding a reference to AppModel — mirrors
+        // the diagnosticSink closure-wiring pattern above for IntelligenceEngine. Wired here (rather than
+        // right after `self.coach = ...`) because every stored property must be set before `self` can be
+        // captured, even weakly.
+        self.coach.illnessSignalProvider = { [weak self] in self?.illnessSignal }
+
         // FIX 2(b): the launch sequence runs at `.utility` so its heavy one-shot 4000-day heal/rescore
         // yields to UI rendering instead of contending at the inherited user-initiated QoS. The reads are
         // already off the main actor (analyzeRecent , FIX 1), and at `.utility` the scheduler keeps the
@@ -370,6 +406,9 @@ final class AppModel: ObservableObject {
                 self.live.batteryPct = 68
             }
             #endif
+            if let store = await self.repo.storeHandle() {
+                await StrengthDerivedRestore.rebuildIfRequired(store: store)
+            }
             await self.repo.refresh()                          // surface any imported data at once
             await self.wireSourceCoordinator()                 // dormant unless a generic strap is active
             try? await Task.sleep(nanoseconds: 6_000_000_000)  // give the first offload a moment
@@ -718,10 +757,25 @@ final class AppModel: ObservableObject {
             durationSec: Int(end.timeIntervalSince(w.start)),
             gpsPoints: wasGps ? gpsRecorder.pointCount : nil))
         buzz(loops: 2)
+        let bodyweightKg = profile.weightKg
+        let sleepHours = repo.today?.totalSleepMin.map { $0 / 60 }
+        let charge = repo.today?.recovery
+        let strengthDeviceId = repo.deviceId
         Task { [weak self] in
             guard let self else { return }
             if let store = await self.repo.storeHandle() {
                 _ = try? await store.upsertWorkouts([row], deviceId: self.deviceId)
+                if w.sport.localizedCaseInsensitiveContains("strength") {
+                    try? await StrengthSessionFinalizer.finalizeMatchingDraft(
+                        store: store,
+                        deviceId: strengthDeviceId,
+                        workoutStartTs: startTs,
+                        endedAt: row.endTs,
+                        cardiovascularEffort: strain,
+                        bodyweightKg: bodyweightKg,
+                        sleepHours: sleepHours,
+                        charge: charge)
+                }
                 await self.repo.refresh()
             }
         }
@@ -811,6 +865,17 @@ final class AppModel: ObservableObject {
     // #690: read-only body-location/status probe (0x54). User-initiated, Test-Centre-gated in DevicesView.
     func probeBodyLocationAndStatus() { ble.probeBodyLocationAndStatus() }
     func clearBodyLocationProbe() { ble.clearBodyLocationProbe() }
+
+    // #761: READ-ONLY feature-flag ENUMERATION probe (117/118) — reads the flag NAMES the strap's firmware
+    // knows and writes nothing. User-initiated, Test-Centre-gated in DevicesView.
+    func probeFeatureFlags() { ble.probeFeatureFlags() }
+    func clearFeatureFlagProbe() { ble.clearFeatureFlagProbe() }
+
+    // #103: READ-ONLY device-config READ probe (121/128) — asks the strap for a key's VALUE, the
+    // follow-up to #761's key-NAME enumeration. Writes nothing. User-initiated, Test-Centre-gated in
+    // DevicesView.
+    func probeDeviceConfigValues() { ble.probeDeviceConfigValues() }
+    func clearDeviceConfigProbe() { ble.clearDeviceConfigProbe() }
 
     /// Drop the current strap and clear bond state so a newly-picked strap model connects fresh
     /// (lets a user with both a WHOOP 4 and a 5/MG switch between them).
@@ -1018,10 +1083,11 @@ final class AppModel: ObservableObject {
     /// `BLEManager.maybeBuzzInactivity` fires its buzz (see crossLaneNotes). `minutes` = the seated bout
     /// length the detector reported. No-op on macOS and when wrist alerts are off.
     static func postInactivity(minutes: Int) {
-        #if os(iOS)
         let body = minutes > 0
             ? String(localized: "You've been seated for about \(minutes) min. Time to move.")
             : String(localized: "Time to move. You've been seated a while.")
+        AlertInbox.post(.inactivity, title: String(localized: "Move reminder"), message: body)
+        #if os(iOS)
         postWristAlert(identifier: "inactivity-nudge", title: String(localized: "Move reminder"), body: body)
         #endif
     }
@@ -1029,9 +1095,10 @@ final class AppModel: ObservableObject {
     /// Post the local notification mirroring the smart-alarm wake buzz. Called from the
     /// `onSmartAlarmFired` hook. No-op on macOS and when wrist alerts are off.
     static func postSmartAlarm() {
+        let body = String(localized: "Good morning. Your smart alarm just woke you.")
+        AlertInbox.post(.smartAlarm, title: String(localized: "Smart alarm"), message: body)
         #if os(iOS)
-        postWristAlert(identifier: "smart-alarm-wake", title: String(localized: "Smart alarm"),
-                       body: String(localized: "Good morning. Your smart alarm just woke you."))
+        postWristAlert(identifier: "smart-alarm-wake", title: String(localized: "Smart alarm"), body: body)
         #endif
     }
 
@@ -1345,6 +1412,35 @@ final class AppModel: ObservableObject {
     /// (alcohol / a hard-or-late workout / etc.) so a night out doesn't cry wolf. The journal context is
     /// read asynchronously, so this kicks a Task; the published `illnessSignal` + the `healthAlert`
     /// banner both come from the engine's single decision. On-device only, APPROXIMATE , not a diagnosis.
+    // MARK: - Battery night-guard: learned bedtime cache
+
+    /// The learned habitual midsleep (local seconds-of-day), cached for the battery night-guard.
+    /// `repo.habitualMidsleepSec()` is an async whole-history store read, but the battery hook runs
+    /// synchronously on the BLE callback, so the value is kept warm here instead. nil = cold-start
+    /// (< `SleepStageTotals.habitualMinDays` nights) → `BatteryEstimator.bedtimeAlert` stays silent.
+    private var habitualMidsleepCache: Int? = nil
+    private var habitualMidsleepCachedAt: Date? = nil
+
+    /// Refresh the cached habitual midsleep, at most hourly. The learner reads the full sleep history
+    /// and the value moves on a timescale of WEEKS, so recomputing it on every `repo.$days` republish
+    /// (several per rollup) would be pure cost for a number that cannot have changed.
+    private func refreshHabitualMidsleep() {
+        if let at = habitualMidsleepCachedAt, Date().timeIntervalSince(at) < 3600 { return }
+        habitualMidsleepCachedAt = Date()
+        Task { [weak self] in
+            guard let self else { return }
+            self.habitualMidsleepCache = await self.repo.habitualMidsleepSec()
+        }
+    }
+
+    /// Local time-of-day in seconds [0, 86400) — the clock the night-guard's bedtime window is in.
+    /// Uses the CURRENT zone, so a traveller's window follows them rather than sticking to home time.
+    static func localSecOfDayNow(_ now: Date = Date()) -> Int {
+        let cal = Calendar.current
+        let c = cal.dateComponents([.hour, .minute, .second], from: now)
+        return (c.hour ?? 0) * 3600 + (c.minute ?? 0) * 60 + (c.second ?? 0)
+    }
+
     private func evaluateIllness(_ days: [DailyMetric]) {
         guard behavior.illnessWatch, days.count >= 14 else {
             healthAlert = nil; illnessSignal = nil; illnessDistance = nil; return
@@ -1534,7 +1630,12 @@ final class AppModel: ObservableObject {
         let now = Int(Date().timeIntervalSince1970)
         let from = now - 14 * 86_400
         let buckets = await repo.hrBuckets(from: from, to: now, bucketSeconds: 3_600)
-        guard buckets.count >= 24 else { circadianPhase = nil; return }
+        guard buckets.count >= 24 else {
+            emitCircadianTrace(CircadianTrace.rejectedLine(reason: .tooFewBuckets,
+                                                           detail: "buckets=\(buckets.count) need=24"))
+            circadianPhase = nil
+            return
+        }
         let tz = TimeZone.current.secondsFromGMT()
         // Pool HR by LOCAL hour-of-day → mean bpm per hour as the activity proxy (higher HR ≈ more active).
         var sums = [Double](repeating: 0, count: 24)
@@ -1549,11 +1650,64 @@ final class AppModel: ObservableObject {
         let bins: [CircadianEngine.ActivityBin] = (0..<24).compactMap { h in
             counts[h] > 0 ? CircadianEngine.ActivityBin(hour: Double(h), activity: sums[h] / Double(counts[h])) : nil
         }
-        guard bins.count >= 6 else { circadianPhase = nil; return }
+        emitCircadianTrace(CircadianTrace.inputLine(binCount: bins.count,
+                                                    daysObserved: daySet.count,
+                                                    hoursCovered: counts.filter { $0 > 0 }.count,
+                                                    minDaysForFit: CircadianEngine.minDaysForFit))
+        guard bins.count >= 6 else {
+            emitCircadianTrace(CircadianTrace.rejectedLine(reason: .tooFewBins,
+                                                           detail: "bins=\(bins.count) need=6"))
+            circadianPhase = nil
+            return
+        }
+        emitCircadianTrace(CircadianTrace.binsLine(bins))
         // Habitual wake from the most recent night's banked wake, falling back to a 07:00 default.
         let wakeHour = habitualWakeHour() ?? 7.0
-        circadianPhase = CircadianEngine.estimatePhase(
+        let estimate = CircadianEngine.estimatePhase(
             bins: bins, daysObserved: daySet.count, habitualWakeHour: wakeHour)
+        emitCircadianDerivation(bins: bins, daysObserved: daySet.count, wakeHour: wakeHour,
+                                estimate: estimate)
+        circadianPhase = estimate
+    }
+
+    /// Emit one Circadian & Body Clock test-mode line tagged `.circadian` iff the mode is on. Same shape
+    /// as `emitWorkoutsTrace`: the cheap `TestCentre.active` gate runs BEFORE the @autoclosure builds the
+    /// line, so an inactive mode costs one Bool read and constructs no string.
+    private func emitCircadianTrace(_ build: @autoclosure () -> String) {
+        guard TestCentre.active(.circadian) else { return }
+        live.append(log: build(), domain: .circadian)
+    }
+
+    /// The fit and its verdict, for the test mode only.
+    ///
+    /// This is the reason the mode exists: `estimatePhase` returns nil when the cosinor doesn't solve, and
+    /// returns an `unreadable` estimate when the run is too short OR the rhythm too flat — three different
+    /// outcomes that look identical on screen. Re-deriving the fit here (rather than plumbing it out of the
+    /// engine) keeps the production path byte-identical, and it only runs when the mode is on.
+    private func emitCircadianDerivation(bins: [CircadianEngine.ActivityBin],
+                                         daysObserved: Int,
+                                         wakeHour: Double,
+                                         estimate: CircadianEngine.PhaseEstimate?) {
+        guard TestCentre.active(.circadian) else { return }
+        guard let fit = CircadianEngine.cosinor(bins) else {
+            live.append(log: CircadianTrace.rejectedLine(reason: .noFit), domain: .circadian)
+            return
+        }
+        live.append(log: CircadianTrace.fitLine(fit,
+                                                minRelativeAmplitude: CircadianEngine.minRelativeAmplitude),
+                    domain: .circadian)
+        guard let estimate else {
+            live.append(log: CircadianTrace.rejectedLine(reason: .noFit), domain: .circadian)
+            return
+        }
+        live.append(log: CircadianTrace.phaseLine(estimate, habitualWakeHour: wakeHour), domain: .circadian)
+        if estimate.confidence == .unreadable {
+            var reasons: [CircadianTrace.Reason] = []
+            if daysObserved < CircadianEngine.minDaysForFit { reasons.append(.tooFewDays) }
+            let relative = fit.mesor != 0 ? fit.amplitude / abs(fit.mesor) : 0
+            if relative < CircadianEngine.minRelativeAmplitude { reasons.append(.flatRhythm) }
+            live.append(log: CircadianTrace.degradedLine(reasons: reasons), domain: .circadian)
+        }
     }
 
     /// A coarse habitual wake hour (local) from the most recent banked sleep session's end time, for the

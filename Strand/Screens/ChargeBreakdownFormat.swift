@@ -1,6 +1,7 @@
 import SwiftUI
 import StrandDesign
 import StrandAnalytics
+import WhoopStore
 
 // MARK: - Charge breakdown presentation (pure, testable)
 //
@@ -16,6 +17,38 @@ import StrandAnalytics
 // supporting term reads green and a limiting term reads red, matching the Charge colour world.
 
 enum ChargeBreakdownFormat {
+
+    // MARK: - Charge-driver composition (shared by classic Today + Heute redesign)
+
+    /// The ordered "What shaped it" Charge drivers for a displayed Charge row, PLUS the confidence tier,
+    /// composed from the SAME folded HRV/RHR/resp baselines the engine scored with. Extracted verbatim from
+    /// `TodayView.chargeBreakdown()` so classic Today and the Heute redesign share ONE composition and can't
+    /// drift (the P5 shared-selector principle — see docs/decisions.md). PURE: it folds the passed `days`
+    /// history and surfaces `RecoveryScorer.chargeDrivers` + `ScoreConfidence.charge` verbatim; it never
+    /// recomputes a score or reads a store. `row` is the row the ring shows (today's own or the carried
+    /// last-scored day); `restScore` is the merged Rest composite (0…100) the Rest ring reads, so the
+    /// sleep-quality term stays consistent. Returns nil for a calibrating / cold-start night (no HRV or RHR,
+    /// or no usable HRV baseline), so the caller gates through to the calibration copy instead.
+    static func compute(row: DailyMetric?, days: [DailyMetric], restScore: Double?)
+        -> (drivers: [ChargeDriver], confidence: ScoreConfidence)? {
+        guard let row, let hrv = row.avgHrv, let rhr = row.restingHr else { return nil }
+        let hrvBase = Baselines.foldHistory(days.map(\.avgHrv), cfg: Baselines.hrvCfg)
+        guard hrvBase.usable else { return nil }
+        let rhrBase = Baselines.foldHistory(days.map { $0.restingHr.map(Double.init) },
+                                            cfg: Baselines.restingHRCfg)
+        let respBase = Baselines.foldHistory(days.map(\.respRateBpm), cfg: Baselines.respCfg)
+        // Rest-quality term = the Rest composite ÷100, matching AnalyticsEngine's `sleepPerf`.
+        let sleepPerf = restScore.map { $0 / 100.0 }
+        let drivers = RecoveryScorer.chargeDrivers(
+            hrv: hrv, rhr: Double(rhr), resp: row.respRateBpm,
+            hrvBaseline: hrvBase,
+            rhrBaseline: rhrBase.usable ? rhrBase : nil,
+            respBaseline: respBase.usable ? respBase : nil,
+            sleepPerf: sleepPerf, skinTempDev: row.skinTempDevC)
+        // Confidence SURFACED (never recomputed) from the SAME folded HRV baseline the drivers scored with,
+        // so the header tier tag and the breakdown agree by construction.
+        return (drivers, ScoreConfidence.charge(recovery: row.recovery, hrvBaseline: hrvBase))
+    }
 
     // MARK: - Signed point-delta chip (A1)
 
@@ -113,6 +146,39 @@ enum ChargeBreakdownFormat {
         // Whole-phrase variants per count so translators never see a stitched plural fragment.
         let n = max(0, nightsRemaining)
         return n == 1 ? String(localized: "1 night to go") : String(localized: "\(n) nights to go")
+    }
+
+    /// #731: names WHY the countdown restarted when the user tapped "Recalibrate baseline".
+    ///
+    /// The count alone is not enough. A reporter sat at "Calibrating, 3 of 4 nights" with 15 valid HRV
+    /// nights on file and tapped Recalibrate again — which discards every earlier night and resets the
+    /// count to 0. Two weeks of that and Charge could never return. Seeing the countdown without knowing
+    /// their own tap caused it makes re-tapping the natural move; naming the cause is what breaks the loop.
+    ///
+    /// A separate whole sentence rather than a fragment appended to the countdown, so translators never
+    /// see a stitched string. Returns nil when no recalibration is set, so the card is unchanged for every
+    /// user who never tapped it. Pure.
+    static func calibrationRestartCause(recalibratedOn day: String?) -> String? {
+        guard let day, !day.isEmpty else { return nil }
+        return String(localized: "Restarted when you recalibrated on \(day) — no need to tap it again.")
+    }
+
+    /// The recalibration epoch as a short display day ("19 Jul"), or nil when none is set. Pure — the
+    /// caller supplies the epoch (`Baselines.hrvBaselineEpoch()`), so this stays testable. Locale-aware
+    /// via `DateFormatter.setLocalizedDateFormatFromTemplate`, so the day/month order follows the user.
+    static func recalibrationDay(epoch: Double, locale: Locale = .current) -> String? {
+        guard epoch > 0 else { return nil }
+        let fmt = DateFormatter()
+        fmt.locale = locale
+        fmt.setLocalizedDateFormatFromTemplate("d MMM")
+        return fmt.string(from: Date(timeIntervalSince1970: epoch))
+    }
+
+    /// Convenience for the calibrating cards: the restart-cause line for the CURRENT recalibration epoch,
+    /// or nil when the user has never recalibrated. Keeps the single UserDefaults read in one place
+    /// instead of repeating it at each card. (#731)
+    static func currentCalibrationRestartCause() -> String? {
+        calibrationRestartCause(recalibratedOn: recalibrationDay(epoch: Baselines.hrvBaselineEpoch()))
     }
 
     /// The supporting line under the countdown, naming the score whose baseline is unlocking. Pure.

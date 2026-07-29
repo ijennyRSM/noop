@@ -17,9 +17,17 @@ enum WorkoutCatalog {
     /// One selectable activity. `name` is the verbatim stored/display label.
     struct Sport: Identifiable, Hashable {
         let name: String
-        /// Types where a route makes sense → GPS hint / default on.
         let isDistanceSport: Bool
-        var id: String { name }
+        var activityID: String { ActivityID.slug(forCanonicalName: name) }
+        var displayName: String { WorkoutCatalog.localizedDisplayName(name) }
+        var id: String { activityID }
+    }
+
+    /// Localize a stored/canonical sport only at the presentation boundary. The database,
+    /// imports, exports, dedup keys, and HealthKit mapping continue to use the unchanged
+    /// English name. Unknown free-text activities intentionally fall back to themselves.
+    static func localizedDisplayName(_ name: String) -> String {
+        String(localized: String.LocalizationValue(name))
     }
 
     /// Ordered to match Android `WorkoutSport.all`: common / distance first, the rest, the EXTRA
@@ -39,6 +47,9 @@ enum WorkoutCatalog {
         Sport(name: "Pool swim", isDistanceSport: false),
         Sport(name: "Row machine", isDistanceSport: false),
         Sport(name: "Elliptical", isDistanceSport: false),
+        // Structured local exercise/set logging is attached to this explicit activity. Keep the
+        // legacy "Strength" value below so older history and cross-platform imports still resolve.
+        Sport(name: "Strength Training", isDistanceSport: false),
         Sport(name: "Strength", isDistanceSport: false),
         // Bodybuilding (#714). A strength-style session with no route, so GPS off.
         Sport(name: "Bodybuilding", isDistanceSport: false),
@@ -89,7 +100,10 @@ enum WorkoutCatalog {
     static func matching(_ query: String) -> [Sport] {
         let q = query.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return all }
-        return all.filter { $0.name.range(of: q, options: .caseInsensitive) != nil }
+        return all.filter {
+            $0.name.range(of: q, options: .caseInsensitive) != nil
+                || $0.displayName.range(of: q, options: .caseInsensitive) != nil
+        }
     }
 
     /// Sports where a step count is meaningful , feet on the ground , so the workout summary can show

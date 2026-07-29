@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.noop.R
+import com.noop.ui.AlertInbox
 import com.noop.ui.NotifPrefs
 import com.noop.ui.appLaunchIntent
 
@@ -28,6 +29,11 @@ object SmartAlarmNotifier {
     @SuppressLint("MissingPermission") // guarded by areNotificationsEnabled() + runCatching
     fun onFired(context: Context) {
         if (!NotifPrefs.getBool(context, NotifPrefs.MASTER, false)) return
+        val title = context.getString(R.string.smart_alarm_title)
+        val body = context.getString(R.string.smart_alarm_body)
+        runCatching {
+            AlertInbox.post(context, AlertInbox.Kind.SMART_ALARM, title, body)
+        }
         runCatching {
             if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
             ensureChannel(context)
@@ -38,8 +44,8 @@ object SmartAlarmNotifier {
             )
             val n = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_heart)
-                .setContentTitle("Good morning")
-                .setContentText("Your smart alarm just went off.")
+                .setContentTitle(title)
+                .setContentText(body)
                 .setContentIntent(openApp)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)

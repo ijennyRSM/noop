@@ -31,6 +31,16 @@ final class HealthKitBridge: ObservableObject {
     /// The most recent failure surfaced by `sync` / `writeBack`. Cleared on a successful run. UI binds
     /// here so an Apple Health auth revoke, quota hit, or invalid sample is visible instead of silent.
     @Published private(set) var lastError: String?
+    /// The newest realistic body-weight (kg) seen in the last successful sync, or nil when Health carried
+    /// none. Published so the app can one-time seed an unset profile weight (see
+    /// `ProfileStore.seedWeightFromHealthIfUnset`); the profile field itself stays the source of truth.
+    @Published private(set) var latestImportedWeightKg: Double?
+    /// A user-requested historical import, deliberately separate from normal foreground/background
+    /// synchronisation. The app stores daily aggregates, never raw HealthKit samples.
+    @Published private(set) var fullHistoryImporting = false
+    @Published private(set) var fullHistoryProgress: Double?
+    @Published private(set) var lastFullHistoryImport: Date?
+    private var fullHistoryTask: Task<Void, Never>?
 
     private let store = HKHealthStore()
     private let repo: Repository
@@ -69,9 +79,27 @@ final class HealthKitBridge: ObservableObject {
         return s
     }
 
+    /// UserDefaults key recording the read scopes the last successful `requestAuthorization` asked for.
+    private static let readAuthSignatureKey = "health.readAuthSignature"
+
+    /// Lookback (days) for the sparse body-composition reads (weight/body-fat/lean/BMI), decoupled from
+    /// the 30-day daily-vitals window. ~10 years so a monthly-or-rarer weigh-in still lands, and the
+    /// history matches the all-history file importer. Cheap: sparse discrete reads yield only real days.
+    private static let bodyCompositionLookbackDays = 3650
+
+    /// A deterministic fingerprint of the read scopes surfaced in the consent dialog — the sorted
+    /// quantity read ids plus stable markers for the sleep + workout reads. When a later version ADDS a
+    /// read-only type (e.g. body composition, #20), this string changes, and `refreshAuthIfPreviouslyGranted`
+    /// uses the mismatch to re-request once so a returning user is actually asked for the new type. Purely
+    /// local (never crosses the `.noopbak` boundary), so the raw joined string is fine — no neutral hash needed.
+    private var currentReadSignature: String {
+        (HealthKitBridge.quantityReadIds.map(\.rawValue).sorted() + ["category:sleepAnalysis", "workout"])
+            .joined(separator: "|")
+    }
+
     private var writeTypes: Set<HKSampleType> {
         var s = Set<HKSampleType>()
-        for id in HealthKitBridge.quantityWriteIds + HealthKitBridge.highResQuantityWriteIds {
+        for id in HealthKitBridge.quantityWriteIds + HealthKitBridge.highResQuantityWriteIds + HealthKitBridge.bodyMassWriteIds {
             if let t = HKObjectType.quantityType(forIdentifier: id) { s.insert(t) }
         }
         if let sleep = HKObjectType.categoryType(forIdentifier: .sleepAnalysis) { s.insert(sleep) }
@@ -97,8 +125,10 @@ final class HealthKitBridge: ObservableObject {
         .heartRate, .restingHeartRate, .heartRateVariabilitySDNN, .oxygenSaturation,
         .respiratoryRate, .bodyTemperature, .stepCount, .activeEnergyBurned,
         .basalEnergyBurned, .vo2Max,
-        // Body composition — READ-ONLY (#20). Imported under the apple-health source like the file
-        // importer already ingests; deliberately NOT in quantityWriteIds (we never write these back).
+        // Body composition — READ-ONLY (#20) for body-fat/lean-mass/BMI (no reliable NOOP-computed
+        // source for them). Weight is the one exception: see `bodyMassWriteIds`/`writeWeight` below —
+        // a later, user-requested reversal of this file's original "never write these back" stance,
+        // scoped to weight only. All four still import under the apple-health source as before.
         .bodyMass, .bodyFatPercentage, .leanBodyMass, .bodyMassIndex
     ]
     private static let quantityWriteIds: [HKQuantityTypeIdentifier] = [
@@ -110,6 +140,10 @@ final class HealthKitBridge: ObservableObject {
     private static let highResQuantityWriteIds: [HKQuantityTypeIdentifier] = [
         .heartRate, .activeEnergyBurned, .distanceWalkingRunning, .distanceCycling
     ]
+    // Weight write-back: the user's own PROFILE edit, not strap-derived data — see `writeWeight` below.
+    // Kept as its own array for the same reason as `highResQuantityWriteIds`: `legacyCoreWriteTypes`
+    // must stay exactly what pre-update users granted, or a returning user regresses to unauthorized.
+    private static let bodyMassWriteIds: [HKQuantityTypeIdentifier] = [.bodyMass]
 
     // MARK: - Authorization
 
@@ -135,6 +169,9 @@ final class HealthKitBridge: ObservableObject {
             // the authoritative signal; the `.notDetermined` fallback only matters when that check can't
             // run, which on iOS means an App Store build that by definition has the entitlement.
             auth = .authorized
+            // Record the read scopes just asked for, so a later read-only addition (which changes the
+            // signature) triggers exactly one top-up re-request on resume — and a fresh grant does not.
+            UserDefaults.standard.set(currentReadSignature, forKey: HealthKitBridge.readAuthSignatureKey)
         } catch {
             // A thrown error here is on a build that carries the entitlement (guarded above), so it's a
             // genuine denial / request failure — keep the normal `.denied` "enable in Settings" path,
@@ -167,11 +204,27 @@ final class HealthKitBridge: ObservableObject {
             // pre-update grant has as `.notDetermined`. Re-request once: HealthKit shows a single sheet
             // listing ONLY the new types, and each write feature independently guards on its own type's
             // share status, so declining any checkbox just skips that feature.
+            //
+            // Read-only additions need the SAME top-up but can't be seen via `authorizationStatus`
+            // (HealthKit never reveals read status), so `newTypesPending` — a WRITE-only probe — misses
+            // them: body composition (#20) is read-only, so a returning user whose writes were already
+            // determined was never asked for weight/BMI/lean/body-fat and HealthKit silently returned
+            // nothing. Compare the persisted read-scope signature to detect a grown read set and re-request.
+            //
             // Raw request, NOT requestAuthorization(): that method reclassifies a thrown error as
             // `.denied`, which must never demote a bridge that just resumed a valid legacy grant.
             let newTypesPending = writeTypes.contains { store.authorizationStatus(for: $0) == .notDetermined }
-            if newTypesPending {
-                Task { try? await store.requestAuthorization(toShare: writeTypes, read: readTypes) }
+            let readGrew = UserDefaults.standard.string(forKey: HealthKitBridge.readAuthSignatureKey) != currentReadSignature
+            if newTypesPending || readGrew {
+                let signature = currentReadSignature
+                Task {
+                    do {
+                        try await store.requestAuthorization(toShare: writeTypes, read: readTypes)
+                        // Only record the signature on success, so a dismissed/failed request retries next
+                        // resume instead of being marked satisfied.
+                        UserDefaults.standard.set(signature, forKey: HealthKitBridge.readAuthSignatureKey)
+                    } catch { /* keep the old signature; try again on the next resume */ }
+                }
             }
         }
     }
@@ -302,15 +355,38 @@ final class HealthKitBridge: ObservableObject {
     /// Pull the last `days` of Apple Health into the on-device store under the `apple-health` source,
     /// then write NOOP's own computed metrics back into Health. Safe to call repeatedly (idempotent
     /// upserts keyed by day).
-    func sync(days: Int = 30) async {
+    func sync(days: Int = 30, importingFullHistory: Bool = false) async {
         guard auth == .authorized, !syncing else { return }
         syncing = true
-        defer { syncing = false }
+        if importingFullHistory {
+            fullHistoryImporting = true
+            fullHistoryProgress = 0
+        }
+        defer {
+            syncing = false
+            if importingFullHistory {
+                fullHistoryImporting = false
+                fullHistoryProgress = nil
+            }
+        }
         guard let store = await repo.storeHandle() else { return }
+
+        func progress(_ value: Double) {
+            guard importingFullHistory else { return }
+            fullHistoryProgress = min(1, max(0, value))
+        }
 
         let cal = Calendar.current
         let end = Date()
         guard let start = cal.date(byAdding: .day, value: -days, to: cal.startOfDay(for: end)) else { return }
+        // Body composition (weight/body-fat/lean/BMI) is SPARSE and slow-moving — a weigh-in can be weeks
+        // or months apart — so the 30-day vitals window frequently holds no sample at all and the metric
+        // silently never imports (the daily HR/steps/sleep reads are unaffected). Give these four types a
+        // long lookback so the latest value AND the full history land, matching the all-history file
+        // importer. Cheap despite the span: they're sparse discrete reads, so enumeration only yields the
+        // handful of days that actually carry a sample.
+        let bodyStart = cal.date(byAdding: .day, value: -HealthKitBridge.bodyCompositionLookbackDays,
+                                 to: cal.startOfDay(for: end)) ?? start
 
         var byDay: [String: DayAgg] = [:]
         func agg(_ day: String) -> DayAgg { byDay[day] ?? DayAgg() }
@@ -346,22 +422,27 @@ final class HealthKitBridge: ObservableObject {
         await collect(.vo2Max, unit: HKUnit(from: "ml/kg*min"), start: start, end: end, op: .discreteAverage) { day, v in
             var a = agg(day); a.vo2max = v; byDay[day] = a
         }
+        progress(0.40)
+        guard !Task.isCancelled else { return }
 
         // Body composition — READ-ONLY import under the apple-health source (#20). Weight, lean mass
         // and BMI are point-in-time readings, so take the latest-of-day; body-fat reads fine as a
         // daily average. Body-fat HealthKit gives a 0…1 fraction, scaled to percent like spo2 above.
-        await collect(.bodyMass, unit: .gramUnit(with: .kilo), start: start, end: end, op: .discreteMostRecent) { day, v in
+        // These use `bodyStart` (long lookback), NOT the 30-day vitals `start`, because they're sparse.
+        await collect(.bodyMass, unit: .gramUnit(with: .kilo), start: bodyStart, end: end, op: .discreteMostRecent) { day, v in
             var a = agg(day); a.weightKg = v; byDay[day] = a
         }
-        await collect(.bodyFatPercentage, unit: .percent(), start: start, end: end, op: .discreteAverage) { day, v in
+        await collect(.bodyFatPercentage, unit: .percent(), start: bodyStart, end: end, op: .discreteAverage) { day, v in
             var a = agg(day); a.bodyFatPct = v * 100; byDay[day] = a   // 0…1 → percent
         }
-        await collect(.leanBodyMass, unit: .gramUnit(with: .kilo), start: start, end: end, op: .discreteMostRecent) { day, v in
+        await collect(.leanBodyMass, unit: .gramUnit(with: .kilo), start: bodyStart, end: end, op: .discreteMostRecent) { day, v in
             var a = agg(day); a.leanMassKg = v; byDay[day] = a
         }
-        await collect(.bodyMassIndex, unit: .count(), start: start, end: end, op: .discreteMostRecent) { day, v in
+        await collect(.bodyMassIndex, unit: .count(), start: bodyStart, end: end, op: .discreteMostRecent) { day, v in
             var a = agg(day); a.bmi = v; byDay[day] = a
         }
+        progress(0.60)
+        guard !Task.isCancelled else { return }
 
         // Sleep minutes per day (asleep stages summed; attributed to wake day).
         await collectSleep(start: start, end: end) { day, asleepMin, deepMin, remMin, coreMin in
@@ -369,6 +450,8 @@ final class HealthKitBridge: ObservableObject {
             a.asleepMin = asleepMin; a.deepMin = deepMin; a.remMin = remMin; a.coreMin = coreMin
             byDay[day] = a
         }
+        progress(0.75)
+        guard !Task.isCancelled else { return }
 
         // Build + upsert the store rows under the apple-health source.
         let appleRows = byDay.map { (day, a) in
@@ -422,6 +505,8 @@ final class HealthKitBridge: ObservableObject {
         // reads them live on-device too, so the platforms reach parity. ON-DEVICE ONLY: this is a plain
         // HealthKit read of workouts NOOP did NOT author, never any cloud/3rd-party API. (#835)
         let workoutRows = await collectWorkouts(start: start, end: end)
+        progress(0.85)
+        guard !Task.isCancelled else { return }
 
         // Persist all the apple-health rows AND write back, advancing lastSync only when the WHOLE
         // round-trip succeeds. The three read-side upserts used to be swallowed by `try?`, so a failed
@@ -435,10 +520,41 @@ final class HealthKitBridge: ObservableObject {
             if !workoutRows.isEmpty { try await store.upsertWorkouts(workoutRows, deviceId: appleDeviceId) }
             try await writeBack(whoopStore: store)
             lastSync = Date()
+            if importingFullHistory { lastFullHistoryImport = lastSync }
             lastError = nil
+            // Newest realistic weigh-in from this sync, for the one-time profile seed. Latest = the
+            // highest day key carrying a >10 kg reading; nil when Health held none.
+            latestImportedWeightKg = appleRows
+                .filter { ($0.weightKg ?? 0) > 10 }
+                .max { $0.day < $1.day }?
+                .weightKg
+            progress(1)
         } catch {
             lastError = String(localized: "Apple Health sync failed: \(error.localizedDescription)")
         }
+    }
+
+    /// Build the local Apple-Health history used by long-range Coach questions. This is an explicit
+    /// action because a multi-year HealthKit query can take noticeable time; subsequent normal syncs
+    /// remain incremental/short-window. Ten years matches the existing sparse body-composition lookback.
+    func startFullHistoryImport() {
+        guard auth == .authorized, !syncing, !fullHistoryImporting else { return }
+        // Publish synchronously so the view cannot mistake the scheduling gap for a completed import.
+        fullHistoryImporting = true
+        fullHistoryProgress = 0
+        fullHistoryTask = Task { [weak self] in
+            guard let self else { return }
+            await self.sync(days: Self.bodyCompositionLookbackDays, importingFullHistory: true)
+            self.fullHistoryTask = nil
+        }
+    }
+
+    /// HealthKit queries are cooperative: the current aggregate query may finish, but no later category
+    /// or database write is started after cancellation. A later tap safely starts the full, idempotent
+    /// import again; day-keyed upserts prevent duplicates.
+    func cancelFullHistoryImport() {
+        fullHistoryTask?.cancel()
+        fullHistoryTask = nil
     }
 
     // MARK: - Write back (NOOP → Health)
@@ -561,6 +677,33 @@ final class HealthKitBridge: ObservableObject {
             _ = try? await self.store.deleteObjects(of: type, predicate: pred)
         }
         try await self.store.save(candidates.map { $0.sample })
+    }
+
+    /// Writes the user's current PROFILE weight into Apple Health — the one write-back whose source is a
+    /// user edit, not strap-derived `WhoopStore` data, so it is deliberately NOT called from the periodic
+    /// `writeBack(whoopStore:days:)` sync loop like `writeVitals`/`writeSleep`/`writeHeartRate`/
+    /// `writeWorkouts` above. Triggered from `ProfileStore.weightKg` changing, wired in `StrandiOSApp.swift`.
+    /// Same dedup model as `writeVitals`: one sample per day, keyed `noop:<noopDeviceId>:bodyMass:<day>`,
+    /// delete-then-save so repeated edits the same day replace rather than duplicate.
+    func writeWeight(kg: Double, day: String = HealthKitBridge.dayString(Date())) async throws {
+        guard kg > 10,
+              let type = HKQuantityType.quantityType(forIdentifier: .bodyMass),
+              store.authorizationStatus(for: type) == .sharingAuthorized,
+              let date = HealthKitBridge.date(from: day) else { return }
+        let cal = Calendar.current
+        let at = cal.date(bySettingHour: 12, minute: 0, second: 0, of: date) ?? date
+        let key = "noop:\(noopDeviceId):bodyMass:\(day)"
+        let sample = HKQuantitySample(
+            type: type,
+            quantity: .init(unit: .gramUnit(with: .kilo), doubleValue: kg),
+            start: at, end: at,
+            metadata: [HKMetadataKeyExternalUUID: key]
+        )
+        let bySource = HKQuery.predicateForObjects(from: HKSource.default())
+        let byKey = HKQuery.predicateForObjects(withMetadataKey: HKMetadataKeyExternalUUID, allowedValues: [key])
+        let pred = NSCompoundPredicate(andPredicateWithSubpredicates: [bySource, byKey])
+        _ = try? await store.deleteObjects(of: type, predicate: pred)
+        try await store.save(sample)
     }
 
     /// Write each BRIDGED NIGHT (#364) as one `.inBed` sample plus one category sample per stage

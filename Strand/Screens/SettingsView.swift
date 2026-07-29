@@ -89,13 +89,16 @@ struct SettingsView: View {
     // Light/Dark/System theme. Read by both app roots' .preferredColorScheme; default follows the OS.
     @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.system.rawValue
     // Chart colour style: Titanium (brand) or Classic (throwback red→green). Re-colours gauges + charts.
-    @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.titanium.rawValue
-    // Day-cycle scene backdrop behind Today (#698). Default ON. Off swaps the scene for a plain dark
-    // canvas. TodayView reads the same key to gate its SceneScreenBackground.
-    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = true
-    // "Sky behind cards" (default ON): extend the day-cycle sky behind the whole Today scroll so
+    @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.health.rawValue
+    // Day-cycle scene backdrop behind Today (#698). Default OFF. On adds the moving time-of-day scene;
+    // off (the default) keeps the plain dark canvas. TodayView reads the same key to gate its
+    // SceneScreenBackground.
+    @AppStorage(SceneBackgroundPrefs.enabledKey) private var showDayCycleBackground = false
+    // "Sky behind cards" (default OFF): extend the day-cycle sky behind the whole Today scroll so
     // Card transparency reveals it under every card. User-toggleable below. Mirrors Kotlin NoopPrefs.skyBehindCards.
-    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = true
+    @AppStorage(SkyBehindCardsPrefs.enabledKey) private var skyBehindCards = false
+    // "Breathing coach tile" (default ON): the Today coach entry's gentle pulse. See CoachTilePrefs.
+    @AppStorage(CoachTilePrefs.breathingKey) private var coachTileBreathing = true
     // Card-surface opacity percent (100 = solid). Reactive — moving the slider live-updates every card.
     @AppStorage(CardAppearancePrefs.opacityKey) private var cardOpacityPercent = CardAppearancePrefs.defaultPercent
     // Hydration tracker (opt-in, MVP). Default OFF — when off the hydration dashboard card + detail are
@@ -145,6 +148,11 @@ struct SettingsView: View {
     /// macOS can "Reveal in Finder" after a share, mirroring the puffin-capture export.
     @State private var rawCsvBusy = false
     @State private var lastRawCsvURL: URL?
+
+    /// Passive WHOOP 5/MG optical experiment: the picker writes local timestamp markers into the
+    /// durable deep-buffer JSONL. It never calls a BLE write path.
+    @State private var showOpticalPhasePicker = false
+    @State private var opticalPhaseStatus = ""
 
     /// Confirm gate for the "Recalibrate Charge baseline" action (it re-learns the HRV anchor from tonight).
     @State private var showRecalibrateConfirm = false
@@ -200,7 +208,8 @@ struct SettingsView: View {
                 appearanceCard.staggeredAppear(index: 3)
                 strapCard.staggeredAppear(index: 4)
                 powerSavingCard.staggeredAppear(index: 5)
-                featuresCard.staggeredAppear(index: 6)
+                streakCard.staggeredAppear(index: 6)
+                featuresCard.staggeredAppear(index: 7)
 
                 // Lower-frequency sections collapse behind a single default-closed disclosure so the
                 // screen opens at ~6 sections instead of 11. Nothing is removed; every section here
@@ -233,6 +242,15 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("This restarts the roughly 4-night build-up for Charge and your HRV baseline. Your history stays. Use it if a bad first week, like wearing it while sick, set your baseline off.")
+        }
+        .confirmationDialog("Mark optical experiment phase",
+                            isPresented: $showOpticalPhasePicker, titleVisibility: .visible) {
+            ForEach(PuffinOpticalExperimentPhase.allCases, id: \.self) { phase in
+                Button(phase.displayName) { markOpticalPhase(phase) }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("A marker starts the selected phase and ends the previous one. This only timestamps the local capture file; it sends nothing to the strap.")
         }
         .sheet(isPresented: $showWhatsNew) {
             WhatsNewView(onClose: { showWhatsNew = false })
@@ -269,27 +287,46 @@ struct SettingsView: View {
         // confused SwiftUI's text-measurement pass — the blurb rendered with zero trailing margin and
         // clipped to the card edge instead of wrapping inside the card padding. The localization key is
         // unchanged (`…Stored only on %@…`), so the existing translations still apply.
-        let blurbText = String(localized: "Optional. Add a photo for the avatar in the top-left. Stored only on \(Platform.deviceNounPhrase). NOOP is offline, so it's never uploaded.")
+        let blurbText = String(localized: "Optional. Add a photo and a name for the header on Today. Stored only on \(Platform.deviceNounPhrase). NOOP is offline, so it's never uploaded.")
         return SettingsSection(
             icon: "person.crop.circle",
-            title: "Profile photo",
+            title: "Photo and name",
             blurb: LocalizedStringKey(blurbText)
         ) {
-            HStack(spacing: 16) {
-                ProfileAvatarView(imageData: profile.avatarImageData, size: 64)
-                    .accessibilityLabel(profile.hasAvatar ? "Your profile photo" : "No profile photo set")
+            VStack(spacing: 0) {
+                HStack(spacing: 16) {
+                    ProfileAvatarView(imageData: profile.avatarImageData, size: 64)
+                        .accessibilityLabel(profile.hasAvatar ? "Your profile photo" : "No profile photo set")
 
-                VStack(alignment: .leading, spacing: NoopMetrics.space2) {
-                    PhotosPicker(selection: $avatarPickerItem, matching: .images) {
-                        Text(profile.hasAvatar ? "Change photo" : "Choose photo")
-                    }
-                    .buttonStyle(NoopButtonStyle(.secondary, fullWidth: true))
+                    VStack(alignment: .leading, spacing: NoopMetrics.space2) {
+                        PhotosPicker(selection: $avatarPickerItem, matching: .images) {
+                            Text(profile.hasAvatar ? "Change photo" : "Choose photo")
+                        }
+                        .buttonStyle(NoopButtonStyle(.secondary, fullWidth: true))
 
-                    if profile.hasAvatar {
-                        Button("Remove photo") { profile.clearAvatar() }
-                            .buttonStyle(NoopButtonStyle(.tertiary, fullWidth: true))
-                            .accessibilityHint("Reverts to the default profile icon")
+                        if profile.hasAvatar {
+                            Button("Remove photo") { profile.clearAvatar() }
+                                .buttonStyle(NoopButtonStyle(.tertiary, fullWidth: true))
+                                .accessibilityHint("Reverts to the default profile icon")
+                        }
                     }
+                }
+                rowDivider
+                // Greeting name (optional). Purely cosmetic — it personalises Today's header greeting and
+                // nothing else, so it stays out of the `.noopbak` whitelist (see `ProfileStore.name`).
+                FormRow(label: "Name") {
+                    TextField("Optional", text: $profile.name)
+                        .textFieldStyle(.plain)
+                        .multilineTextAlignment(.trailing)
+                        .font(StrandFont.body)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                        .tint(StrandPalette.accent)
+                        #if os(iOS)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        #endif
+                        .accessibilityLabel("Your name, used in the Today greeting")
                 }
             }
         }
@@ -665,6 +702,34 @@ struct SettingsView: View {
     /// Theme (System / Light / Dark) on every platform, plus the iOS app-icon choice. The Theme picker
     /// writes `AppearanceMode.storageKey`, which both app roots read via `.preferredColorScheme`; because
     /// every palette token is a dynamic `Color(light:dark:)`, the whole UI re-resolves on change.
+    /// Day streak (#569): consecutive days with a Charge score, computed on-device from the merged
+    /// daily metrics. A day qualifies when its `DailyMetric` has a `recovery` value. The math is the
+    /// pure `StreakCalculator` (Swift/Kotlin twin).
+    private var streakCard: some View {
+        let days = model.repo.days
+        let today = AnalyticsEngine.dayString(Int(Date().timeIntervalSince1970),
+                                              offsetSec: TimeZone.current.secondsFromGMT())
+        let s = StreakCalculator.streaks(dayKeys: days.map { $0.day },
+                                         qualified: days.map { $0.recovery != nil },
+                                         today: today)
+        return NoopCard(tint: StrandPalette.accent) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Streak").strandOverline()
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(verbatim: "\(s.current)")
+                        .font(StrandFont.number(30))
+                        .foregroundStyle(StrandPalette.accent)
+                    Text(s.current == 1 ? "day in a row" : "days in a row")
+                        .font(StrandFont.footnote)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+                Text(s.longest == 1 ? "Longest: 1 day" : "Longest: \(s.longest) days")
+                    .font(StrandFont.footnote)
+                    .foregroundStyle(StrandPalette.textSecondary)
+            }
+        }
+    }
+
     private var appearanceCard: some View {
         SettingsSection(
             icon: "circle.lefthalf.filled",
@@ -686,7 +751,8 @@ struct SettingsView: View {
                 rowDivider   // #79: the segmented rows sat flush against each other (missing separator)
                 FormRow(label: "Chart colours") {
                     // Default = NOOP's clean metric ramps; Classic = the throwback red→amber→green
-                    // readiness scale (cool→hot zones, green→red stress). Both schemes.
+                    // readiness scale (cool→hot zones, green→red stress); Apple Health = Apple's own
+                    // system colours (systemRed/Green/Indigo/Pink). All three work in both schemes.
                     Picker("Chart colours", selection: $chartStyleRaw) {
                         ForEach(ChartStyle.allCases) { style in
                             Text(style.label).tag(style.rawValue)
@@ -727,8 +793,8 @@ struct SettingsView: View {
                 #endif
 
                 Divider().overlay(StrandPalette.hairline).padding(.vertical, 4)
-                // MARK: Day-cycle background — the time-of-day scene behind Today (#698). On by default.
-                // Off swaps it for the plain dark canvas for people who find the moving scene distracting.
+                // MARK: Day-cycle background — the time-of-day scene behind Today (#698). Off by default.
+                // On adds the moving scene; off keeps the plain dark canvas.
                 Toggle(isOn: $showDayCycleBackground) {
                     Text("Day-cycle background")
                         .font(StrandFont.subhead)
@@ -760,6 +826,22 @@ struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
+                // MARK: Breathing coach tile — the one continuously animating element on Today. Subtle by
+                // design, but a permanently moving thing in peripheral vision genuinely bothers some
+                // people, so it gets its own switch (Reduce Motion suppresses it either way).
+                Toggle(isOn: $coachTileBreathing) {
+                    Text("Breathing coach tile")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                }
+                .toggleStyle(.switch)
+                .tint(StrandPalette.accent)
+                Text("Lets the coach tile on Today pulse gently, so the one thing that talks back has a pulse. Turn it off to keep it perfectly still.")
+                    .font(StrandFont.caption)
+                    .foregroundStyle(StrandPalette.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
                 // MARK: Card transparency — fade every frosted card's glass toward the background. Reactive
                 // @AppStorage, so all cards (incl. the ones on this screen) update live as you drag. The
                 // slider shows TRANSPARENCY (0 = solid, 100 = clear); we store the OPACITY percent.
@@ -785,7 +867,38 @@ struct SettingsView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
+
+                rowDivider
+                appIconColorSection
+                rowDivider
+                appearanceExperimentalSection
             }
+        }
+    }
+
+    /// Single global switch for leading row/section icons across the app: the iOS "More" tab
+    /// (`RootTabView.MoreRow`), Coach's chat header and every one of its submenus, JourneyView, and
+    /// SettingsView's own section headers. ON (default) recolors all of them to an Apple Health-style
+    /// palette (`MoreRowAppleHealthColors` / `CoachIconColors` / `SettingsIconColors`); OFF keeps every
+    /// one of those icons plain `StrandPalette.accent` blue. Purely functional icons (chevrons,
+    /// checkmarks, state icons like `bell`/`bell.badge.fill`) are unaffected either way. Same key every
+    /// consumer reads via its own `@AppStorage`, so flipping this here updates all of them live — no
+    /// per-icon choice, on-device feedback was explicit that one switch for all icons is what's wanted.
+    @AppStorage("noop.moreRowAppleHealthColors") private var moreRowAppleHealthColors = true
+
+    private var appIconColorSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle(isOn: $moreRowAppleHealthColors) {
+                Text("App icon colors")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textPrimary)
+            }
+            .toggleStyle(.switch)
+            .tint(StrandPalette.accent)
+            Text("Recolors the leading icons across the app — the More tab, Chat and its submenus, Journey, and Settings — to match Apple Health's palette. Off keeps them plain blue.")
+                .font(StrandFont.caption)
+                .foregroundStyle(StrandPalette.textTertiary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -1236,8 +1349,11 @@ struct SettingsView: View {
     /// Entry point used by `body`. The 5/MG probe card only renders for a 5/MG (see `showFiveMGControls`,
     /// #22); the raw-sensor CSV diagnostic is split into its own card so it stays available on every
     /// model — a 4.0 owner still needs the export to share decoded streams.
+    // NOTE: the two Today-variant toggles (Liquid Today / Heute Redesign) used to live here as their
+    // own cards. Moved into `appearanceCard`'s own "Experimental" subsection (on-device feedback) so
+    // both Today-variant switches sit together with the rest of the look-and-feel controls instead of
+    // being buried in the collapsed Advanced group — see `appearanceExperimentalSection` below.
     @ViewBuilder private var experimentalCard: some View {
-        liquidTodayCard
         liveSessionsCard
         if showFiveMGControls { fiveMGCard }
         sleepStagingCard
@@ -1247,25 +1363,34 @@ struct SettingsView: View {
     /// Opt-in liquid Today redesign (default ON in this build). Off falls back to the
     /// classic dashboard immediately, no rebuild. Same data either way.
     @AppStorage("noop.liquidTodayEnabled") private var liquidTodayEnabled = true
-    private var liquidTodayCard: some View {
-        SettingsSection(
-            icon: "drop.fill",
-            title: "Experimental · Liquid Today",
-            blurb: "A redesigned Today screen in the new liquid language: the scores as living liquid, a time-of-day sky, and a calmer layout. Same numbers, new look."
-        ) {
-            VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
-                Toggle(isOn: $liquidTodayEnabled) {
-                    Text("Liquid Today (prototype)")
-                        .font(StrandFont.subhead)
-                        .foregroundStyle(StrandPalette.textPrimary)
-                }
-                .toggleStyle(.switch)
-                .tint(StrandPalette.accent)
-                Text("Replaces the Today tab with the prototype redesign. Turn it off any time to return to the classic dashboard. Reads the same live data from your strap.")
-                    .font(StrandFont.caption)
-                    .foregroundStyle(StrandPalette.textTertiary)
-                    .fixedSize(horizontal: false, vertical: true)
+
+    /// The Today-variant toggle, appended to the bottom of `appearanceCard`'s own section (on-device
+    /// feedback: this belongs with Appearance, not buried in the collapsed Advanced → Experimental
+    /// group). Kept as a private helper rather than inline in `appearanceCard` so the toggle body stays
+    /// readable next to its `@AppStorage` declaration above.
+    ///
+    /// The Heute-screen redesign toggle (StrandiOS/Redesign/) used to live here too — removed, since the
+    /// prototype never got past off-by-default/untested-on-a-real-strap. `RootTabView` no longer reads
+    /// its flag at all, so the fork's code is unreachable but left in place rather than deleted.
+    private var appearanceExperimentalSection: some View {
+        VStack(alignment: .leading, spacing: NoopMetrics.rowSpacing) {
+            Text("EXPERIMENTAL")
+                .font(StrandFont.overline)
+                .tracking(StrandFont.overlineTracking)
+                .foregroundStyle(StrandPalette.textTertiary)
+                .padding(.top, 4)
+
+            Toggle(isOn: $liquidTodayEnabled) {
+                Text("Liquid Today (prototype)")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textPrimary)
             }
+            .toggleStyle(.switch)
+            .tint(StrandPalette.accent)
+            Text("Replaces the Today tab with the prototype redesign. Turn it off any time to return to the classic dashboard. Reads the same live data from your strap.")
+                .font(StrandFont.caption)
+                .foregroundStyle(StrandPalette.textTertiary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -1472,6 +1597,31 @@ struct SettingsView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
 
+                if puffinCapture {
+                    Divider().overlay(StrandPalette.hairline)
+                    Text("Optical block experiment")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                    Text("Mark the start of each physical phase while wearing or handling the strap. NOOP aligns the marker to the timestamp inside delayed history buffers, then the offline analyzer compares block activation, header bytes and raw ADC changes. It does not assume a wavelength or calculate SpO₂/BP.")
+                        .font(StrandFont.caption)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    HStack(spacing: NoopMetrics.space3) {
+                        NoopButton("Mark phase…", systemImage: "flag.fill", kind: .primary) {
+                            showOpticalPhasePicker = true
+                        }
+                        NoopButton("Export experiment…", systemImage: "square.and.arrow.up", kind: .secondary) {
+                            exportOpticalExperiment()
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    if !opticalPhaseStatus.isEmpty {
+                        Text(opticalPhaseStatus)
+                            .font(StrandFont.caption)
+                            .foregroundStyle(StrandPalette.textSecondary)
+                    }
+                }
+
                 if live.puffinCaptureCount > 0 {
                     Text(live.puffinCaptureCount == 1
                          ? "1 frame captured this session."
@@ -1551,10 +1701,20 @@ struct SettingsView: View {
     }
 
     /// Export the last 24h of decoded sensor streams for the connected strap to a CSV, then save (macOS
-    /// NSSavePanel) or share (iOS share sheet) — the same pattern as exportPuffinCaptures(). The store
-    /// handle and the strap deviceId both come from the app's single "my-whoop" id.
+    /// NSSavePanel) or share (iOS share sheet) — the same pattern as exportPuffinCaptures().
+    ///
+    /// The strap id comes from `repo.deviceId`, NOT `model.deviceId`. The latter is a hardcoded
+    /// `let "my-whoop"`; the former is seeded with it and then re-pointed to the registry's active strap
+    /// once the store opens (`adoptActiveDeviceId`). This read used the hardcoded one, so after a
+    /// remove+re-add — which mints a fresh "whoop-<uuid>" that the Collector writes today's raw under —
+    /// the CSV exported the legacy id's streams rather than the strap being worn, silently, in the file
+    /// people attach to bug reports. That is #814 on the diagnostic path, and the Android twin of it.
+    ///
+    /// Read on the MainActor before the Task hop, as `LiveSessionRunner` does, rather than reaching into
+    /// the actor-isolated repo from inside the task.
     private func exportRawSensorCSV() {
         rawCsvBusy = true
+        let strapId = model.repo.deviceId
         Task {
             let since = Date().timeIntervalSince1970 - 24 * 60 * 60
             guard let store = await model.repo.storeHandle() else {
@@ -1567,7 +1727,7 @@ struct SettingsView: View {
                 return
             }
             do {
-                let url = try await store.exportRawCSV(deviceId: model.deviceId, since: since)
+                let url = try await store.exportRawCSV(deviceId: strapId, since: since)
                 await MainActor.run {
                     rawCsvBusy = false
                     lastRawCsvURL = url
@@ -1627,6 +1787,28 @@ struct SettingsView: View {
         #else
         FileExport.exportFile(at: src, suggestedName: suggested)
         #endif
+    }
+
+    private func markOpticalPhase(_ phase: PuffinOpticalExperimentPhase) {
+        if model.ble.markWhoop5OpticalPhase(phase) {
+            opticalPhaseStatus = String(localized: "Marked: \(phase.displayName)")
+        } else {
+            opticalPhaseStatus = String(localized: "Marker wasn't saved. Keep frame recording on and try again.")
+        }
+    }
+
+    /// Export the durable JSONL used by the optical comparison CLI. Closing its append handle first
+    /// makes the user-selected copy complete; logging reopens lazily on the next buffer or marker.
+    private func exportOpticalExperiment() {
+        guard let src = model.ble.whoop5OpticalExperimentURL() else {
+            backupAlertTitle = String(localized: "Nothing to export")
+            backupAlertMessage = String(localized: "No WHOOP 5/MG deep buffers or phase markers have been recorded yet.")
+            showBackupAlert = true
+            return
+        }
+        FileExport.exportFile(
+            at: src,
+            suggestedName: FileExport.timestampedName("noop-whoop5-optical-experiment", ext: "jsonl"))
     }
 
     /// One-tap matched-pair export (#510): export the raw puffin capture AND the strap log together,
@@ -2306,6 +2488,11 @@ private struct SettingsSection<Content: View>: View {
     let blurb: LocalizedStringKey
     @ViewBuilder var content: () -> Content
 
+    /// Apple Health-style leading-icon coloring ("App icon colors") — same switch that recolors the
+    /// More tab and Coach's screens. Keyed directly on `icon` (see `SettingsIconColors`): every one of
+    /// this struct's 15 call sites already uses a distinct SF Symbol, so the glyph itself is a stable key.
+    @AppStorage("noop.moreRowAppleHealthColors") private var appleHealthColors = true
+
     var body: some View {
         StrandCard(padding: 20, tint: StrandPalette.accent) {
             VStack(alignment: .leading, spacing: NoopMetrics.space4) {
@@ -2313,7 +2500,8 @@ private struct SettingsSection<Content: View>: View {
                     Text("Settings").strandOverline()
                     HStack(spacing: NoopMetrics.space2 + 2) {
                         Image(systemName: icon)
-                            .foregroundStyle(StrandPalette.accent)
+                            .foregroundStyle(appleHealthColors
+                                            ? SettingsIconColors.color(for: icon) : StrandPalette.accent)
                             .accessibilityHidden(true)
                         Text(title)
                             .font(StrandFont.title2)

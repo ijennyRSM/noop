@@ -1,5 +1,6 @@
 import Foundation
 import ZIPFoundation
+import WhoopStore
 
 /// Parses a Whoop data export (CSV bundle) into normalized Swift models.
 ///
@@ -35,7 +36,11 @@ public struct WhoopExportImporter {
     /// Rescale an imported WHOOP Day Strain (0–21) onto NOOP's 0–100 Effort axis. `nil` passes through.
     public static func effortFromImportedDayStrain(_ dayStrain: Double?) -> Double? {
         guard let dayStrain else { return nil }
-        return dayStrain * dayStrainToEffortScale
+        return CardiovascularEffortValue(
+            rawValue: dayStrain,
+            scale: .whoop21,
+            source: .whoopCSVImport
+        ).normalized100
     }
 
     /// Inverse: convert NOOP's internal 0–100 Effort back onto WHOOP's 0–21 Day Strain scale for a
@@ -43,7 +48,11 @@ public struct WhoopExportImporter {
     /// NOOP import round-trip lossless (export ÷scale, then import ×scale restores the value).
     public static func whoopDayStrainFromEffort(_ effort: Double?) -> Double? {
         guard let effort else { return nil }
-        return effort / dayStrainToEffortScale
+        return CardiovascularEffortValue(
+            rawValue: effort,
+            scale: .noop100,
+            source: .stored
+        ).value(on: .whoop21)
     }
 
     /// WHOOP CSVs carry "Sleep efficiency %" on a 0–100 scale; NOOP's `efficiency` columns store the
@@ -384,7 +393,11 @@ public struct WhoopExportImporter {
             r.tzOffsetMin = tz
             r.cycleStart = WhoopTime.parse(row.cell("cycle_start_time"), offsetMinutes: tz)
             r.question = row.cell("question_text", "question")
-            r.answer   = row.cell("answered_yes_no", "answer", "answer_text")
+            // #631: the REAL WHOOP export header is "Answered yes" (-> answered_yes), not the
+            // "Answered yes/no" NOOP's own exporter writes (-> answered_yes_no). Every real WHOOP
+            // journal import silently zeroed out to "without" because neither of the old keys ever
+            // matched, regardless of the account's actual answers.
+            r.answer   = row.cell("answered_yes", "answered_yes_no", "answer", "answer_text")
             r.notes    = row.cell("notes")
 
             // A journal row is only meaningful if it has a question.

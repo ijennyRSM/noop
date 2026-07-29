@@ -14,7 +14,7 @@ import WhoopStore
 ///   signal (Lamberts et al. 2004).
 /// - **Respiratory-rate drift** — a rise in sleeping respiratory rate is an early illness signal.
 /// - **Training Stress Balance (ACWR)** — acute (7-day) vs chronic (28-day) strain. The 0.8–1.3
-///   band is the "sweet spot"; >1.5 is associated with higher injury risk (Gabbett 2016).
+///   band is a load-change heuristic; it is not an injury prediction.
 /// - **Training monotony** — mean/SD of daily strain over a week; high monotony (low variety) is
 ///   associated with higher strain and illness (Foster 1998).
 ///
@@ -70,6 +70,7 @@ public enum ReadinessEngine {
     private static let minBaseline    = 7    // need at least this many baseline nights
     private static let acuteWindow    = 7
     private static let chronicWindow  = 28
+    private static let minAcute       = 4
     private static let minChronic     = 14   // need at least this much strain history for ACWR
 
     // MARK: Entry point
@@ -127,7 +128,11 @@ public enum ReadinessEngine {
                              summary: "Wear the strap for a few nights and your readiness read will appear here.",
                              signals: [], acwr: nil, monotony: nil)
         }
-        let history = sorted.filter { $0.day < latest.day }   // everything before today
+        let history = sorted.filter {
+            $0.day < latest.day
+                && calendarDayDistance(from: $0.day, to: latest.day)
+                    .map { (1...baselineWindow).contains($0) } == true
+        }
 
         var signals: [Signal] = []
 
@@ -182,26 +187,34 @@ public enum ReadinessEngine {
         }
 
         // Training Stress Balance (ACWR) + monotony --------------------------
-        let strainSeries = sorted.compactMap { $0.strain }
+        let datedStrain = sorted.compactMap { row -> (distance: Int, value: Double)? in
+            guard let value = row.strain,
+                  let distance = calendarDayDistance(from: row.day, to: latest.day),
+                  distance >= 0 else { return nil }
+            return (distance, value)
+        }
+        let acuteSeries = datedStrain.filter { $0.distance < acuteWindow }.map(\.value)
+        let chronicSeries = datedStrain.filter { $0.distance < chronicWindow }.map(\.value)
         var acwr: Double? = nil
         var monotony: Double? = nil
-        if strainSeries.count >= minChronic {
-            let acute = mean(Array(strainSeries.suffix(acuteWindow)))!
-            let chronic = mean(Array(strainSeries.suffix(chronicWindow)))!
+        if acuteSeries.count >= minAcute, chronicSeries.count >= minChronic {
+            let acute = mean(acuteSeries)!
+            let chronic = mean(chronicSeries)!
             if chronic > 0 {
                 let ratio = acute / chronic
                 acwr = ratio
                 signals.append(acwrSignal(ratio, acute: acute, chronic: chronic))
             }
             // Foster monotony over the last week of strain.
-            let week = Array(strainSeries.suffix(acuteWindow))
+            let week = acuteSeries
             if week.count >= 4, let sd = sampleSD(week), sd > 0, let m = mean(week) {
                 let mono = m / sd
                 monotony = mono
                 if mono >= 2.0 {
                     signals.append(Signal(key: "monotony", label: "Training variety",
                         evidence: "monotony \(String(format: "%.1f", mono))",
-                        detail: "low - similar strain every day raises strain/illness risk", flag: .watch))
+                        detail: "low - recent training load has had little day-to-day variation",
+                        flag: .watch))
                 }
             }
         }
@@ -256,7 +269,7 @@ public enum ReadinessEngine {
         default:
             return Signal(key: "acwr", label: "Training load",
                 evidence: evidence,
-                detail: "spiking (acute:chronic \(pct)) - higher injury risk", flag: .bad)
+                detail: "spiking (acute:chronic \(pct)) - consider a controlled day", flag: .bad)
         }
     }
 
@@ -310,5 +323,18 @@ public enum ReadinessEngine {
         guard xs.count >= 2, let m = mean(xs) else { return nil }
         let ss = xs.reduce(0) { $0 + ($1 - m) * ($1 - m) }
         return (ss / Double(xs.count - 1)).squareRoot()
+    }
+
+    private static func calendarDayDistance(from start: String, to end: String) -> Int? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = calendar.timeZone
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard let startDate = formatter.date(from: start),
+              let endDate = formatter.date(from: end) else { return nil }
+        return calendar.dateComponents([.day], from: startDate, to: endDate).day
     }
 }

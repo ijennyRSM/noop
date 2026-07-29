@@ -1,73 +1,41 @@
-# การแปล NOOP สำหรับ iOS เป็นภาษาไทย
+# Thai localization
 
-สาขานี้เพิ่มภาษาไทยให้ NOOP โดยคงภาษาอังกฤษ (`en`) เป็นภาษาต้นฉบับและภาษาสำรอง การเปลี่ยนแปลงนี้เป็นงานดัดแปลงอิสระสำหรับการใช้งานส่วนตัวและไม่ใช่ NOOP รุ่นทางการ ไม่มีการแก้ protocol ของ WHOOP, การประมวลผล BLE, สูตรสุขภาพ, schema/migration ของฐานข้อมูล หรือรูปแบบนำเข้าและส่งออก
+NOOP AI Full Beta keeps English as the development and fallback language and adds Thai (`th`) through
+Apple String Catalogs. The iPhone app, StrandDesign package, widgets, Watch app, Watch complications,
+display name, and iOS permission descriptions each own their localization resources; targets do not
+depend on another target's catalog.
 
-## ขอบเขตที่แปล
+The main health terms use concise Thai: Today = วันนี้, Recovery = การฟื้นตัว, Strain/Effort =
+ภาระร่างกาย, Sleep = การนอน, Readiness = ความพร้อมของร่างกาย, Skin Temperature =
+อุณหภูมิผิวหนัง, and Strength Training = การฝึกเวท. Brand names and standard abbreviations such as
+NOOP, WHOOP, HRV, RHR, SpO₂, BLE, GPS, CSV, and AI remain unchanged.
 
-- แอป iPhone: หน้า Today, Recovery/Charge, Strain/Effort, Sleep/Rest, Workouts, Trends, Insights, Compare, Metric Explorer, Live heart rate, การเชื่อมต่อสายรัด, การซิงค์/backfill, การนำเข้า/ส่งออก, Apple Health, Profile, Settings, AI Coach, Breathe, Intervals, onboarding, terms/privacy, dialog, error, empty state, accessibility และข้อความแจ้งเตือนที่อยู่ใน String Catalog
-- `StrandDesign`: ข้อความของ component ที่อยู่ใน Swift package ใช้ resource bundle ของ package ตามเดิม
-- iOS Widget และ Live Activity: มี `StrandiOSWidgets/Localizable.xcstrings` ของ extension เอง ไม่พึ่ง catalog ของแอปหลัก
-- Apple Watch และ Watch complication: ใช้ catalog ของ target แต่ละตัวตามเดิมและมีภาษาไทยครบ
-- ข้อความ permission ของ iOS และ watchOS รวมถึงชื่อแอปภาษาไทย `NOOP ไทย` อยู่ใน `th.lproj/InfoPlist.strings` ของแต่ละ bundle
-
-คำหลักที่ใช้สม่ำเสมอ ได้แก่ `การฟื้นตัว`, `ภาระร่างกาย`, `การนอน`, `ประสิทธิภาพการนอน`, `เวลานอนที่ร่างกายต้องการ`, `หนี้การนอน`, `ความพร้อมของร่างกาย`, `อัตราการเต้นหัวใจขณะพัก`, `อัตราการหายใจ`, `อุณหภูมิผิวหนัง` และ `ออกซิเจนในเลือด` ชื่อแบรนด์และตัวย่อสากล เช่น NOOP, WHOOP, HRV, RHR, SpO₂, GPS, CSV, AI และ BLE ไม่ถูกแปล
-
-## ตรวจสอบ localization
-
-รันจาก root ของ repository:
+Run the dependency-free validator from the repository root:
 
 ```bash
 python3 Tools/validate-thai-localization.py
 ```
 
-สคริปต์ใช้เฉพาะ Python standard library โดยตรวจ JSON, `sourceLanguage: en`, สถานะ `translated` ของภาษา `th`, จำนวนและชนิดของ format placeholder และ key ที่จำเป็นใน Thai `InfoPlist.strings` รายการที่ตั้ง `shouldTranslate: false` จะถูกข้ามโดยตั้งใจ
+It validates JSON, requires `th`, checks every required Thai value, and compares Apple formatting
+placeholders. The DX baseline key list in `Tools/i18n-dx-required-keys.json` prevents an integration from
+silently dropping a DX-only string.
 
-บน macOS ให้ตรวจ project และ build เพิ่มเติมด้วย:
+To build the sideload IPA in GitHub, open **Actions**, choose **Build NOOP AI Full Thai Strength**,
+select **Run workflow**, choose `integration/dx-thai-strength-full`, and click **Run workflow**. When it
+finishes, open the run, scroll to **Artifacts**, and download
+`NOOP-AI-Full-Thai-Strength-Unsigned-IPA`.
 
-```bash
-xcodegen generate
-xcodebuild \
-  -scheme NOOPiOS \
-  -configuration Release \
-  -destination 'generic/platform=iOS' \
-  -derivedDataPath build/dd \
-  CODE_SIGNING_ALLOWED=NO \
-  CODE_SIGNING_REQUIRED=NO \
-  CODE_SIGN_IDENTITY="" \
-  build
-```
+The IPA is unsigned. Sign it with AltStore, SideStore, or Sideloadly before installation. A free Apple ID
+signature normally expires after seven days. The sideload package deliberately removes Watch, widget,
+and Live Activity extensions; HealthKit and other entitlement-dependent features can also be unavailable
+when freely re-signed.
 
-## สร้างและดาวน์โหลด IPA
+When updating from upstream:
 
-1. เปิด repository ของ fork บน GitHub
-2. เลือกแท็บ **Actions**
-3. เลือก workflow **Build Thai iOS Unsigned IPA**
-4. กด **Run workflow** เลือก branch ที่ต้องการ แล้วกด **Run workflow** อีกครั้ง
-5. รอ job **Build unsigned Thai IPA** เสร็จ
-6. เปิดหน้ารายละเอียด run แล้วดาวน์โหลด artifact **NOOP-Thai-Unsigned-IPA** ในส่วน **Artifacts**
+1. Fetch `upstream/main` and merge it into a separate integration branch.
+2. Never replace a whole `.xcstrings` file. Merge by key and preserve the English source value.
+3. Run the validator. New source keys reported as missing need a natural Thai translation.
+4. Review new SwiftUI screens and target-specific resources, then run the iOS build workflow.
 
-ไฟล์ภายใน artifact มีรูปแบบ `NOOP-Thai-ios-unsigned-v<VERSION>-<SHORT_SHA>.ipa` และถูกเก็บไว้ 14 วัน workflow จะไม่สร้าง GitHub Release และไม่ใช้ certificate, provisioning profile, Apple ID หรือ repository secret
-
-IPA นี้ยังไม่ได้เซ็น ต้องนำไปเซ็นและติดตั้งด้วย AltStore, SideStore หรือ Sideloadly การเซ็นด้วย Apple ID แบบฟรีโดยทั่วไปหมดอายุภายใน 7 วันและต้องเซ็นใหม่ ข้อจำกัด entitlement ของบัญชีฟรีอาจทำให้ HealthKit บางส่วนใช้งานไม่ได้
-
-ขั้นตอน packaging จะนำ `Watch/` และ `PlugIns/` ออกจาก app bundle เพื่อให้ re-sign ด้วยบัญชีฟรีง่ายขึ้น ดังนั้น IPA แบบ sideload นี้ไม่มี Apple Watch app, widget และ Live Activity ฟังก์ชันเหล่านี้ยังอยู่ใน source และตรวจภาษาไทยได้ แต่ต้อง build/sign ด้วย entitlement ที่เหมาะสมจึงจะใช้งานได้
-
-## อัปเดตจาก upstream
-
-รักษา `upstream` ให้ชี้ไปที่ `ryanbr/noop` และนำการเปลี่ยนแปลงเข้า fork ก่อน จากนั้น merge หรือ rebase สาขาภาษาไทยอย่างระมัดระวัง:
-
-```bash
-git fetch upstream
-git switch main
-git merge --ff-only upstream/main
-git push origin main
-git switch feat/thai-localization-ios
-git merge main
-python3 Tools/validate-thai-localization.py
-```
-
-หากเกิด conflict ใน `.xcstrings` ให้เก็บ key ภาษาอังกฤษใหม่จาก upstream และรักษา `localizations.th` เดิมไว้ ห้ามเลือกทับทั้งไฟล์โดยไม่ตรวจ diff เพราะจะทำให้คำแปลภาษาไทยหาย หลังแก้ conflict ให้รัน validator และ `Tools/i18n_audit.py --platform ios` อีกครั้ง
-
-เมื่อ upstream เพิ่มข้อความใหม่ ให้ build ด้วย Xcode/XcodeGen เพื่อให้ String Catalog ดึง key จาก `LocalizedStringKey`/`String(localized:)`, ตรวจข้อความด้วย `python3 Tools/i18n_audit.py --platform ios --full`, เติม `th` ใน catalog ของ target ที่เป็นเจ้าของข้อความ และรัน validator ก่อน commit อย่านำข้อความของ widget, watch หรือ Swift package ไปใส่เฉพาะ catalog ของแอปหลัก เพราะแต่ละ bundle โหลด resource ของตัวเอง
-
-โครงการยังอยู่ภายใต้ PolyForm Noncommercial License และไฟล์ `LICENSE`, `NOTICE`, `ATTRIBUTION.md` และ `DISCLAIMER.md` ของต้นฉบับยังมีผลครบถ้วน ห้ามนำ fork นี้ไปนำเสนอว่าเป็น NOOP รุ่นทางการหรือใช้เพื่อการจำหน่ายเชิงพาณิชย์
+This is a personal, non-commercial, unofficial localized fork. The original PolyForm Noncommercial
+license and attribution files remain authoritative.

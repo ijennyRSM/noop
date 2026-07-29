@@ -23,6 +23,19 @@ jobs:
         run: |
           set -euo pipefail
           python3 Tools/validate-thai-localization.py
+          python3 Tools/validate-exercise-library.py
+          git diff --check
+
+      - name: Cache Nomic runtime and model
+        uses: actions/cache@v4
+        with:
+          path: Vendor/Nomic
+          key: nomic-${{ hashFiles('Tools/bootstrap-nomic.sh') }}
+
+      - name: Bootstrap pinned Nomic and llama assets
+        run: |
+          set -euo pipefail
+          Tools/bootstrap-nomic.sh
 
       - name: Install XcodeGen
         run: |
@@ -90,6 +103,30 @@ jobs:
             echo "::error::Build product is not an iOS application bundle: $APP"
             exit 1
           fi
+          if [[ -e "$APP/embedded.mobileprovision" ]]; then
+            echo "::error::Provisioning profile found in unsigned build"
+            exit 1
+          fi
+          if codesign -dvv "$APP" >/dev/null 2>&1; then
+            echo "::error::Developer signature unexpectedly present"
+            exit 1
+          fi
+          find "$APP" -name '*.gguf' -type f -print -quit | grep -q . || {
+            echo "::error::Nomic GGUF is missing from the app bundle"
+            exit 1
+          }
+          find "$APP" -iname '*llama*' -print -quit | grep -q . || {
+            echo "::error::llama runtime is missing from the app bundle"
+            exit 1
+          }
+          find "$APP" -name 'exercise-library-v1.json' -type f -print -quit | grep -q . || {
+            echo "::error::Exercise Library resource is missing"
+            exit 1
+          }
+          find "$APP" -path '*th.lproj*' -print -quit | grep -q . || {
+            echo "::error::Thai resources are missing"
+            exit 1
+          }
 
           # Free-account sideloaders commonly cannot provision the embedded Watch app,
           # widget, or Live Activity extension. The core iPhone app remains intact.
@@ -102,7 +139,7 @@ jobs:
             exit 1
           fi
           SHORT_SHA="${GITHUB_SHA:0:7}"
-          IPA_NAME="NOOP-Thai-ios-unsigned-v${VERSION}-${SHORT_SHA}.ipa"
+          IPA_NAME="NOOP-AI-Full-Thai-Strength-v${VERSION}-${SHORT_SHA}-unsigned.ipa"
           IPA_ROOT="build/ipa"
 
           rm -rf "$IPA_ROOT"
@@ -126,7 +163,7 @@ jobs:
           echo "ipa_size=$IPA_SIZE" >> "$GITHUB_OUTPUT"
 
           {
-            echo "## NOOP Thai unsigned IPA"
+            echo "## NOOP AI Full Beta unsigned IPA"
             echo ""
             echo "- File: \`$IPA_NAME\`"
             echo "- Size: $IPA_SIZE"
@@ -138,7 +175,97 @@ jobs:
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
-          name: NOOP-Thai-Unsigned-IPA
+          name: NOOP-AI-Full-Thai-Strength-Unsigned-IPA
           path: ${{ steps.package.outputs.ipa_path }}
           if-no-files-found: error
+          retention-days: 14
+
+  previews:
+    name: Capture seeded Thai previews
+    runs-on: macos-26
+    timeout-minutes: 70
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Bootstrap model and build simulator app
+        run: |
+          set -euo pipefail
+          Tools/bootstrap-nomic.sh
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+          mkdir -p build
+          udid="$(xcrun simctl list devices available -j | jq -r \
+            '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          [[ -n "$udid" && "$udid" != null ]] || {
+            echo "::error::No available iPhone simulator"
+            exit 1
+          }
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          set +e
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$udid" \
+            -derivedDataPath build/preview-dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee build/preview-xcodebuild.log
+          status="${PIPESTATUS[0]}"
+          set -e
+          exit "$status"
+
+      - name: Install and capture screens
+        run: |
+          set -euo pipefail
+          apps=()
+          while IFS= read -r -d '' candidate; do apps+=("$candidate"); done \
+            < <(find build/preview-dd/Build/Products/Debug-iphonesimulator \
+              -maxdepth 1 -type d -name '*.app' -print0)
+          [[ ${#apps[@]} -eq 1 ]] || {
+            echo "::error::Expected exactly one simulator app; found ${#apps[@]}"
+            exit 1
+          }
+          app="${apps[0]}"
+          rm -rf "$app/Watch" "$app/PlugIns"
+          xcrun simctl install "$UDID" "$app"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          mkdir -p build/ui-previews
+          # The performance UI is designed and visually regression-tested in the same
+          # dark appearance used by the WHOOP-style dashboard. Production still follows
+          # the user's system appearance.
+          xcrun simctl ui "$UDID" appearance dark
+          xcrun simctl status_bar "$UDID" override \
+            --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
+          screens=(liquidtoday strength strengthlogger bodymap coach goalplan privacy)
+          for screen in "${screens[@]}"; do
+            xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
+            xcrun simctl launch "$UDID" "$bundle_id" \
+              --demo-seed --demo-hour 14 --demo-screen "$screen" \
+              -AppleLanguages "(th)" -AppleLocale th_TH
+            sleep 8
+            xcrun simctl io "$UDID" screenshot "build/ui-previews/${screen}.png"
+          done
+
+      - name: Upload Thai preview set
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-AI-Full-Thai-UI-Previews
+          path: build/ui-previews/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload preview diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-AI-Full-Preview-Logs
+          path: build/preview-xcodebuild.log
+          if-no-files-found: ignore
           retention-days: 14

@@ -48,7 +48,7 @@ enum WorkoutSource: Equatable {
     /// renders "Traditional Strength Training". Already-spaced labels (manual/edited) pass through. (#175)
     static func displaySport(_ sport: String) -> String {
         if sport == "detected" { return String(localized: "Activity") }
-        return splitCamelCase(sport)
+        return WorkoutCatalog.localizedDisplayName(splitCamelCase(sport))
     }
 
     /// The camelCase splitter shared by the display and KEY paths. Deliberately NOT localized: the

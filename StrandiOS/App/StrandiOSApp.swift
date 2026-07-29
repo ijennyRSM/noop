@@ -2,6 +2,7 @@
 import SwiftUI
 import StrandDesign
 import UserNotifications
+import UIKit
 
 /// iOS entry point. Unlike the macOS app (which adds a `MenuBarExtra` scene), iOS uses a single
 /// `WindowGroup`; the glanceable menu-bar role is filled by the Home/Lock-Screen widget instead.
@@ -27,9 +28,13 @@ struct StrandiOSApp: App {
     /// Appearance preference (System/Light/Dark). Default follows the OS; the Settings picker writes it.
     @AppStorage(AppearanceMode.storageKey) private var appearanceRaw = AppearanceMode.system.rawValue
     /// Chart data-colour style (Titanium / Classic throwback). Re-colours gauges + charts.
-    @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.titanium.rawValue
+    @AppStorage(ChartStyle.storageKey) private var chartStyleRaw = ChartStyle.health.rawValue
 
     init() {
+        // One-time migration off the retired card/button/both Coach-entry picker onto the three
+        // independent entry toggles (banner/header-icon/floating-button). No-op after the first launch
+        // that has them. Must run before any Today/RootTabView reads its @AppStorage default.
+        CoachEntryPrefs.migrateIfNeeded()
         #if DEBUG
         // DEBUG-only promo-screenshot harness: when launched with `--demo-hour <Int>`, pin Today to that
         // hour's day-cycle scene + a per-hour stat frame. No-op (active stays nil) when the arg is absent.
@@ -46,11 +51,16 @@ struct StrandiOSApp: App {
         // target's BGTaskSchedulerPermittedIdentifiers (project.yml). Without this the overnight drop
         // never fires; the macOS timer, foreground catch-up, and "Run now" already work without it.
         ScheduledDebugExport.register()
+        SemanticMemoryBackgroundTask.register()
         // Foreground presentation: without a delegate, iOS suppresses a notification's banner while the app
         // is open, so a user testing the wind-down reminder with NOOP foregrounded sees nothing. Register
         // before the first scene so any early-fired notification is presented.
         UNUserNotificationCenter.current().delegate = NotificationPresenter.shared
+        // Register the check-in's action buttons before any notification can arrive — a category a
+        // notification names but nobody registered simply shows no buttons, silently.
+        CoachCheckIn.registerCategory()
         let model = AppModel()
+        SemanticMemoryBackgroundTask.attach(coach: model.coach)
         _model = StateObject(wrappedValue: model)
         _health = StateObject(wrappedValue: HealthKitBridge(
             repo: model.repo,
@@ -82,6 +92,20 @@ struct StrandiOSApp: App {
                 // fixed-geometry tiles/gauges stay legible at the largest accessibility sizes rather than
                 // clipping; the common Larger-Text range still scales fully.
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                // "Health always wins" (user decision): every successful sync overwrites the profile
+                // weight with the freshest Health reading, not just once when unset.
+                .onReceive(health.$latestImportedWeightKg) { kg in
+                    if let kg { model.profile.applyHealthWeight(kg: kg) }
+                }
+                // The reverse direction: a genuine user edit to the profile weight writes back to Health.
+                // Ping-pong guard — skip when the new value is (near-)identical to what Health itself last
+                // reported, since that means this change is the "Health always wins" overwrite above
+                // echoing back through this same publisher, not a fresh user edit (a real edit almost
+                // never lands within 0.05 kg of the last Health-imported value by coincidence).
+                .onReceive(model.profile.$weightKg.dropFirst()) { kg in
+                    guard abs(kg - (health.latestImportedWeightKg ?? -.greatestFiniteMagnitude)) > 0.05 else { return }
+                    Task { try? await health.writeWeight(kg: kg) }
+                }
                 .onReceive(model.live.$heartRate) { _ in
                     // #911: anchor the Live Activity on the SAME shared `Repository.widgetAnchor` the
                     // Home/Lock widget and the watch snapshot use, so this fourth surface can't drift to a
@@ -154,6 +178,19 @@ struct StrandiOSApp: App {
                     guard WidgetSnapshot.HRPublishThrottle.admit() else { return }
                     Task { await WidgetSnapshot.publish(from: model) }
                 }
+                .onReceive(NotificationCenter.default.publisher(
+                    for: UIApplication.didReceiveMemoryWarningNotification
+                )) { _ in
+                    Task { await model.coach.unloadSemanticMemory() }
+                }
+                .onReceive(NotificationCenter.default.publisher(
+                    for: ProcessInfo.thermalStateDidChangeNotification
+                )) { _ in
+                    let state = ProcessInfo.processInfo.thermalState
+                    if state == .serious || state == .critical {
+                        Task { await model.coach.unloadSemanticMemory() }
+                    }
+                }
                 // #581: the `noop://import-health` deep link the iOS Shortcut opens after building the
                 // HealthKit-free payload. Filter on the host so other future schemes don't trip the
                 // importer; macOS never registers the scheme so this stays iOS-only.
@@ -200,10 +237,21 @@ struct StrandiOSApp: App {
                 // Re-arm the strap's smart alarm on foreground: the firmware alarm is a single instant
                 // and iOS can't re-arm it while suspended, so it would otherwise fire once and stop.
                 model.applySmartAlarm()
+                Task {
+                    await CurrentMuscleResidualService.shared.invalidateAll()
+                }
                 // #267: pull a reasonably fresh sync on open rather than waiting for the 900s periodic
                 // timer or an incidental reconnect. Floored at 90s and never clock/empty-streak-suppressed
                 // (BackfillPolicy.shouldRun's .foreground case), so this is a safe no-op on rapid re-opens.
                 model.ble.requestSync(.foreground)
+                // Re-learn the wake-time-tracking check-in from fresh sleep on foreground. No-op unless
+                // the check-in is on and set to .afterWake; keeps the repeating trigger in step with the
+                // user's actual wake time rather than a clock time that drifts out of sync.
+                Task { await CoachCheckIn.refreshDynamicScheduleIfNeeded(repo: model.repo) }
+                if CoachSemanticMemory.shared.foregroundCatchUpIsDue() {
+                    CoachSemanticMemory.shared.markForegroundCatchUp()
+                    Task { await model.coach.performSemanticMemoryMaintenance(limit: 64) }
+                }
                 Task {
                     health.refreshAuthIfPreviouslyGranted()
                     await health.sync()
@@ -214,6 +262,8 @@ struct StrandiOSApp: App {
                     await watch.pushLatest(from: model)
                 }
             } else if phase == .background {
+                SemanticMemoryBackgroundTask.schedule()
+                Task { await model.coach.unloadSemanticMemory() }
                 // #114: capture the LAST in-app live state on the way out so the Home widget matches what
                 // the user just saw — its battery/HR/score otherwise lag to the last FOREGROUND refreshSeq
                 // bump. One reload per app-exit is low-frequency and well within WidgetKit's daily budget.
@@ -346,6 +396,12 @@ enum DemoScreens {
         case "explore":  return AnyView(MetricExplorerView())
         case "compare":  return AnyView(CompareView())
         case "settings": return AnyView(SettingsView())
+        case "strength": return AnyView(StrengthHistoryView())
+        case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
+        case "bodymap": return AnyView(BodyMapDemoHost())
+        case "coach": return AnyView(CoachView())
+        case "goalplan": return AnyView(CoachGoalJourneyScreen())
+        case "privacy": return AnyView(CoachSettingsView())
         case "chargebreakdown": return AnyView(ChargeBreakdownDemoHost())
         case "devices":  return AnyView(DevicesView())
         case "devicescatalog": return AnyView(DeviceCardCatalog())
@@ -377,6 +433,34 @@ enum DemoScreens {
 private struct AddWizardDemoHost: View {
     @EnvironmentObject var live: LiveState
     var body: some View { AddDeviceWizard(live: live, onClose: {}) }
+}
+
+private struct StrengthLoggerDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+
+    var body: some View {
+        ScrollView {
+            StrengthWorkoutLogger(viewModel: viewModel)
+                .padding()
+        }
+        .task {
+            await viewModel.load(
+                repository: repository,
+                deviceId: repository.deviceId,
+                startedAt: Date().addingTimeInterval(-38 * 60),
+                bodyweightKg: ProfileStore().weightKg)
+        }
+    }
+}
+
+private struct BodyMapDemoHost: View {
+    var body: some View {
+        ScrollView {
+            MuscleBodyMapCard()
+                .padding()
+        }
+    }
 }
 
 /// DEBUG-only host so `--demo-screen ouraonboarding` renders the Add-device wizard deep-linked to the

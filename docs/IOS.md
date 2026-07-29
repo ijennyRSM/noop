@@ -1,13 +1,13 @@
 # iOS — Install & Build
 
-> **iOS is now a direct download (v1.96).** Grab **`NOOP-v<version>-ios.ipa`** from the
-> [Releases](https://github.com/ryanbr/noop/releases) page and install it with **AltStore** or **SideStore** — see
+> **The iOS DX Beta is a direct download.** Grab **`NOOP-ios-unsigned-v9.2.1-dx-beta.ipa`** from the
+> [NOOP AI prerelease](https://github.com/DX23876/noop/releases/tag/v9.2.1-dx-beta) page and install it with **AltStore** or **SideStore** — see
 > **[Install (sideload)](#install-sideload)** below. No Mac, no Xcode, no App Store, and no Apple
 > Developer account needed — **and NOOP stays anonymous**, because the `.ipa` we ship is *unsigned*
 > and **you** sign it on your own iPhone with your own free Apple ID. The app target (`NOOPiOS` +
 > `NOOPiOSWidgets`) also still builds from source in Xcode if you'd rather (**[Build from source](#build-from-source)**).
-> A CI job ([`app-build.yml`](../.github/workflows/app-build.yml)) compiles both the macOS and iOS
-> targets on every change so iOS can't silently break.
+> The manual [`publish-ios-beta.yml`](../.github/workflows/publish-ios-beta.yml) workflow builds the
+> unsigned release IPA without an Apple team or personal signing identity.
 
 ## Install (sideload)
 
@@ -18,7 +18,8 @@ Nothing about this touches NOOP's identity or Apple's servers on our side.
 1. **Install a sideloader on your computer** — [AltStore](https://altstore.io) or
    [SideStore](https://sidestore.io) (both free). Follow their one-time setup (it installs a helper +
    AltStore/SideStore onto your iPhone using your own Apple ID).
-2. **Download `NOOP-v<version>-ios.ipa`** from [Releases](https://github.com/ryanbr/noop/releases) to your iPhone (or your
+2. **Download `NOOP-ios-unsigned-v9.2.1-dx-beta.ipa`** from the
+   [DX Beta prerelease](https://github.com/DX23876/noop/releases/tag/v9.2.1-dx-beta) to your iPhone (or your
    computer, then AirDrop/transfer it).
 3. **Open the `.ipa` with AltStore/SideStore** (Share → AltStore, or the app's "+" button). It signs
    and installs NOOP. First launch may need **Settings → General → VPN & Device Management → trust
@@ -29,7 +30,7 @@ Nothing about this touches NOOP's identity or Apple's servers on our side.
 So you never have to manually re-download, add NOOP's **source** to AltStore/SideStore once — new
 releases then show up (and re-sign) automatically:
 
-**Source URL:** `https://raw.githubusercontent.com/ryanbr/noop/main/altstore-source.json`
+**Source URL:** `https://raw.githubusercontent.com/DX23876/noop/main/altstore-source.json`
 
 > Make sure you copy the **raw** URL above exactly. If a sideloader says **"given data not valid
 > JSON"** when you add the source, you've pasted a normal web page URL (which returns HTML) instead of
@@ -52,8 +53,10 @@ hunting for the `.ipa` each time.
 >   widgets may not work** on a free-signed sideload. The core app — pairing your strap, live HR,
 >   recovery/strain/sleep, history, the AI Coach, everything on-device — works regardless. This is an
 >   Apple signing constraint, not a NOOP limitation, and it's why a HealthKit toggle can appear to do
->   nothing on a sideloaded build. (Building from source with your own Apple ID in Xcode grants these
->   entitlements normally.)
+>   nothing on a sideloaded build. The release IPA retains `NOOPWidgets.appex`, so AltStore/Sideloadly
+>   must provision one additional app extension for widgets and Live Activities; removing app extensions
+>   while signing disables those surfaces. Building from source with your own Apple ID in Xcode and
+>   selecting your Team for both targets grants these entitlements normally.
 
 iOS shares the cross-platform Swift packages with macOS, so the number-crunching (recovery, strain,
 HRV, sleep) is the **same code** and produces the same results. iOS is newer and less battle-tested
@@ -63,24 +66,28 @@ are very welcome.
 ## Build from source
 
 Prefer to build it yourself (which also grants HealthKit/widgets under your own Apple ID)? Run
-`xcodegen generate`, then build the **`NOOPiOS`** scheme in Xcode. The reconciliation that brought the
+`Tools/bootstrap-nomic.sh` once to download and verify the pinned on-device Coach model and llama.cpp
+runtime, then run `xcodegen generate` and build the **`NOOPiOS`** scheme in Xcode. The verified files
+remain local build inputs, so later Xcode builds do not download them again. They add roughly 328 MiB
+for the quantized model plus the selected runtime slice to the installed app; Git does not store those
+large binaries. The reconciliation that brought the
 [PR #42](../../../pull/42) port onto current `main` is summarised in **"Lessons from the fold-in"**
 below.
 
-> 🛠️ **Signing it under your own Apple ID** (thanks @gingerbeardman for the recipe). Apple requires a
-> bundle id and an app group that are unique to *your* developer account, so for each target that has
-> them (the `NOOPiOS` app **and** the `NOOPiOSWidgets` extension):
-> 1. **Select your Team** (Signing & Capabilities).
-> 2. **Change the bundle id** to your own reverse-domain prefix (e.g. `com.yourdomain.noop`).
-> 3. **Change the App Group** to match (e.g. `group.com.yourdomain.noop`) — the app and the widget
->    extension must share the *same* group.
+> 🛠️ **Signing it under your own Apple ID** (thanks @gingerbeardman for the original recipe). Apple
+> requires a bundle id and app group unique to *your* developer account — otherwise the build collides
+> with any other NOOP install already on your device (an AltStore/SideStore sideload, or someone
+> else's build). Two steps:
+> 1. `cp Config/BundleIdSecrets.example.xcconfig Config/BundleIdSecrets.xcconfig` and set
+>    `BUNDLE_ID_PREFIX` to your own reverse-domain prefix (e.g. `com.yourdomain`), then re-run
+>    `xcodegen generate`. This one gitignored file drives **every** target's bundle id *and* the shared
+>    App Group together (`$(BUNDLE_ID_PREFIX).noopai`, `group.$(BUNDLE_ID_PREFIX).noop.staging`) — nothing
+>    hard-coded in Swift, nothing else to edit, and it survives future regenerates.
+> 2. In Xcode, **select your Team** (Signing & Capabilities) for the `NOOPiOS` **and** `NOOPiOSWidgets`
+>    targets — the one step Apple still requires you to do by hand.
 >
-> Set the team + bundle prefix in **`project.yml`**, and set the App Group **once** via the
-> **`APP_GROUP_ID`** build setting there — both targets' entitlements/Info.plist reference
-> `$(APP_GROUP_ID)`, and the runtime `WidgetSnapshot.suiteName` reads it back from the Info.plist, so
-> there's a single value to change and nothing hard-coded in Swift. Then re-run `xcodegen` so the
-> change survives regeneration instead of being overwritten. The App Group is only needed for the
-> **widgets / Live Activity** — if you don't need those, you can skip wiring it and the core app still builds.
+> Skip step 1 and the build still works under the default `com.noopapp` identifiers — fine if this is
+> the only NOOP install on your device.
 
 > ℹ️ **Cross-platform engineering lives in [`CROSS_PLATFORM.md`](CROSS_PLATFORM.md)** — the shared-code
 > boundary across the macOS / iOS / Android clients, the `Platform.swift` shim convention, the
@@ -504,7 +511,7 @@ targets:
   NOOPiOS:
     type: application
     platform: iOS
-    deploymentTarget: "16.0"
+    deploymentTarget: "17.0"
     sources:
       - StrandiOS
       - Shared            # screens lifted from Strand/Screens, if shared
@@ -533,7 +540,7 @@ targets:
         com.apple.developer.healthkit.background-delivery: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noop
+        PRODUCT_BUNDLE_IDENTIFIER: com.noopapp.noopai
         PRODUCT_NAME: NOOP
     dependencies:
       - package: WhoopProtocol
@@ -560,10 +567,16 @@ targets:
 - [x] `MenuBarExtra` replaced by a WidgetKit widget + Live Activity (`StrandiOSWidgets`), reusing `StrandDesign`.
 - [x] iOS action layer: `lockScreen` returns false on iOS, `buzzBack`/`markMoment` portable, **App Intents** exposed (`StrandiOS/System/NOOPAppIntents.swift`).
 - [x] Clipboard + URL-open routed through `Platform.swift` (`PlatformPasteboard`/`PlatformOpen`).
-- [x] `HealthKitBridge` two-way Apple Health (read live + write NOOP metrics). _(See the device-id follow-up flagged below.)_
+- [x] `HealthKitBridge` two-way Apple Health (read live + write NOOP metrics).
 - [ ] **Still TODO (needs hardware):** verify BLE on a **physical iPhone** with a real strap — CoreBluetooth has no Simulator. This is the one thing CI/compile can't cover.
 
-> **Open follow-up:** `HealthKitBridge.writeBack` reads NOOP-computed metrics under `deviceId = "my-whoop"`, but the on-device *computed* scores (recovery/HRV/…) are persisted under the **computed** id `"my-whoop-noop"` — so the Apple-Health write-back may read little/nothing for a strap-only user. Behavioural (not a compile issue); fix when the iOS HealthKit path gets device-tested.
+> **Resolved:** the device-id follow-up previously noted here — `HealthKitBridge.writeBack` reading
+> NOOP-computed metrics under the wrong device id — no longer applies. `writeVitals`
+> (`StrandiOS/Health/HealthKitBridge.swift:567-572`) already unions `computedDeviceId` (`deviceId +
+> "-noop"`, where on-device scores live) with `noopDeviceId` (imports), computed first, imported
+> overriding — a strap-only user's recovery/HRV/RHR/SpO₂/resp write back correctly. `writeHeartRate`
+> reads only the base `noopDeviceId`, which is correct as-is: raw HR buckets are live telemetry with no
+> "-noop" computed variant, unlike the daily scores. Still device-untested per the TODO above.
 
 ---
 

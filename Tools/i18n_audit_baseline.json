@@ -77,6 +77,26 @@
       "No caffeine logged. Log an intake to see an estimate."
     ],
     [
+      "android/app/src/main/java/com/noop/ui/Charts.kt",
+      "Bars"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/Charts.kt",
+      "Breakdown, ${segments.size} segments"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/Charts.kt",
+      "Breakdown, no data"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/Charts.kt",
+      "Timeline"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/Charts.kt",
+      "Trend"
+    ],
+    [
       "android/app/src/main/java/com/noop/ui/CoachScreen.kt",
       "Bring your own API key. It is stored encrypted on this device and only used to "
     ],
@@ -153,6 +173,18 @@
       "A classic one-glance read of NOOP's own scores. Same data, different lens."
     ],
     [
+      "android/app/src/main/java/com/noop/ui/CoupledScreen.kt",
+      "Recovery ${recovery.roundToInt()} percent. See what shaped your Charge"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/CoupledScreen.kt",
+      "Recovery calibrating, $calibrationNights of ${Baselines.minNightsSeed} nights"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/CoupledScreen.kt",
+      "Recovery, no data yet"
+    ],
+    [
       "android/app/src/main/java/com/noop/ui/DataSourcesScreen.kt",
       "Imported"
     ],
@@ -183,6 +215,14 @@
     [
       "android/app/src/main/java/com/noop/ui/FusedRecordScreen.kt",
       ", in use"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/FusedRecordScreen.kt",
+      "Scores still calibrating, no single day-owner yet"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/FusedRecordScreen.kt",
+      "Today's scores owned by ${owner.displayName}"
     ],
     [
       "android/app/src/main/java/com/noop/ui/HealthScreen.kt",
@@ -259,6 +299,14 @@
     [
       "android/app/src/main/java/com/noop/ui/HealthScreen.kt",
       "about your age"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/HrvSnapshotScreen.kt",
+      "$value $unit"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/HrvSnapshotScreen.kt",
+      "Capturing. $value milliseconds RMSSD so far. $sub."
     ],
     [
       "android/app/src/main/java/com/noop/ui/HrvSnapshotScreen.kt",
@@ -418,6 +466,10 @@
     ],
     [
       "android/app/src/main/java/com/noop/ui/MindSection.kt",
+      "${face.word}, mood ${face.value.toInt()} of 5"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/MindSection.kt",
       "r = %+.2f"
     ],
     [
@@ -546,11 +598,27 @@
     ],
     [
       "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
+      "Raw on-device stages"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
       "Removes this recorded sleep and recomputes the day without it. NOOP won't re-detect sleep in this window. You can undo for a few seconds after."
     ],
     [
       "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
       "Removes this sleep and recomputes the day without it. You can undo for a few seconds after."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
+      "Sleep deleted."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
+      "Sleep deleted. NOOP won't detect sleep between $startText and $endText again."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/SleepScreen.kt",
+      "This split is the ring's raw on-device classification read over Bluetooth, not the adjusted "
     ],
     [
       "android/app/src/main/java/com/noop/ui/SmartAlarmScreen.kt",
@@ -571,14 +639,6 @@
     [
       "android/app/src/main/java/com/noop/ui/StepsCalibrationScreen.kt",
       "Auto"
-    ],
-    [
-      "android/app/src/main/java/com/noop/ui/StepsCalibrationScreen.kt",
-      "Manual steps coefficient, %.1f steps per motion unit"
-    ],
-    [
-      "android/app/src/main/java/com/noop/ui/StepsCalibrationScreen.kt",
-      "Manual steps coefficient, automatic"
     ],
     [
       "android/app/src/main/java/com/noop/ui/StepsCalibrationScreen.kt",
@@ -603,6 +663,14 @@
     [
       "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
       "Calibrating , no heart rate banked yet today. Your curve fills in as the strap offloads."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
+      "How ${it.label} is calculated"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
+      "How this score is calculated"
     ],
     [
       "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
@@ -634,6 +702,14 @@
     ],
     [
       "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
+      "Strap battery"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
+      "Strap battery ${it.roundToInt()} percent"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/TodayScreen.kt",
       "Zoomed in · drag to pan"
     ],
     [
@@ -651,6 +727,22 @@
     [
       "android/app/src/main/java/com/noop/ui/WorkoutStart.kt",
       "%d:%02d"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/WorkoutsScreen.kt",
+      "${WorkoutEditing.displaySport(row.sport)}, ${dateLabel(row.startTs)}"
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/WorkoutsScreen.kt",
+      ". Imported, can't be merged."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/WorkoutsScreen.kt",
+      ". Not selected."
+    ],
+    [
+      "android/app/src/main/java/com/noop/ui/WorkoutsScreen.kt",
+      ". Selected."
     ],
     [
       "android/app/src/main/java/com/noop/ui/WorkoutsScreen.kt",
@@ -769,262 +861,5 @@
       "⚡ $it%"
     ]
   ],
-  "ios": [
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/ChartHover.swift",
-      "\\(value), \\(label!)"
-    ],
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/DayNavBar.swift",
-      "Next day"
-    ],
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/DayNavBar.swift",
-      "Pick a date"
-    ],
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/DayNavBar.swift",
-      "Previous day"
-    ],
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/TrendChart.swift",
-      "Trend"
-    ],
-    [
-      "Packages/StrandDesign/Sources/StrandDesign/YearHeatStrip.swift",
-      "\\(DateFormatterCache.day.string(from: day.date)) · recovery \\(Int(score.rounded()))"
-    ],
-    [
-      "Strand/Liquid/LiquidPrimitives.swift",
-      "%.\\(decimals)f"
-    ],
-    [
-      "Strand/Liquid/LiquidTodayView.swift",
-      " \\(unit)"
-    ],
-    [
-      "Strand/Liquid/LiquidTodayView.swift",
-      "Arrange Today sections"
-    ],
-    [
-      "Strand/Screens/AddDeviceWizard.swift",
-      "The most common cause is the ring was not fully reset in the Oura app, or the Oura app is still running. Reset the ring again, force-quit Oura, then try once more. If it keeps failing, your ring may be a generation NOOP cannot adopt yet. The ring is not bricked: re-pair it in the Oura app to recover it. You can still use file import."
-    ],
-    [
-      "Strand/Screens/BreathingView.swift",
-      "%.1f br/min"
-    ],
-    [
-      "Strand/Screens/DataSourcesView.swift",
-      "Import your Oura history"
-    ],
-    [
-      "Strand/Screens/DevicesView.swift",
-      "Historical record layout v\\(layout)"
-    ],
-    [
-      "Strand/Screens/FullDayChartView.swift",
-      "Pinch to zoom · drag to pan · hold to read"
-    ],
-    [
-      "Strand/Screens/FullDayChartView.swift",
-      "Zoomed in. Drag to pan · hold to read"
-    ],
-    [
-      "Strand/Screens/HealthView.swift",
-      "Refresh Fitness Age now"
-    ],
-    [
-      "Strand/Screens/HealthView.swift",
-      "Vitality \\(Int(v.rounded())) out of 100"
-    ],
-    [
-      "Strand/Screens/HydrationView.swift",
-      "Progress toward today's goal"
-    ],
-    [
-      "Strand/Screens/InsightsHubView.swift",
-      "d = %.2f"
-    ],
-    [
-      "Strand/Screens/InsightsView.swift",
-      "d = %.2f"
-    ],
-    [
-      "Strand/Screens/InsightsView.swift",
-      "r = %+.2f"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Clear \\(item.display)"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Decrease"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Delete this custom item"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Edit \\(item.display)"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Hide this item"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Increase"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "New item group"
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "Rename, regroup, or remove an item to tidy your list. Renaming keeps the original question behind the scenes, so a WHOOP import still lines up. Custom items are deleted; built-in ones are hidden and can be restored below."
-    ],
-    [
-      "Strand/Screens/JournalLogCard.swift",
-      "\\(group.title), \\(groupItems.count) items, \\(collapsed ? \"collapsed\" : \"expanded\")"
-    ],
-    [
-      "Strand/Screens/LabBookView.swift",
-      "Choose CSV…"
-    ],
-    [
-      "Strand/Screens/LabBookView.swift",
-      "Choose a markers CSV file to import"
-    ],
-    [
-      "Strand/Screens/LabBookView.swift",
-      "Choose a signal"
-    ],
-    [
-      "Strand/Screens/LabBookView.swift",
-      "the signal"
-    ],
-    [
-      "Strand/Screens/MetricExplorerView.swift",
-      "\\(row.time), \\(row.value), \\(row.source)"
-    ],
-    [
-      "Strand/Screens/SettingsView.swift",
-      "%+.0f%%"
-    ],
-    [
-      "Strand/Screens/SettingsView.swift",
-      "Date of birth, age \\(profile.age) years"
-    ],
-    [
-      "Strand/Screens/SettingsView.swift",
-      "NOOP estimates your steps from your WHOOP's motion, calibrated to your phone's step count. It's an estimate, not a step counter — a WHOOP 5.0 / MG streams motion (not a step count) only with deep data on."
-    ],
-    [
-      "Strand/Screens/SettingsView.swift",
-      "Trend chart style"
-    ],
-    [
-      "Strand/Screens/SettingsView.swift",
-      "WHOOP 5.0 / MG · motion → steps"
-    ],
-    [
-      "Strand/Screens/SleepView.swift",
-      "Removes this recorded sleep and recomputes the day without it. NOOP won't re-detect sleep in this window. You can undo for a few seconds after."
-    ],
-    [
-      "Strand/Screens/SleepView.swift",
-      "Removes this sleep and recomputes the day without it. You can undo for a few seconds after."
-    ],
-    [
-      "Strand/Screens/SleepView.swift",
-      "Undo sleep deletion"
-    ],
-    [
-      "Strand/Screens/SmartAlarmView.swift",
-      "Notifications are off"
-    ],
-    [
-      "Strand/Screens/SmartAlarmView.swift",
-      "Open Settings"
-    ],
-    [
-      "Strand/Screens/StressView.swift",
-      "Stress \\(String(format: \"%.1f\", score)) of 3"
-    ],
-    [
-      "Strand/Screens/StressView.swift",
-      "Today's value is your recorded daily stress score (0-3)."
-    ],
-    [
-      "Strand/Screens/TodayView.swift",
-      "Acute (7-day) vs chronic (28-day) training load. 0.8-1.3 is the sweet spot."
-    ],
-    [
-      "Strand/Screens/TrendsView.swift",
-      "Opens the full Charge metric."
-    ],
-    [
-      "Strand/Screens/TrendsView.swift",
-      "Opens the full \\(accessibilityTitle) metric."
-    ],
-    [
-      "Strand/Screens/WorkoutDetailView.swift",
-      "Effort \\(UnitFormatter.effortDisplay(strain, scale: effortScale)) \\(effortScale == .whoop ? \"of 21\" : \"of 100\")"
-    ],
-    [
-      "Strand/Screens/WorkoutDetailView.swift",
-      "of 21"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "All sources"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "All sports"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Clear filters"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Clear search"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Delete (\\(chosen.count))"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Finish selecting"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Merge (\\(chosen.count))"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Select"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Select sessions to merge or delete"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Typical effort \\(UnitFormatter.effortDisplay(avgStrain, scale: effortScale))"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "Typical effort, no data"
-    ],
-    [
-      "Strand/Screens/WorkoutsView.swift",
-      "of 21"
-    ]
-  ]
+  "ios": []
 }
