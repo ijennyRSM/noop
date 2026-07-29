@@ -2637,9 +2637,8 @@ final class AICoachEngine: ObservableObject {
 
     /// Whole-day distance between two "yyyy-MM-dd" keys, or nil if either doesn't parse.
     static func dayKeyDistance(from: String, to: String) -> Int? {
-        let df = DateFormatter(); df.dateFormat = "yyyy-MM-dd"; df.timeZone = .current
-        guard let a = df.date(from: from), let b = df.date(from: to) else { return nil }
-        return Calendar.current.dateComponents([.day], from: a, to: b).day
+        guard let later = CanonicalDay.date(from: to) else { return nil }
+        return CanonicalDay.daysBetween(from, later)
     }
 
     /// Cancellable runner for the proactive/weekly generated turns — mirrors `runCheckInCancellable` so
