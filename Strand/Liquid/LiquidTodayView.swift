@@ -1731,15 +1731,36 @@ struct LiquidTodayView: View {
             // hero are the same number, so a carry that reached only one of them would put two answers for
             // Charge on one screen. (#543: one prior row feeds every recovery-derived read-out.) Strain below
             // stays raw, matching the Effort hero, which correctly does not carry.
-            ktile(String(localized: "Recovery"), intText(chargeDisplay.pct), "%", StrandPalette.chargeColor, frac(chargeDisplay.pct), key: "recovery")
+            ktile(
+                String(localized: "Recovery"),
+                intText(chargeDisplay.pct),
+                "%",
+                PerformanceScorePalette.color(for: .charge, score: chargeDisplay.pct),
+                frac(chargeDisplay.pct),
+                key: "recovery"
+            )
         case .effort:
             // #45 parity with the hero: route through effortDisplay so this tile shows the SAME number on
             // the SAME scale as the Effort hero (0–21 WHOOP vs 0–100), instead of always the raw 0–100
             // stored value — the two used to disagree whenever the user picked the WHOOP scale.
             let effortText = displayDay?.strain.map { UnitFormatter.effortDisplay($0, scale: effortScale) } ?? "–"
-            ktile(String(localized: "Strain"), effortText, "%", StrandPalette.effortColor, frac(displayDay?.strain), key: "strain")
+            ktile(
+                String(localized: "Strain"),
+                effortText,
+                "",
+                PerformanceScorePalette.effortBlue,
+                frac(displayDay?.strain),
+                key: "strain"
+            )
         case .rest:
-            ktile(String(localized: "Rest"), intText(restScore), "%", StrandPalette.restColor, frac(restScore), key: "sleep_performance")
+            ktile(
+                String(localized: "Rest"),
+                intText(restScore),
+                "%",
+                PerformanceScorePalette.restBlue,
+                frac(restScore),
+                key: "sleep_performance"
+            )
         case .hrv:
             ktile("HRV", intText(hrv), "ms", StrandPalette.metricCyan, fracOver(hrv, 120), key: "hrv")
         case .restingHr:

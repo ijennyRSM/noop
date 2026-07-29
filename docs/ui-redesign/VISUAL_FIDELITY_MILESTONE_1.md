@@ -83,7 +83,9 @@ Compared with the rejected capture, the rings can no longer expand with their
 parent cards, the value dominates the ring centre, and Today/detail screens
 resolve color through one fixed semantic API. Rest is blue-gray, Effort is
 bright blue, and Charge uses inclusive discrete bands (0–33 poor, 34–66
-moderate, 67–100 good). Chart themes cannot recolor these primary scores.
+moderate, 67–100 good). The matching Today key-metric tiles reuse those same
+tokens, and Effort is shown without a percent sign. Chart themes cannot recolor
+these primary scores.
 
 ## Before and after checks
 
