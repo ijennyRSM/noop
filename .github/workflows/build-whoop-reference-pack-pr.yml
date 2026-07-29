@@ -46,16 +46,11 @@ jobs:
           fetch '16_official_recovery_strain.webp' 'https://images.ctfassets.net/rbzqg6pelgqa/1746IxeV9WZEamrPM3IdFm/12e21fecba58229ffb1fe5de6362a836/How-does-WHOOP-recovery-wor-INLINE-1000x1000-2.jpg?fm=webp&q=80&w=1600'
           fetch '17_review_home_legacy.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-App-Home-screen.jpg?strip=all'
           fetch '18_review_monthly_trends.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2023/01/WHOOPs-monthly-trend-feature-1920x1261.jpg?strip=all'
-          fetch '19_review_teams.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-App-Teams-1.jpg?strip=all'
-          fetch '20_review_strain_coach.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2019/08/WHOOP-Strain-Coach.jpg?strip=all'
-          fetch '21_review_haptic_alarm.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-Haptic-Alarm-Settings.jpg?strip=all'
-          fetch '22_review_journal.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2023/01/The-WHOOP-Journal-makes-it-easy-to-correlate-lifestyle-choices-with-sleep-and-recovery-performance.jpg?strip=all'
-          fetch '23_review_sleep_tracking.jpg' 'https://cdn.michaelkummer.com/wp-content/uploads/2021/11/WHOOP-4.0-Sleep-Tracking.jpg?strip=all'
 
           cat > build/whoop-real-reference/SOURCES.md <<'EOF'
           # WHOOP real-image reference sources
 
-          Files 01–08 are current Google Play listing screenshots. File 09 is a member screenshot showing the modern Home family. Files 10–16 are official WHOOP editorial visuals. Files 17–23 are older independent review screenshots and should not define current navigation.
+          Files 01–08 are current Google Play listing screenshots. File 09 is a member screenshot showing the modern Home family. Files 10–16 are official WHOOP editorial visuals. Files 17–18 are older independent review screenshots and should not define current navigation.
 
           Priority navigation reference is the screenshot supplied by Karn in ChatGPT. It is added locally after artifact download as `00_PRIORITY_latest_navigation_user_reference.png`.
 
@@ -73,7 +68,7 @@ jobs:
           EOF
 
           find build/whoop-real-reference/images -type f -print0 | sort -z | xargs -0 sha256sum > build/whoop-real-reference/SHA256SUMS.txt
-          test "$(find build/whoop-real-reference/images -type f | wc -l | tr -d ' ')" -eq 23
+          test "$(find build/whoop-real-reference/images -type f | wc -l | tr -d ' ')" -eq 18
 
       - uses: actions/upload-artifact@v4
         with:
