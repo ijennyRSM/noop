@@ -225,7 +225,7 @@ jobs:
             exit 1
           }
           mkdir -p build/visual-inputs/reference-pack/images
-          printf '%s' "$NAV_REFERENCE_B64" | base64 --decode \
+          printf '%s' "$NAV_REFERENCE_B64" | /usr/bin/base64 -D \
             > build/visual-inputs/reference-pack/images/00_PRIORITY_latest_navigation_user_reference.png
 
       - name: Bootstrap model and build simulator app

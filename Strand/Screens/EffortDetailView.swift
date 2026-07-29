@@ -43,10 +43,10 @@ struct EffortDetailView: View {
     private var effortBand: LocalizedStringKey? {
         guard let value = effort100 else { return nil }
         switch value {
-        case ..<30: "Light"
-        case ..<55: "Moderate"
-        case ..<75: "Strenuous"
-        default: "High"
+        case ..<30: return "Light"
+        case ..<55: return "Moderate"
+        case ..<75: return "Strenuous"
+        default: return "High"
         }
     }
 
