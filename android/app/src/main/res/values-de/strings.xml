@@ -1772,4 +1772,5 @@
     <string name="battery_channel_name">Akku-Hinweise</string>
     <string name="battery_channel_desc">Hinweise, wenn der Strap-Akku schwach oder voll geladen ist.</string>
     <string name="l10n_app_changelog_battery_saver_quiets_the_gauges_translated_bdbe8650">Energiesparmodus beruhigt die Anzeigen, übersetzte Android-Benachrichtigungen und sofort geladene Diagramme</string>
+    <string name="l10n_app_changelog_coach_memory_privacy_presets">Ein Coach, der sich erinnert, mit einfachen Datenschutz-Voreinstellungen</string>
 </resources>

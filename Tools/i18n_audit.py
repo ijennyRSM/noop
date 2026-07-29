@@ -821,11 +821,17 @@ def apple_format_gaps(cat: dict, lang: str) -> list[str]:
     for key, entry in cat.get("strings", {}).items():
         if entry.get("shouldTranslate") is False:
             continue
+        # A manually managed catalog may use a stable semantic key while the
+        # English localization carries the actual source format string. In
+        # that case comparing every locale with the opaque key incorrectly
+        # reports valid placeholders as mismatches.
+        english_units = _string_units(entry, "en")
+        source_value = english_units[0].get("value", "") if english_units else key
         # Compare EVERY form independently against the key, never a folded concatenation: folding would
         # make the signature depend on how many plural categories the language HAS (ru/pl carry four,
         # zh one), so a correct translation would read as a format mismatch purely for having more forms.
         values = [u.get("value", "") for u in _string_units(entry, lang)] or [""]
-        if any(signature(key) != signature(v) for v in values):
+        if any(signature(source_value) != signature(v) for v in values):
             mismatched.append(key)
     return mismatched
 

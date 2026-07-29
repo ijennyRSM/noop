@@ -1751,4 +1751,5 @@
     <string name="battery_channel_name">Alertas de bateria</string>
     <string name="battery_channel_desc">Avisos quando a bateria da correia está fraca ou totalmente carregada.</string>
     <string name="l10n_app_changelog_battery_saver_quiets_the_gauges_translated_bdbe8650">A poupança de bateria acalma os indicadores, notificações Android traduzidas e gráficos instantâneos</string>
+    <string name="l10n_app_changelog_coach_memory_privacy_presets">Um coach que se lembra, com predefinições de privacidade simples</string>
 </resources>

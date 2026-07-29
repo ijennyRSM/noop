@@ -398,5 +398,58 @@ class Baseline(unittest.TestCase):
         self.assertIn((finding[0], finding[2]), baseline["android"])
 
 
+class AppleFormatPlaceholders(unittest.TestCase):
+    def test_manual_semantic_key_uses_english_value_as_source(self):
+        catalog = {
+            "strings": {
+                "chart.tooltip.value_label": {
+                    "localizations": {
+                        "en": {
+                            "stringUnit": {
+                                "state": "translated",
+                                "value": "%1$@, %2$@",
+                            }
+                        },
+                        "de": {
+                            "stringUnit": {
+                                "state": "translated",
+                                "value": "%1$@, %2$@",
+                            }
+                        },
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(ia.apple_format_gaps(catalog, "de"), [])
+
+    def test_manual_semantic_key_still_detects_dropped_argument(self):
+        catalog = {
+            "strings": {
+                "chart.tooltip.value_label": {
+                    "localizations": {
+                        "en": {
+                            "stringUnit": {
+                                "state": "translated",
+                                "value": "%1$@, %2$@",
+                            }
+                        },
+                        "de": {
+                            "stringUnit": {
+                                "state": "translated",
+                                "value": "%1$@",
+                            }
+                        },
+                    }
+                }
+            }
+        }
+
+        self.assertEqual(
+            ia.apple_format_gaps(catalog, "de"),
+            ["chart.tooltip.value_label"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

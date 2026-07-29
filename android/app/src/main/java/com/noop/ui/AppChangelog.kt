@@ -39,7 +39,7 @@ object AppChangelog {
     val releases: List<Release> = listOf(
         Release(
             version = "9.2.1 DX Beta",
-            title = "A coach that remembers, privacy presets that stay simple",
+            title = uiString(R.string.l10n_app_changelog_coach_memory_privacy_presets),
             date = "July 2026",
             items = listOf(
                 "**The coach now has real long-term memory.** An on-device semantic index lets it recall past conversations and journal entries by meaning, not just exact wording — nothing leaves your device, and it stays off until you turn it on.",

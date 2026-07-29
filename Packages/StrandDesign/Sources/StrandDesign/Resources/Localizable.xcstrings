@@ -97,6 +97,30 @@
             "state": "translated",
             "value": "%lld"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
         }
       }
     },
@@ -142,6 +166,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld วันที่ผ่านมา"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days ago"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days ago"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days ago"
           }
         }
       }
@@ -253,6 +295,24 @@
             "state": "translated",
             "value": "%lld นาที"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld minutes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld minutes"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld minutes"
+          }
         }
       }
     },
@@ -298,6 +358,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "จุด %lld หมายถึง %@ ช่วง %@ ถึง %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld points, mean %@, range %@ to %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld points, mean %@, range %@ to %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld points, mean %@, range %@ to %@"
           }
         }
       }
@@ -345,6 +423,24 @@
             "state": "translated",
             "value": "ค่าที่วัดได้ %lld ค่า"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld readings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld readings"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld readings"
+          }
         }
       }
     },
@@ -391,6 +487,24 @@
             "state": "translated",
             "value": "การออกกำลังกาย %lld"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld workouts"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld workouts"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld workouts"
+          }
         }
       }
     },
@@ -436,6 +550,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lldd ที่แล้ว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldd ago"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldd ago"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldd ago"
           }
         }
       }
@@ -547,6 +679,24 @@
             "state": "translated",
             "value": "%lldm มาแล้ว"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldm ago"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldm ago"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldm ago"
+          }
         }
       }
     },
@@ -580,6 +730,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "0xAA 41 00 1c crc32=f3a1 โมโน 13"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1  mono 13"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1  mono 13"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1  mono 13"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1  mono 13"
           }
         }
       }
@@ -691,6 +865,24 @@
             "state": "translated",
             "value": "1 นาที"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 minute"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 minute"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 minute"
+          }
         }
       }
     },
@@ -737,6 +929,24 @@
             "state": "translated",
             "value": "ออกกำลังกาย 1 ครั้ง"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 workout"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 workout"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 workout"
+          }
         }
       }
     },
@@ -770,6 +980,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "51 ครั้งต่อนาที"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 bpm"
           }
         }
       }
@@ -805,6 +1039,30 @@
             "state": "translated",
             "value": "นอนหลับ 7 ชม. 42 นาที · 92% efficiency"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m asleep · 92% efficiency"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m asleep · 92% efficiency"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m asleep · 92% efficiency"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7h 42m asleep · 92% efficiency"
+          }
         }
       }
     },
@@ -838,6 +1096,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "87% · สตรีมมิ่ง"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · streaming"
           }
         }
       }
@@ -885,6 +1167,24 @@
             "state": "translated",
             "value": "ออกทั้งหมด"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALL-OUT"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALL-OUT"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALL-OUT"
+          }
         }
       }
     },
@@ -925,6 +1225,24 @@
             "state": "translated",
             "value": "添加"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
         }
       }
     },
@@ -958,6 +1276,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "นำมาใช้ผ่าน NoopButtonStyle"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopted via NoopButtonStyle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopted via NoopButtonStyle"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopted via NoopButtonStyle"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopted via NoopButtonStyle"
           }
         }
       }
@@ -1057,6 +1399,30 @@
             "state": "translated",
             "value": "บาร์เท่านั้น"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar only"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar only"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar only"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bar only"
+          }
         }
       }
     },
@@ -1090,6 +1456,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "Body / Regular 15 — กระทู้ของคุณ อ่านเต็มๆ"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — the thread of you, read in full."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — the thread of you, read in full."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — the thread of you, read in full."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — the thread of you, read in full."
           }
         }
       }
@@ -1125,6 +1515,30 @@
             "state": "translated",
             "value": "คะแนนนับขึ้น"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "COUNT-UP SCORE"
+          }
         }
       }
     },
@@ -1158,6 +1572,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "คืนที่เงียบสงบ"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calm night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calm night"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calm night"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calm night"
           }
         }
       }
@@ -1193,6 +1631,30 @@
             "state": "translated",
             "value": "คำบรรยายภาพ 12"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption 12"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption 12"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption 12"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption 12"
+          }
         }
       }
     },
@@ -1226,6 +1688,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "การ์ด %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card %lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card %lld"
           }
         }
       }
@@ -1273,6 +1759,24 @@
             "state": "translated",
             "value": "คลาสสิค"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classic"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classic"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classic"
+          }
         }
       }
     },
@@ -1318,6 +1822,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "หมดลงแล้ว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DEPLETED"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DEPLETED"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DEPLETED"
           }
         }
       }
@@ -1370,6 +1892,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "深色"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
           }
         }
       }
@@ -1539,6 +2073,24 @@
             "state": "translated",
             "value": "完成"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
         }
       }
     },
@@ -1572,6 +2124,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เชิงอรรถ 11"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footnote 11"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footnote 11"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footnote 11"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Footnote 11"
           }
         }
       }
@@ -1671,6 +2247,30 @@
             "state": "translated",
             "value": "HRV (มิลลิวินาที) — 30 วัน"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 days"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 days"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 days"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (ms) — 30 days"
+          }
         }
       }
     },
@@ -1704,6 +2304,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "พาดหัว / กึ่งหนา 17"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headline / Semibold 17"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headline / Semibold 17"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headline / Semibold 17"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headline / Semibold 17"
           }
         }
       }
@@ -1739,6 +2363,30 @@
             "state": "translated",
             "value": "อัตราการเต้นหัวใจ 24 ชั่วโมง"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate, 24 hours"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate, 24 hours"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate, 24 hours"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart rate, 24 hours"
+          }
         }
       }
     },
@@ -1772,6 +2420,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เลื่อนดูแถบเพื่อดูชื่อระยะ เวลาเริ่ม–สิ้นสุด และระยะเวลา"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a band: stage name, clock start–end and duration."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a band: stage name, clock start–end and duration."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a band: stage name, clock start–end and duration."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a band: stage name, clock start–end and duration."
           }
         }
       }
@@ -1807,6 +2479,30 @@
             "state": "translated",
             "value": "เลื่อนเซลล์: แหวน + วันที่ คะแนน และคำแนะนำเครื่องมือสถานะการฟื้นตัว"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a cell: ring + date, score and recovery-state tooltip."
+          }
         }
       }
     },
@@ -1840,6 +2536,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เลื่อนมาตรวัดสำหรับโหลดเนื้อหา + คำแนะนำเครื่องมือโหลด"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a gauge for a strain + load-word tooltip."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a gauge for a strain + load-word tooltip."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a gauge for a strain + load-word tooltip."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a gauge for a strain + load-word tooltip."
           }
         }
       }
@@ -1875,6 +2595,30 @@
             "state": "translated",
             "value": "เลื่อนวงแหวนสำหรับการฟื้นตัว + คำแนะนำเครื่องมือสถานะ"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a ring for a recovery + state-word tooltip."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a ring for a recovery + state-word tooltip."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a ring for a recovery + state-word tooltip."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover a ring for a recovery + state-word tooltip."
+          }
         }
       }
     },
@@ -1908,6 +2652,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "วางเมาส์เหนือเส้นประกายไฟเพื่ออ่านตัวอย่างที่ต้องการใต้เคอร์เซอร์"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover any sparkline to read the exact sample under the cursor."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover any sparkline to read the exact sample under the cursor."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover any sparkline to read the exact sample under the cursor."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover any sparkline to read the exact sample under the cursor."
           }
         }
       }
@@ -1943,6 +2711,30 @@
             "state": "translated",
             "value": "เลื่อนการ์ดเพื่อดูลิฟต์"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the cards to see the lift."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the cards to see the lift."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the cards to see the lift."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the cards to see the lift."
+          }
         }
       }
     },
@@ -1976,6 +2768,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เลื่อนเส้น: เป้าเล็ง + จุด + เคล็ดลับเครื่องมือวันที่/ค่า"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the line: crosshair + dot + date/value tooltip."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the line: crosshair + dot + date/value tooltip."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the line: crosshair + dot + date/value tooltip."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover the line: crosshair + dot + date/value tooltip."
           }
         }
       }
@@ -2011,6 +2827,30 @@
             "state": "translated",
             "value": "วางเมาส์เหนือเพื่ออ่าน HRV ในแต่ละวันในหน่วยมิลลิวินาที"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover to read each day's HRV in ms."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover to read each day's HRV in ms."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover to read each day's HRV in ms."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hover to read each day's HRV in ms."
+          }
         }
       }
     },
@@ -2044,6 +2884,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ในการ์ด"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In a card"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In a card"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In a card"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In a card"
           }
         }
       }
@@ -2090,6 +2954,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "หลับตื้น"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LIGHT"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LIGHT"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LIGHT"
           }
         }
       }
@@ -2188,6 +3070,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เมื่อคืน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last night"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last night"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last night"
           }
         }
       }
@@ -2299,6 +3205,24 @@
             "state": "translated",
             "value": "ปานกลาง"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODERATE"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODERATE"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MODERATE"
+          }
         }
       }
     },
@@ -2332,6 +3256,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "การเคลื่อนไหวระหว่างการนอน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement during sleep"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement during sleep"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement during sleep"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movement during sleep"
           }
         }
       }
@@ -2508,6 +3456,24 @@
             "state": "translated",
             "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No heart-rate data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No heart-rate data"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No heart-rate data"
+          }
         }
       }
     },
@@ -2542,6 +3508,30 @@
             "state": "translated",
             "value": "โอเวอร์ไลน์"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overline"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overline"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overline"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overline"
+          }
         }
       }
     },
@@ -2575,6 +3565,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ภาพรวมHR"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview HR"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview HR"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview HR"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview HR"
           }
         }
       }
@@ -2685,6 +3699,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "ลงสีพื้นแล้ว"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRIMED"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRIMED"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRIMED"
           }
         }
       }
@@ -2850,6 +3882,30 @@
             "state": "translated",
             "value": "ไล่ระดับการฟื้นฟู"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECOVERY GRADIENT"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECOVERY GRADIENT"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECOVERY GRADIENT"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECOVERY GRADIENT"
+          }
         }
       }
     },
@@ -2895,6 +3951,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "ปฏิทินการฟื้นตัว, %lld วัน, เฉลี่ย %lld, %lld ต่ำ, %lld สูง"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, %lld days, average %lld, low %lld, high %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, %lld days, average %lld, low %lld, high %lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, %lld days, average %lld, low %lld, high %lld"
           }
         }
       }
@@ -2942,6 +4016,24 @@
             "state": "translated",
             "value": "ปฏิทินการฟื้นตัว ไม่มีข้อมูล"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, no data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, no data"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery calendar, no data"
+          }
         }
       }
     },
@@ -2975,6 +4067,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "พักฟื้น — 30 วัน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — 30 days"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — 30 days"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — 30 days"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — 30 days"
           }
         }
       }
@@ -3010,6 +4126,30 @@
             "state": "translated",
             "value": "ฟื้นตัว — ปีที่แล้ว"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — past year"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — past year"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — past year"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery — past year"
+          }
         }
       }
     },
@@ -3043,6 +4183,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ลดการเคลื่อนไหว แสดงผลคงที่ในเฟรมสุดท้าย"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce Motion renders static at the final frame."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce Motion renders static at the final frame."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce Motion renders static at the final frame."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reduce Motion renders static at the final frame."
           }
         }
       }
@@ -3084,6 +4248,24 @@
             "state": "translated",
             "value": "移除"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
         }
       }
     },
@@ -3117,6 +4299,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "เปิดเผยการเล่นซ้ำ"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replay reveal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replay reveal"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replay reveal"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replay reveal"
           }
         }
       }
@@ -3158,6 +4364,24 @@
             "state": "translated",
             "value": "静息心率"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resting HR"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resting HR"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resting HR"
+          }
         }
       }
     },
@@ -3191,6 +4415,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "คืนกระสับกระส่าย"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restless night"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restless night"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restless night"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restless night"
           }
         }
       }
@@ -3226,6 +4474,30 @@
             "state": "translated",
             "value": "หมุนหมายเลข"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roll the number"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roll the number"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roll the number"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roll the number"
+          }
         }
       }
     },
@@ -3259,6 +4531,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "การเปลี่ยนซอฟท์การ์ด"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOFT CARD TRANSITION"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOFT CARD TRANSITION"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOFT CARD TRANSITION"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SOFT CARD TRANSITION"
           }
         }
       }
@@ -3294,6 +4590,30 @@
             "state": "translated",
             "value": "ปรากฏขึ้นอย่างเซ"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAGGERED APPEAR"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAGGERED APPEAR"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAGGERED APPEAR"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STAGGERED APPEAR"
+          }
         }
       }
     },
@@ -3327,6 +4647,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "RAMP ภาระร่างกาย"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRAIN RAMP"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRAIN RAMP"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRAIN RAMP"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRAIN RAMP"
           }
         }
       }
@@ -3374,6 +4718,24 @@
             "state": "translated",
             "value": "แข็งแกร่ง"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRENUOUS"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRENUOUS"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STRENUOUS"
+          }
         }
       }
     },
@@ -3414,6 +4776,24 @@
             "state": "translated",
             "value": "保存"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
         }
       }
     },
@@ -3447,6 +4827,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "จำนวนเซกเมนต์และความสูง"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segment counts & heights"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segment counts & heights"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segment counts & heights"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segment counts & heights"
           }
         }
       }
@@ -3482,6 +4886,30 @@
             "state": "translated",
             "value": "ประสิทธิภาพการนอน"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep performance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep performance"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep performance"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep performance"
+          }
         }
       }
     },
@@ -3515,6 +4943,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ขั้นตอนการนอน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages"
           }
         }
       }
@@ -3562,6 +5014,24 @@
             "state": "translated",
             "value": "ระยะการนอน %@"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, %@"
+          }
         }
       }
     },
@@ -3608,6 +5078,24 @@
             "state": "translated",
             "value": "ระยะการนอน ไม่มีข้อมูล"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, no data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, no data"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep stages, no data"
+          }
         }
       }
     },
@@ -3641,6 +5129,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "หัวข้อย่อย 13"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subhead 13"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subhead 13"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subhead 13"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subhead 13"
           }
         }
       }
@@ -3688,6 +5200,24 @@
             "state": "translated",
             "value": "ระบบ"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
         }
       }
     },
@@ -3722,6 +5252,30 @@
             "state": "translated",
             "value": "หัวข้อ 1 / ตัวหนา 28"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 1 / Bold 28"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 1 / Bold 28"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 1 / Bold 28"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 1 / Bold 28"
+          }
         }
       }
     },
@@ -3755,6 +5309,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "หัวข้อ 2 / เซมิโบลด์ 22"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 2 / Semibold 22"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 2 / Semibold 22"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 2 / Semibold 22"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title 2 / Semibold 22"
           }
         }
       }
@@ -3853,6 +5431,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "สลับสปริงอ่อนโยน"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle gentle spring"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle gentle spring"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle gentle spring"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle gentle spring"
           }
         }
       }
@@ -3965,6 +5567,24 @@
             "state": "translated",
             "value": "เทรนด์ จุด %lld %@ ล่าสุด %@ ต่ำ %@ สูง"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend, %lld points, latest %@, low %@, high %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend, %lld points, latest %@, low %@, high %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trend, %lld points, latest %@, low %@, high %@"
+          }
         }
       }
     },
@@ -3999,6 +5619,30 @@
             "state": "translated",
             "value": "ค่านิยม"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Values"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Values"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Values"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Values"
+          }
         }
       }
     },
@@ -4032,6 +5676,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "WHOOP 4.0"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whoop 4.0"
           }
         }
       }
@@ -4143,6 +5811,24 @@
             "state": "translated",
             "value": "หลับ %@"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "asleep %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "asleep %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "asleep %@"
+          }
         }
       }
     },
@@ -4188,6 +5874,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "เฉลี่ย %@ ครั้งต่อนาที"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "average %@ bpm"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "average %@ bpm"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "average %@ bpm"
           }
         }
       }
@@ -4287,6 +5991,30 @@
           "stringUnit": {
             "state": "translated",
             "value": "ชั่วโมง %lld"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hour %lld"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hour %lld"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hour %lld"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hour %lld"
           }
         }
       }
@@ -4398,6 +6126,24 @@
             "state": "translated",
             "value": "ช่วง %@ ถึง %@"
           }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "range %@ to %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "range %@ to %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "range %@ to %@"
+          }
         }
       }
     },
@@ -4462,6 +6208,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "淺眠"
+          }
+        }
+      }
+    },
+    "%@, %@": {
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
           }
         }
       }
