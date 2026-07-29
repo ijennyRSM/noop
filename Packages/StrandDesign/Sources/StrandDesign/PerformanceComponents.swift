@@ -571,23 +571,23 @@ public struct PerformanceNavigationDock: View {
     }
 
     public var body: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 1) {
             ForEach(items) { item in
                 button(item)
             }
         }
-        .padding(6)
-        .frame(height: PerformanceTheme.Metrics.navigationHeight)
+        .padding(4)
+        .frame(height: 58)
         .background(
             Capsule(style: .continuous)
                 .fill(.ultraThinMaterial)
-                .overlay(Capsule(style: .continuous).fill(PerformanceTheme.primarySurface.opacity(0.82)))
+                .overlay(Capsule(style: .continuous).fill(PerformanceTheme.primarySurface.opacity(0.94)))
         )
         .overlay(
             Capsule(style: .continuous)
                 .strokeBorder(PerformanceTheme.subtleDivider.opacity(0.9), lineWidth: 0.75)
         )
-        .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
+        .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
         .accessibilityElement(children: .contain)
     }
 
@@ -602,12 +602,12 @@ public struct PerformanceNavigationDock: View {
                 }
             }
         } label: {
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 Image(systemName: item.icon)
-                    .font(.system(size: 17, weight: active ? .semibold : .regular))
+                    .font(.system(size: 16, weight: active ? .semibold : .regular))
                     .accessibilityHidden(true)
                 Text(item.title)
-                    .font(.system(size: 9.5, weight: active ? .semibold : .medium, design: .rounded))
+                    .font(.system(size: 9, weight: active ? .semibold : .medium, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.74)
             }
@@ -620,14 +620,14 @@ public struct PerformanceNavigationDock: View {
             .contentShape(RoundedRectangle(cornerRadius: PerformanceTheme.Radius.medium, style: .continuous))
         }
         .buttonStyle(.plain)
-        .frame(minWidth: 54)
+        .frame(minWidth: 50)
         .accessibilityLabel(item.title)
         .accessibilityAddTraits(active ? [.isButton, .isSelected] : .isButton)
     }
 }
 
 /// The separate circular action adjacent to the navigation dock. It intentionally
-/// carries the NOOP spark/waveform symbol, not another product's logo.
+/// carries an original NOOP sparkle, not another product's logo.
 public struct CoachFloatingAction: View {
     private let action: () -> Void
 
@@ -639,26 +639,16 @@ public struct CoachFloatingAction: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .fill(.ultraThinMaterial)
+                    .fill(PerformanceTheme.primarySurface.opacity(0.96))
                 Circle()
-                    .fill(PerformanceTheme.primarySurface.opacity(0.86))
-                Circle()
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [PerformanceTheme.coach, PerformanceTheme.effort],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
-                    .padding(7)
-                Image(systemName: "waveform.path.ecg")
-                    .font(.system(size: 20, weight: .semibold))
+                    .strokeBorder(PerformanceTheme.coach.opacity(0.9), lineWidth: 1.5)
+                    .padding(5)
+                Image(systemName: "sparkles")
+                    .font(.system(size: 17, weight: .bold))
                     .foregroundStyle(PerformanceTheme.primaryText)
             }
-            .frame(width: PerformanceTheme.Metrics.navigationHeight,
-                   height: PerformanceTheme.Metrics.navigationHeight)
-            .shadow(color: .black.opacity(0.28), radius: 18, x: 0, y: 8)
+            .frame(width: 58, height: 58)
+            .shadow(color: .black.opacity(0.24), radius: 7, x: 0, y: 3)
         }
         .buttonStyle(.plain)
         .frame(minWidth: PerformanceTheme.Metrics.minimumTapTarget,

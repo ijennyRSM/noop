@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   build-ios:
@@ -196,6 +197,37 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
 
+      - name: Download previous UI and web reference artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 30454093573
+          name: NOOP-AI-Full-Thai-UI-Previews
+          path: build/visual-inputs/before
+
+      - name: Download authoritative web reference artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 30445729550
+          name: WHOOP-Real-Web-Reference-Images
+          path: build/visual-inputs/reference-pack
+
+      - name: Decode private navigation reference
+        env:
+          NAV_REFERENCE_B64: ${{ vars.WHOOP_NAV_REFERENCE_B64 }}
+        run: |
+          set -euo pipefail
+          [[ -n "$NAV_REFERENCE_B64" ]] || {
+            echo "::error::WHOOP_NAV_REFERENCE_B64 repository variable is missing"
+            exit 1
+          }
+          mkdir -p build/visual-inputs/reference-pack/images
+          printf '%s' "$NAV_REFERENCE_B64" | base64 --decode \
+            > build/visual-inputs/reference-pack/images/00_PRIORITY_latest_navigation_user_reference.png
+
       - name: Bootstrap model and build simulator app
         run: |
           set -euo pipefail
@@ -262,12 +294,7 @@ jobs:
           xcrun simctl ui "$UDID" appearance dark
           xcrun simctl status_bar "$UDID" override \
             --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
-          screens=(
-            root today todayscrolled charge rest effort healthmonitor stress trends
-            workouts activitydetail strengthhome strengthlogger exercisepicker bodymap
-            soreness coach goal planproposal planbook journey privacy backup settings
-            loading empty error
-          )
+          screens=(root today todayscrolled charge rest effort)
           for screen in "${screens[@]}"; do
             xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
             xcrun simctl launch "$UDID" "$bundle_id" \
@@ -283,11 +310,42 @@ jobs:
             exit 1
           }
 
-      - name: Upload Thai preview set
+      - name: Assemble visual-fidelity comparison
+        run: |
+          set -euo pipefail
+          comparison="build/visual-fidelity-milestone-1"
+          mkdir -p "$comparison/reference" "$comparison/before" "$comparison/after"
+          cp build/visual-inputs/reference-pack/images/00_PRIORITY_latest_navigation_user_reference.png \
+            "$comparison/reference/00-navigation.png"
+          cp build/visual-inputs/reference-pack/images/01_google_play_current_01.jpg \
+            "$comparison/reference/01-home.jpg"
+          for screen in root today todayscrolled charge rest effort; do
+            cp "build/visual-inputs/before/${screen}.png" "$comparison/before/${screen}.png"
+            cp "build/ui-previews/${screen}.png" "$comparison/after/${screen}.png"
+          done
+          cp docs/ui-redesign/VISUAL_FIDELITY_MILESTONE_1.md "$comparison/MEASURED_DIFFERENCES.md"
+          {
+            echo ""
+            echo "## Build identity"
+            echo ""
+            echo "- SHA: \`${GITHUB_SHA}\`"
+            echo "- Reference priority: 00 navigation, then 01 home"
+            echo "- Captured screens: root, today, todayscrolled, charge, rest, effort"
+          } >> "$comparison/MEASURED_DIFFERENCES.md"
+
+      - name: Upload Thai Milestone 1 preview set
         uses: actions/upload-artifact@v4
         with:
-          name: NOOP-AI-Full-Thai-UI-Previews
+          name: NOOP-Visual-Fidelity-Milestone-1-Previews
           path: build/ui-previews/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload reference-before-after comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-Visual-Fidelity-Milestone-1-Comparison
+          path: build/visual-fidelity-milestone-1
           if-no-files-found: error
           retention-days: 14
 

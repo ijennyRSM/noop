@@ -128,8 +128,7 @@ struct SleepView: View {
                        // syncing note now own `live` in their own leaves), so a 1 Hz HR tick no longer
                        // re-evaluates this heavy body.
                        onRefresh: { await repo.refresh() },
-                       lazy: true,
-                       topBackground: liquidScaffoldSky()) {
+                       lazy: true) {
             Group {
                 if let resolved {
                     // Each top-level section fades + rises in sequence on first appear (Reduce-Motion safe).
@@ -395,7 +394,15 @@ struct SleepView: View {
                     // the arc draw-in and the number roll-up land together (Today's HeroScoreCell idiom).
                     VStack(spacing: NoopMetrics.space3) {
                         ZStack {
-                            LiquidVessel(value: heroFraction, tint: StrandPalette.restColor, animated: true)
+                            Circle()
+                                .stroke(PerformanceTheme.subtleDivider, lineWidth: 11)
+                            Circle()
+                                .trim(from: 0, to: heroFraction)
+                                .stroke(StrandPalette.restColor,
+                                        style: StrokeStyle(lineWidth: 11, lineCap: .butt))
+                                .rotationEffect(.degrees(-90))
+                            Circle()
+                                .fill(StrandPalette.surfaceBase.opacity(0.001))
                                 .frame(width: 184, height: 184)
                             VStack(spacing: 0) {
                                 CountUpText(
@@ -439,7 +446,7 @@ struct SleepView: View {
             }
             .padding(NoopMetrics.cardInnerPadding + NoopMetrics.space1)
             .frame(maxWidth: .infinity)
-            .timeOfDayBackground(.night)
+            .background(PerformanceTheme.primarySurface)
             .clipShape(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous))
         }
     }
