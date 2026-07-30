@@ -51,7 +51,9 @@ UI while retaining their stored identifiers and AI/context representations.
 
 ## Thai and accessibility
 
-- Thai catalog validation: 4,251/4,251 entries, placeholder compatible.
+- Thai catalog validation: 4,227/4,227 translatable entries, placeholder
+  compatible. The additional DEBUG-only seeded-review phrases carry Thai
+  values but are excluded from production translation coverage.
 - Exercise Library validation: 420 exercises, 22/22 muscles.
 - Seeded visual review uses `th_TH` on a compact iPhone simulator.
 - Major status components combine text and color.

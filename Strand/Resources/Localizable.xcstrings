@@ -241576,6 +241576,7 @@
       }
     },
     "Loading": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241586,6 +241587,7 @@
       }
     },
     "Something went wrong": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241596,6 +241598,7 @@
       }
     },
     "Strength sessions": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241606,6 +241609,7 @@
       }
     },
     "Goals and plans": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241616,6 +241620,7 @@
       }
     },
     "Rollback": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241626,6 +241631,7 @@
       }
     },
     "Available": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241636,6 +241642,7 @@
       }
     },
     "Ready to review": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241646,6 +241653,7 @@
       }
     },
     "Validating backup…": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241656,6 +241664,7 @@
       }
     },
     "Export complete": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241666,6 +241675,7 @@
       }
     },
     "Loading your data…": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241676,6 +241686,7 @@
       }
     },
     "No records yet": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241686,6 +241697,7 @@
       }
     },
     "Import failed": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241696,6 +241708,7 @@
       }
     },
     "Review what will be replaced before continuing.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241706,6 +241719,7 @@
       }
     },
     "The backup is checked before any data is changed.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241716,6 +241730,7 @@
       }
     },
     "Your backup is ready to share.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241726,6 +241741,7 @@
       }
     },
     "Reading on-device data.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241736,6 +241752,7 @@
       }
     },
     "There is nothing to show yet.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241746,6 +241763,7 @@
       }
     },
     "Your existing data has not been changed.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241756,6 +241774,7 @@
       }
     },
     "Nothing is restored until you confirm.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241766,6 +241785,7 @@
       }
     },
     "Checking the manifest, checksums, and database integrity.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241776,6 +241796,7 @@
       }
     },
     "Secrets and derived caches were not included.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241786,6 +241807,7 @@
       }
     },
     "NOOP is opening your local database.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241796,6 +241818,7 @@
       }
     },
     "Connect a data source or import a backup to begin.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
@@ -241806,6 +241829,7 @@
       }
     },
     "The file could not be validated. No data was imported.": {
+      "shouldTranslate": false,
       "localizations": {
         "th": {
           "stringUnit": {
