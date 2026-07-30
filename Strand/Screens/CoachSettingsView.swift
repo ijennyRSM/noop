@@ -201,7 +201,8 @@ struct CoachSettingsView: View {
     /// strings invisible to the very gate that just closed 27 identical gaps fork-wide (M1).
     private var hub: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+                PR3PageHeading("Coach settings")
                 coachFeatureBar
                 connectedHeader
 
@@ -333,7 +334,8 @@ struct CoachSettingsView: View {
 
                 privacyFootnote
             }
-            .padding(16)
+            .screenPadding()
+            .padding(.vertical, 16)
         }
         .background(StrandPalette.surfaceBase.ignoresSafeArea())
     }
@@ -356,8 +358,9 @@ struct CoachSettingsView: View {
     /// scanner-visibility reason as the hub rows above.
     private func subpageScaffold<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
         ScrollView {
-            VStack(spacing: 16) { content() }
-                .padding(16)
+            VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) { content() }
+                .screenPadding()
+                .padding(.vertical, 16)
         }
         .background(StrandPalette.surfaceBase.ignoresSafeArea())
         #if !os(macOS)

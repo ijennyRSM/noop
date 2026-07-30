@@ -64,10 +64,12 @@ struct BackupSyncView: View {
     // MARK: - Cards
 
     private var folderCard: some View {
-        StrandCard(padding: 20) {
+        StrandCard(padding: NoopMetrics.cardPadding) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Backup folder")
-                    .font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                    .font(StrandFont.title2)
+                    .tracking(-0.2)
+                    .foregroundStyle(StrandPalette.textPrimary)
                 Text(folderLabel.map { String(localized: "Saving to: \($0)") }
                      ?? String(localized: "No folder chosen yet. Pick one your cloud app already syncs, or any local folder."))
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
@@ -92,7 +94,10 @@ struct BackupSyncView: View {
     }
 
     private var autoCard: some View {
-        StrandCard(padding: 20, tint: auto && folderLabel != nil ? StrandPalette.accent : nil) {
+        StrandCard(
+            padding: NoopMetrics.cardPadding,
+            tint: auto && folderLabel != nil ? PR3SecondaryPalette.action : nil
+        ) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center, spacing: 16) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -135,10 +140,12 @@ struct BackupSyncView: View {
     }
 
     private var restoreCard: some View {
-        StrandCard(padding: 20) {
+        StrandCard(padding: NoopMetrics.cardPadding) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Restore")
-                    .font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                    .font(StrandFont.title2)
+                    .tracking(-0.2)
+                    .foregroundStyle(PR3SecondaryPalette.danger)
                 Text("Replace this device's data with one of the backups in your folder. This overwrites current data, so back up first if you're unsure.")
                     .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -195,11 +195,7 @@ struct SettingsView: View {
 
     var body: some View {
         ScreenScaffold(title: "Settings",
-                       subtitle: "Your numbers, your strap, and how NOOP works. All on \(Platform.deviceNounPhrase).",
-                       // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends / Devices:
-                       // a fixed, full-bleed time-of-day sky behind the scroll content (it does not scroll).
-                       // Settings' own frosted cards sit on the dark canvas below the sky band, unchanged.
-                       topBackground: liquidScaffoldSky()) {
+                       subtitle: "Your numbers, your strap, and how NOOP works. All on \(Platform.deviceNounPhrase).") {
             VStack(alignment: .leading, spacing: NoopMetrics.sectionSpacing) {
                 // Everyday sections stay expanded (S3): the ones a first-run user actually needs.
                 profilePhotoCard.staggeredAppear(index: 0)
@@ -2494,10 +2490,9 @@ private struct SettingsSection<Content: View>: View {
     @AppStorage("noop.moreRowAppleHealthColors") private var appleHealthColors = true
 
     var body: some View {
-        StrandCard(padding: 20, tint: StrandPalette.accent) {
-            VStack(alignment: .leading, spacing: NoopMetrics.space4) {
+        StrandCard(padding: NoopMetrics.cardPadding) {
+            VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Settings").strandOverline()
                     HStack(spacing: NoopMetrics.space2 + 2) {
                         Image(systemName: icon)
                             .foregroundStyle(appleHealthColors
@@ -2505,6 +2500,7 @@ private struct SettingsSection<Content: View>: View {
                             .accessibilityHidden(true)
                         Text(title)
                             .font(StrandFont.title2)
+                            .tracking(-0.2)
                             .foregroundStyle(StrandPalette.textPrimary)
                     }
                 }
