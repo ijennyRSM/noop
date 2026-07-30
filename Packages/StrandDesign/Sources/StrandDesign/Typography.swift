@@ -16,6 +16,8 @@ public enum StrandFont {
     /// The house family — Helvetica Neue, a built-in system face. Weight is applied
     /// via `.weight()` since `Font.custom` ignores the design's default weight.
     private static let family = "Helvetica Neue"
+    /// Built into iOS and macOS. No font file is bundled with NOOP.
+    private static let condensedFamily = "HelveticaNeue-CondensedBold"
 
     /// Helvetica Neue at a FIXED size/weight — used by the big gauge/tile numerals (`display`,
     /// `rounded`, `number`) that live in fixed-geometry rings/tiles where unbounded growth would
@@ -33,12 +35,20 @@ public enum StrandFont {
         .custom(family, size: size, relativeTo: style).weight(weight)
     }
 
+    /// The PR #3 display face used by scores and high-level dashboard headings.
+    private static func condensed(_ size: CGFloat, relativeTo style: Font.TextStyle? = nil) -> Font {
+        if let style {
+            return .custom(condensedFamily, size: size, relativeTo: style)
+        }
+        return .custom(condensedFamily, size: size)
+    }
+
     // MARK: Scale (§9.2)
 
     /// Display 64–80 / Bold — the gauge score number. Helvetica Neue 700 with tight
     /// tracking (≈ -0.04em), tabular digits so a changing value never reflows.
     public static func display(_ size: CGFloat = 72) -> Font {
-        helvetica(size, weight: .bold).monospacedDigit()
+        condensed(size).monospacedDigit()
     }
 
     /// The tight tracking for big display numbers (≈ -0.04em). Apply alongside
@@ -50,14 +60,14 @@ public enum StrandFont {
     /// A Helvetica-Neue numeric style at an arbitrary size/weight — the house
     /// numeral. Tabular so live values align. Use anywhere a score/number is shown.
     public static func rounded(_ size: CGFloat, weight: Font.Weight = .bold) -> Font {
-        helvetica(size, weight: weight).monospacedDigit()
+        condensed(size).weight(weight).monospacedDigit()
     }
 
     /// Title1 28 / Bold. Scales with Dynamic Type.
-    public static let title1 = helveticaScaled(28, weight: .bold, relativeTo: .title)
+    public static let title1 = condensed(30, relativeTo: .title)
 
     /// Title2 22 / Semibold. Scales with Dynamic Type.
-    public static let title2 = helveticaScaled(22, weight: .semibold, relativeTo: .title2)
+    public static let title2 = condensed(23, relativeTo: .title2)
 
     /// Headline 17 / Semibold. Scales with Dynamic Type.
     public static let headline = helveticaScaled(17, weight: .semibold, relativeTo: .headline)
@@ -93,7 +103,7 @@ public enum StrandFont {
     /// A numeric style at an arbitrary size/weight, for live values — Helvetica
     /// Neue, tabular digits. This is the tile/value numeral.
     public static func number(_ size: CGFloat, weight: Font.Weight = .semibold) -> Font {
-        helvetica(size, weight: weight).monospacedDigit()
+        condensed(size).weight(weight).monospacedDigit()
     }
 
     /// Helvetica-Neue body number — for inline live values that should align. Scales with Dynamic

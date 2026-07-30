@@ -80,6 +80,7 @@ struct LiquidTodayView: View {
 
     // sheets / expanders
     @State private var guideSection: ScoreSection?
+    @State private var scoreDetail: PR3ScoreMetric?
     @State private var showCustomise = false
     @State private var showSettings = false
     @State private var synthesisExpanded = false
@@ -364,6 +365,8 @@ struct LiquidTodayView: View {
 
                 VStack(alignment: .leading, spacing: NoopMetrics.gap) {
                     scene
+                    pr3HeroCard
+                    monitorStrip
                     // The coach entry is NOT here any more: a full-width row between the wordmark and the
                     // scores both dominated the screen and pushed Charge/Effort/Rest down the page. It is now
                     // a narrow tile beside the Synthesis card (`synthesisSection`), so the hero is the first
@@ -373,6 +376,10 @@ struct LiquidTodayView: View {
                     // pinned above the reorderable block so an active manual workout is immediately visible
                     // and taps straight through to Live. Renders nothing when no workout is active.
                     ActiveWorkoutIndicatorSection()
+                    myDayHeader
+                    pr3OutlookCard
+                    todayActivitiesSection
+                        .id("pr3.today.activities")
                     MorningSuggestionCard(showPlan: $showPlan)
                     // #today-layout (parity with Android): every Today section — the Charge/Effort/Rest hero
                     // and Start-session included — renders in the user's saved order. Reorder via the Arrange
@@ -395,7 +402,7 @@ struct LiquidTodayView: View {
                         // `CoachTodayRow`, independent of the compact header-icon entry (see `scene`).
                         case .coach:
                             if coachFeatureEnabled, coachUIEnabled, coachBannerEnabled { coachBanner }
-                        case .hero: heroCard
+                        case .hero: EmptyView()
                         // Live Sessions (silent guardian) is an OPTIONAL, strap-dependent beta, so it no
                         // longer holds a prominent card between the scores and Synthesis. On iOS it lives in
                         // the "+" quick-action sheet (`QuickActionSheet`, RootTabView); macOS has no such
@@ -409,9 +416,9 @@ struct LiquidTodayView: View {
                             #else
                             EmptyView()
                             #endif
-                        case .synthesis: synthesisSection
+                        case .synthesis: EmptyView()
                         case .keyMetrics: keyMetricsSection
-                        case .workouts: lastWorkoutsSection
+                        case .workouts: EmptyView()
                         case .strengthStatus:
                             if selectedDayOffset == 0 { MuscleBodyMapCard() }
                         case .heartRate: heartRateSection
@@ -437,7 +444,7 @@ struct LiquidTodayView: View {
                     Color.clear.frame(height: 90) // floating tab-bar clearance
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 30) // sit the title lower into the sky, not jammed under the status bar
+                .padding(.top, 12)
             }
             #if os(macOS)
             // Keep the phone-shaped column readable + centred on the wide mac detail pane. The sky is a
@@ -492,6 +499,12 @@ struct LiquidTodayView: View {
         }
         .sheet(item: $guideSection) { section in
             NavigationStack { ScoringGuideView(initialSection: section, onClose: { guideSection = nil }) }
+        }
+        .sheet(item: $scoreDetail) { metric in
+            NavigationStack { PR3ScoreDetailView(metric: metric).environmentObject(repo) }
+                #if os(iOS)
+                .noopSheetPresentation(largeFirst: true)
+                #endif
         }
         // A tapped workout from `lastWorkoutsSection`, opened directly — mirrors WorkoutsView's own
         // `WorkoutDetailTarget` sheet exactly, so the detail looks identical wherever it's opened from.
@@ -548,6 +561,13 @@ struct LiquidTodayView: View {
             withAnimation(.easeOut(duration: 0.35)) { proxy.scrollTo(Self.topAnchorID, anchor: .top) }
         }
         #endif
+        #if DEBUG
+        .task {
+            guard CommandLine.arguments.contains("--pr3-scroll") else { return }
+            try? await Task.sleep(nanoseconds: 650_000_000)
+            proxy.scrollTo("pr3.today.activities", anchor: .top)
+        }
+        #endif
         }
     }
 
@@ -592,7 +612,94 @@ struct LiquidTodayView: View {
 
     // MARK: - Scene (sky title + controls + hero)
 
+    /// PR #3's compact, symmetric header. It is deliberately presentation-only: day selection, profile,
+    /// battery state and quick actions still call the Full Beta owners that were already on this screen.
     private var scene: some View {
+        VStack(spacing: 18) {
+            HStack(spacing: 10) {
+                Button { showSettings = true } label: {
+                    HStack(spacing: 6) {
+                        ProfileAvatarView(imageData: profile.avatarImageData, size: 36)
+                            .frame(width: 36, height: 36)
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(StrandPalette.metricAmber)
+                    }
+                    .frame(width: 76, alignment: .leading)
+                }
+                .buttonStyle(LiquidPressStyle())
+                .accessibilityLabel("Profile and settings")
+
+                HStack(spacing: 0) {
+                    Button { stepDay(1) } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 15, weight: .bold))
+                            .frame(width: 34, height: 34)
+                    }
+                    .disabled(selectedDayOffset >= earliestDayOffset)
+                    .opacity(selectedDayOffset >= earliestDayOffset ? 0.35 : 1)
+
+                    Button { showDayPicker = true } label: {
+                        Text(dayTitle.uppercased())
+                            .font(StrandFont.rounded(12))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 34)
+                            .background(Capsule().fill(Color(hex: "#596268")))
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showDayPicker) {
+                        DatePicker("", selection: dayPickerBinding, in: ...Repository.logicalDay(Date()),
+                                   displayedComponents: [.date])
+                            .datePickerStyle(.graphical)
+                            .labelsHidden()
+                            .padding(12)
+                            .frame(minWidth: 320, minHeight: 360)
+                            .liquidPopoverAdaptation()
+                    }
+
+                    Button { stepDay(-1) } label: {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 15, weight: .bold))
+                            .frame(width: 34, height: 34)
+                    }
+                    .disabled(selectedDayOffset == 0)
+                    .opacity(selectedDayOffset == 0 ? 0.35 : 1)
+                }
+                .foregroundStyle(.white)
+                .padding(3)
+                .background(Capsule().fill(Color(hex: "#30373D")))
+
+                Button { router.requestQuickActions() } label: {
+                    ZStack {
+                        Circle().fill(Color(hex: "#30373D"))
+                        Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(width: 36, height: 36)
+                    .frame(width: 76, alignment: .trailing)
+                }
+                .buttonStyle(LiquidPressStyle())
+                .accessibilityLabel("Quick actions")
+            }
+
+            LiquidWordmark()
+                .padding(.top, 4)
+        }
+    }
+
+    private func stepDay(_ delta: Int) {
+        let next = Self.clampedDayOffset(current: selectedDayOffset, delta: delta,
+                                         maxOffset: earliestDayOffset)
+        guard next != selectedDayOffset else { return }
+        withAnimation(StrandMotion.interactive) { selectedDayOffset = next }
+    }
+
+    /// Kept temporarily as an implementation reference while Milestone 1 is under visual review.
+    /// It is not mounted, so none of its previous large-header geometry affects the port.
+    private var legacyScene: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 Button { showDayPicker = true } label: {
@@ -752,6 +859,311 @@ struct LiquidTodayView: View {
         }
         .buttonStyle(LiquidPressStyle())
         .accessibilityLabel("Start a live session. Beta. Silent strap coaching against today's Charge.")
+    }
+
+    private var pr3HeroCard: some View {
+        HStack(alignment: .top, spacing: 6) {
+            PR3HeroScoreCell(label: String(localized: "Sleep"), score: restScore,
+                             tint: PR3ScorePalette.rest, onGuide: { scoreDetail = .rest })
+            PR3HeroScoreCell(label: String(localized: "Recovery"), score: chargeDisplay.pct,
+                             tint: PR3ScorePalette.charge(chargeDisplay.pct),
+                             onGuide: { scoreDetail = .charge })
+            PR3HeroScoreCell(label: String(localized: "Strain"),
+                             score: displayDay?.strain.map {
+                                 UnitFormatter.effortValue($0, scale: effortScale)
+                             },
+                             tint: PR3ScorePalette.effort,
+                             onGuide: { scoreDetail = .effort },
+                             maxValue: effortScale == .whoop ? 21 : 100,
+                             decimals: effortScale == .whoop ? 1 : 0)
+        }
+        .padding(.vertical, 2)
+    }
+
+    private var monitorStrip: some View {
+        HStack(spacing: 12) {
+            monitorCard(route: .health,
+                        title: "Health Monitor",
+                        value: healthMonitorStatus,
+                        detail: "\(healthMetricCount)/5",
+                        icon: healthMetricCount == 5 ? "checkmark" : "waveform.path.ecg",
+                        tint: healthMonitorTint)
+            monitorCard(route: .stress,
+                        title: "Stress Monitor",
+                        value: stressMonitorStatus,
+                        detail: stress.map { String(format: "%.1f", $0) } ?? "–",
+                        icon: "waveform.path.ecg",
+                        tint: stressMonitorTint)
+        }
+    }
+
+    private func monitorCard(route: TabRoute, title: String, value: String, detail: String,
+                             icon: String, tint: Color) -> some View {
+        NavigationLink(value: route) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 6) {
+                    Text(LocalizedStringKey(title))
+                        .font(StrandFont.overline)
+                        .tracking(1)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                    Spacer(minLength: 2)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .heavy))
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+                HStack(spacing: 9) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 5, style: .continuous)
+                            .fill(tint.opacity(0.18))
+                        Image(systemName: icon)
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(tint)
+                    }
+                    .frame(width: 29, height: 29)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(value.uppercased())
+                            .font(StrandFont.rounded(12))
+                            .foregroundStyle(tint)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        Text(detail)
+                            .font(StrandFont.captionNumber)
+                            .foregroundStyle(StrandPalette.textSecondary)
+                    }
+                }
+            }
+            .padding(13)
+            .frame(maxWidth: .infinity, minHeight: 94, alignment: .topLeading)
+            .background(
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    .fill(Color(hex: "#2B3136"))
+                    .overlay(RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .strokeBorder(.white.opacity(0.035), lineWidth: 1))
+            )
+        }
+        .buttonStyle(LiquidPressStyle())
+    }
+
+    private var healthMetricCount: Int {
+        [
+            (displayDay?.avgHrv ?? vitalsDay?.avgHrv) != nil,
+            (displayDay?.restingHr ?? vitalsDay?.restingHr) != nil,
+            (displayDay?.respRateBpm ?? vitalsDay?.respRateBpm) != nil,
+            (displayDay?.spo2Pct ?? vitalsDay?.spo2Pct) != nil,
+            (displayDay?.skinTempDevC ?? vitalsDay?.skinTempDevC) != nil
+        ].filter { $0 }.count
+    }
+
+    private var healthMonitorStatus: String {
+        guard healthMetricCount > 0 else { return String(localized: "Building") }
+        switch readiness.level {
+        case .primed, .balanced: return String(localized: "Within range")
+        case .strained, .rundown: return String(localized: "Review")
+        case .insufficient: return String(localized: "Building")
+        }
+    }
+
+    private var healthMonitorTint: Color {
+        switch readiness.level {
+        case .primed, .balanced: return StrandPalette.statusPositive
+        case .strained: return StrandPalette.metricAmber
+        case .rundown: return StrandPalette.metricRose
+        case .insufficient: return StrandPalette.textSecondary
+        }
+    }
+
+    private var stressMonitorStatus: String {
+        guard let stress else { return String(localized: "Calibrating") }
+        if stress < 1 { return String(localized: "Low") }
+        if stress < 2 { return String(localized: "Medium") }
+        return String(localized: "High")
+    }
+
+    private var stressMonitorTint: Color {
+        guard let stress else { return StrandPalette.textSecondary }
+        if stress < 1 { return StrandPalette.statusPositive }
+        if stress < 2 { return StrandPalette.metricAmber }
+        return StrandPalette.metricRose
+    }
+
+    private var myDayHeader: some View {
+        HStack {
+            Text("My Day")
+                .font(StrandFont.title1)
+                .foregroundStyle(StrandPalette.textPrimary)
+            Spacer()
+            Button { router.requestQuickActions() } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(.black)
+                    .frame(width: 48, height: 48)
+                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(.white))
+            }
+            .buttonStyle(LiquidPressStyle())
+            .accessibilityLabel("Add Activity")
+        }
+        .padding(.top, 12)
+        .padding(.horizontal, 4)
+    }
+
+    private var pr3OutlookCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                Image(systemName: "sun.max")
+                    .font(.system(size: 22, weight: .light))
+                    .foregroundStyle(.white.opacity(0.8))
+                Text("Your Daily Outlook")
+                    .font(StrandFont.headline)
+                    .foregroundStyle(.white)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .rotationEffect(.degrees(synthesisExpanded ? 90 : 0))
+            }
+            if synthesisExpanded {
+                Text(chargeDisplay.calibrationDetail ?? synthLine)
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .fixedSize(horizontal: false, vertical: true)
+                if let note = effortZeroNote {
+                    Text(note)
+                        .font(StrandFont.footnote)
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+            }
+        }
+        .padding(.horizontal, 17)
+        .frame(maxWidth: .infinity, minHeight: synthesisExpanded ? 116 : 64,
+               alignment: .leading)
+        .background(
+            LinearGradient(colors: [Color(hex: "#8B8580"), Color(hex: "#36536B")],
+                           startPoint: .leading, endPoint: .trailing),
+            in: RoundedRectangle(cornerRadius: 15, style: .continuous)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.2)) { synthesisExpanded.toggle() }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var todayActivitiesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("TODAY’S ACTIVITIES")
+                    .font(StrandFont.overline)
+                    .tracking(1.25)
+                    .foregroundStyle(StrandPalette.textPrimary)
+                Spacer()
+                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(StrandPalette.textTertiary)
+            }
+
+            NavigationLink(value: TabRoute.sleep) {
+                activityRow(tint: PR3ScorePalette.rest, icon: "moon.fill", score: sleepText,
+                            title: String(localized: "Sleep"), start: nil, end: nil)
+            }
+            .buttonStyle(LiquidPressStyle())
+
+            ForEach(Array(workouts.prefix(2)), id: \.startTs) { workout in
+                Button { workoutDetailTarget = WorkoutDetailTarget(row: workout) } label: {
+                    activityRow(tint: PR3ScorePalette.effort, icon: "figure.walk",
+                                score: effortText(workout.strain),
+                                title: WorkoutSource.displaySport(workout.sport),
+                                start: activityClock(workout.startTs),
+                                end: activityClock(workout.endTs))
+                }
+                .buttonStyle(LiquidPressStyle())
+            }
+
+            if workouts.isEmpty {
+                Text("No workouts yet")
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textTertiary)
+                    .padding(.horizontal, 14)
+                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                    .background(RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(Color(hex: "#343A3F")))
+            }
+
+            HStack(spacing: 10) {
+                NavigationLink(value: TabRoute.workouts) {
+                    activityAction(title: "Add Activity", icon: "plus")
+                }
+                NavigationLink(value: TabRoute.workouts) {
+                    activityAction(title: "Start Activity", icon: "stopwatch")
+                }
+            }
+            .buttonStyle(LiquidPressStyle())
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(hex: "#292E33"))
+                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(.white.opacity(0.035), lineWidth: 1))
+        )
+    }
+
+    private func activityRow(tint: Color, icon: String, score: String, title: String,
+                             start: String?, end: String?) -> some View {
+        HStack(spacing: 14) {
+            HStack(spacing: 9) {
+                Image(systemName: icon).font(.system(size: 22, weight: .bold))
+                Text(score)
+                    .font(StrandFont.rounded(18))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .frame(width: 127, height: 60, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(tint))
+
+            Text(title.uppercased())
+                .font(StrandFont.rounded(13))
+                .tracking(0.7)
+                .foregroundStyle(StrandPalette.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+            Spacer(minLength: 2)
+            if let start, let end {
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(start)
+                    Text(end)
+                }
+                .font(StrandFont.footnote)
+                .foregroundStyle(StrandPalette.textTertiary)
+            }
+        }
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(Color(hex: "#3A4045")))
+    }
+
+    private func activityAction(title: String, icon: String) -> some View {
+        HStack(spacing: 9) {
+            Image(systemName: icon).font(.system(size: 16, weight: .semibold))
+            Text(LocalizedStringKey(title))
+                .font(StrandFont.overline)
+                .tracking(0.8)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .foregroundStyle(StrandPalette.textPrimary)
+        .frame(maxWidth: .infinity)
+        .frame(height: 48)
+        .background(RoundedRectangle(cornerRadius: 11, style: .continuous)
+            .fill(Color(hex: "#343A3F")))
+    }
+
+    private func activityClock(_ timestamp: Int) -> String {
+        Date(timeIntervalSince1970: TimeInterval(timestamp))
+            .formatted(date: .omitted, time: .shortened)
     }
 
     private var heroCard: some View {
@@ -2003,11 +2415,11 @@ private struct LiquidWordmark: View {
     var body: some View {
         // Smaller AND brighter: the wordmark should cost less height between the header and the scores while
         // reading more like a mark and less like a watermark.
-        HStack(spacing: 10) {
+        HStack(spacing: 14) {
             ForEach(Array("NOOP".enumerated()), id: \.offset) { _, ch in
                 Text(String(ch))
-                    .font(StrandFont.rounded(13, weight: .bold))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .font(StrandFont.rounded(16))
+                    .foregroundStyle(.white.opacity(0.56))
             }
         }
         .shadow(color: .black.opacity(0.25), radius: 6, y: 1)
@@ -2049,6 +2461,83 @@ private struct LiquidWordmark: View {
 }
 
 // MARK: - Hero score cell (count-up number over a filling vessel, tap-to-splash)
+
+/// The score-ring implementation accepted in PR #3. Kept screen-specific so later generic ring work
+/// cannot silently alter the Today geometry that this visual port is measured against.
+private struct PR3HeroScoreCell: View {
+    static let diameter: CGFloat = 84
+    static let strokeWidth: CGFloat = 8
+
+    let label: String
+    let score: Double?
+    let tint: Color
+    let onGuide: () -> Void
+    var maxValue: Double = 100
+    var decimals: Int = 0
+
+    @State private var shown: Double = 0
+
+    private var shownFraction: Double {
+        guard score != nil else { return 0 }
+        return max(0, min(1, shown / maxValue))
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .stroke(Color(hex: "#394247"), lineWidth: Self.strokeWidth)
+                Circle()
+                    .trim(from: 0, to: shownFraction)
+                    .stroke(tint, style: StrokeStyle(lineWidth: Self.strokeWidth, lineCap: .butt))
+                    .rotationEffect(.degrees(-90))
+                    .shadow(color: tint.opacity(0.18), radius: 4)
+                HStack(alignment: .firstTextBaseline, spacing: 1) {
+                    if score != nil {
+                        CountUpNumber(value: shown, font: StrandFont.rounded(28), decimals: decimals)
+                    } else {
+                        Text("–").font(StrandFont.rounded(28))
+                    }
+                    if score != nil, maxValue == 100 {
+                        Text("%")
+                            .font(StrandFont.rounded(13))
+                            .foregroundStyle(.white.opacity(0.72))
+                    }
+                }
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .allowsHitTesting(false)
+            }
+            .frame(width: Self.diameter, height: Self.diameter)
+
+            Button(action: onGuide) {
+                HStack(spacing: 3) {
+                    Text(label.uppercased())
+                        .font(StrandFont.overline)
+                        .tracking(1.2)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 9, weight: .semibold))
+                        .opacity(0.6)
+                }
+                .foregroundStyle(StrandPalette.onDarkPrimary)
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
+        .onAppear { rollTo(score) }
+        .onChangeCompat(of: score) { rollTo($0) }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(label), \(score.map { String($0) } ?? String(localized: "no data yet"))")
+    }
+
+    private func rollTo(_ value: Double?) {
+        guard let value else { shown = 0; return }
+        withAnimation(.easeOut(duration: 0.9)) { shown = value }
+    }
+}
 
 /// One of the three hero scores (Charge / Effort / Rest). The vessel fills from empty and the number
 /// COUNTS UP to the value when data lands; tapping the gauge itself splashes (the number is

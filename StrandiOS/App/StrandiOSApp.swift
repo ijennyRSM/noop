@@ -380,12 +380,18 @@ enum DemoScreens {
         let args = CommandLine.arguments
         guard let i = args.firstIndex(of: "--demo-screen"), i + 1 < args.count else { return nil }
         switch args[i + 1].lowercased() {
+        case "root": return AnyView(RootTabView())
         case "today":    return AnyView(TodayView())
         // The DEFAULT iOS Today (`noop.liquidTodayEnabled` ships true), so it needs its own entry — plain
         // "today" renders the CLASSIC screen, which is exactly the screen whose behaviour Liquid was found
         // to have diverged from. Without this, the default Today was the one screen the harness could not
         // capture.
         case "liquidtoday": return AnyView(LiquidTodayView())
+        case "pr3today": return AnyView(LiquidTodayView())
+        case "pr3scrolled": return AnyView(LiquidTodayView())
+        case "pr3charge": return AnyView(PR3ScoreDetailDemoHost(metric: .charge))
+        case "pr3rest": return AnyView(PR3ScoreDetailDemoHost(metric: .rest))
+        case "pr3effort": return AnyView(PR3ScoreDetailDemoHost(metric: .effort))
         case "trends":   return AnyView(TrendsView())
         case "sleep":    return AnyView(SleepView())
         case "live":     return AnyView(LiveView())
