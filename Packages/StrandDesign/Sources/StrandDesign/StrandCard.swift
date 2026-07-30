@@ -96,8 +96,8 @@ public struct StrandCard<Content: View>: View {
     @ViewBuilder public var content: () -> Content
 
     public init(
-        padding: CGFloat = 16,
-        cornerRadius: CGFloat = 22,
+        padding: CGFloat = NoopMetrics.cardPadding,
+        cornerRadius: CGFloat = NoopMetrics.cardRadius,
         tint: Color? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) {
