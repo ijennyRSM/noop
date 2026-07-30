@@ -16,6 +16,17 @@ public enum PR3SecondaryPalette {
     public static let success = Color(hex: "#00E65A")
 }
 
+/// Compact geometry used only by secondary screens in the full-app port.
+/// The approved root/Today/score-detail geometry continues to use
+/// `NoopMetrics`, so extending the design cannot silently move that baseline.
+public enum PR3SecondaryMetrics {
+    public static let cardRadius: CGFloat = 16
+    public static let cardPadding: CGFloat = 14
+    public static let sectionGap: CGFloat = 18
+    public static let screenPadding: CGFloat = 16
+    public static let innerSpacing: CGFloat = 10
+}
+
 public struct PR3PageHeading: View {
     private let overline: LocalizedStringKey?
     private let title: LocalizedStringKey
@@ -240,9 +251,9 @@ public struct PR3TruthfulState: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(PR3SecondaryPalette.surface, in: RoundedRectangle(
-            cornerRadius: NoopMetrics.cardRadius, style: .continuous
+            cornerRadius: PR3SecondaryMetrics.cardRadius, style: .continuous
         ))
-        .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+        .overlay(RoundedRectangle(cornerRadius: PR3SecondaryMetrics.cardRadius, style: .continuous)
             .strokeBorder(PR3SecondaryPalette.border, lineWidth: 1))
         .accessibilityElement(children: .combine)
     }
