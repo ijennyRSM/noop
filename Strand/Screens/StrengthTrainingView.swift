@@ -838,7 +838,9 @@ struct StrengthTemplateSheet: View {
             .background(StrandPalette.surfaceBase)
             .tint(PR3SecondaryPalette.action)
             .navigationTitle("Workout templates")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
@@ -1024,7 +1026,9 @@ struct ExercisePicker: View {
             .padding(.top, 10)
             .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Add exercise")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -1106,7 +1110,9 @@ struct CustomExerciseSheet: View {
             .background(StrandPalette.surfaceBase)
             .tint(PR3SecondaryPalette.action)
             .navigationTitle("Create custom exercise")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -1234,7 +1240,9 @@ struct StrengthHistoryView: View {
             }
             .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Strength history")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
@@ -1625,7 +1633,9 @@ struct ExerciseHistorySheet: View {
             .scrollContentBackground(.hidden)
             .background(StrandPalette.surfaceBase)
             .navigationTitle(exerciseName)
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

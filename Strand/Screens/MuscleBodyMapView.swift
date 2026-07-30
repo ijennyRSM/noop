@@ -678,7 +678,9 @@ struct SorenessCheckInSheet: View {
             }
             .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Soreness")
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Skip") { dismiss() }
