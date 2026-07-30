@@ -148,10 +148,7 @@ struct WorkoutsView: View {
                        // zones card, and a row-per-session table). On a large imported history the eager
                        // VStack built every section + the whole table up-front; the LazyVStack path (which
                        // is byte-identical layout) builds the off-screen sections/rows on demand instead.
-                       lazy: true,
-                       // The day-of-sky liquid backdrop, matching Today / Health / Sleep / Trends: a fixed,
-                       // full-bleed time-of-day sky behind the scroll content (it does not scroll).
-                       topBackground: liquidScaffoldSky()) {
+                       lazy: true) {
             if allRows.isEmpty {
                 VStack(alignment: .leading, spacing: NoopMetrics.space4) {
                     ComingSoon(what: loaded
@@ -848,29 +845,49 @@ struct WorkoutsView: View {
         let totalKmRaw = rows.compactMap(\.distanceM).reduce(0, +) / 1000.0
         let modal = modalSport(from: groups)
 
-        return LazyVGrid(columns: tileColumns, alignment: .leading, spacing: NoopMetrics.gap) {
-            StatTile(label: "Total Workouts",
-                     value: "\(totalCount)",
-                     caption: effectiveRange.caption,
-                     accent: StrandPalette.effortColor)
-            StatTile(label: "Total Time",
-                     value: String(localized: "\(oneDecimal(totalTimeH))h"),
-                     caption: String(localized: "active"),
-                     accent: StrandPalette.textPrimary)
-            StatTile(label: "Total Calories",
-                     value: grouped(totalKcal),
-                     caption: "kcal",
-                     accent: StrandPalette.metricAmber)
-            StatTile(label: "Total Distance",
-                     value: UnitFormatter.distanceFromKilometers(totalKmRaw, system: unitSystem),
-                     caption: String(localized: "covered"),
-                     accent: StrandPalette.metricCyan)
-            StatTile(label: "Most Active",
-                     value: modal.sport,
-                     caption: modal.count > 0
-                         ? (modal.count == 1 ? String(localized: "1 session") : String(localized: "\(modal.count) sessions"))
-                         : nil,
-                     accent: StrandPalette.textPrimary)
+        return VStack(alignment: .leading, spacing: 8) {
+            PR3SectionLabel("Summary", trailing: effectiveRange.caption)
+            NoopCard {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 26) {
+                        PR3InlineMetric(
+                            "Total Workouts",
+                            value: "\(totalCount)",
+                            color: PR3ScorePalette.effort
+                        )
+                        PR3InlineMetric(
+                            "Total Time",
+                            value: String(localized: "\(oneDecimal(totalTimeH))h")
+                        )
+                        PR3InlineMetric(
+                            "Total Calories",
+                            value: grouped(totalKcal),
+                            unit: "kcal",
+                            color: StrandPalette.metricAmber
+                        )
+                        PR3InlineMetric(
+                            "Total Distance",
+                            value: UnitFormatter.distanceFromKilometers(
+                                totalKmRaw, system: unitSystem
+                            ),
+                            color: StrandPalette.metricCyan
+                        )
+                    }
+                }
+                Divider().overlay(StrandPalette.hairline)
+                HStack {
+                    Text("Most Active")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textSecondary)
+                    Spacer()
+                    Text(WorkoutSource.displaySport(modal.sport))
+                        .font(StrandFont.headline)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                    Text(verbatim: "· \(modal.count)")
+                        .font(StrandFont.captionNumber)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+            }
         }
     }
 
@@ -883,13 +900,57 @@ struct WorkoutsView: View {
                           trailing: groups.count == 1
                               ? String(localized: "1 sport")
                               : String(localized: "\(groups.count) sports"))
-            LazyVGrid(columns: breakdownColumns, alignment: .leading, spacing: NoopMetrics.gap) {
-                ForEach(groups) { g in
-                    // This sport's own sessions, so the card can carry an HR-zone mini-bar.
-                    sportCard(g, zones: WorkoutZones.summary(from: rows.filter { $0.sport == g.sport }))
+            NoopCard(padding: 0) {
+                VStack(spacing: 0) {
+                    ForEach(groups) { group in
+                        sportBreakdownRow(
+                            group,
+                            zones: WorkoutZones.summary(
+                                from: rows.filter { $0.sport == group.sport }
+                            )
+                        )
+                        if group.id != groups.last?.id {
+                            Divider().overlay(StrandPalette.hairline)
+                                .padding(.leading, 48)
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private func sportBreakdownRow(
+        _ group: SportGroup,
+        zones: WorkoutZones.Summary?
+    ) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: sportIcon(group.sport))
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(PR3ScorePalette.effort)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text(WorkoutSource.displaySport(group.sport))
+                        .font(StrandFont.headline)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                    Spacer()
+                    Text(verbatim: "\(group.count)")
+                        .font(StrandFont.number(20))
+                        .foregroundStyle(PR3ScorePalette.effort)
+                }
+                if let zones { zoneMiniBar(zones) }
+                Text(
+                    String(
+                        format: String(localized: "%@ · %lld kcal"),
+                        String(localized: "\(oneDecimal(group.totalTimeH))h"),
+                        Int64(group.totalKcal.rounded())
+                    )
+                )
+                .font(StrandFont.footnote)
+                .foregroundStyle(StrandPalette.textTertiary)
+            }
+        }
+        .padding(14)
     }
 
     private func sportCard(_ g: SportGroup, zones: WorkoutZones.Summary?) -> some View {
