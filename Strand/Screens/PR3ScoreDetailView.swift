@@ -108,7 +108,9 @@ struct PR3ScoreDetailView: View {
         }
         .background(StrandPalette.surfaceBase.ignoresSafeArea())
         .navigationTitle(title)
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     private var detailRing: some View {
