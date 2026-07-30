@@ -8,8 +8,20 @@ import StrandDesign
 /// Bindings are the same `AICoachEngine` properties the old inline cards used — only relocated, not
 /// rewired. Design-system tokens only, per `docs/CONTRIBUTING.md`.
 struct CoachSettingsView: View {
+    enum InitialPage {
+        case connection
+        case memory
+        case privacy
+        case dataAccess
+    }
+
     @EnvironmentObject var coach: AICoachEngine
     @Environment(\.dismiss) private var dismiss
+    private let initialPage: InitialPage?
+
+    init(initialPage: InitialPage? = nil) {
+        self.initialPage = initialPage
+    }
 
     /// Apple Health-style leading-icon coloring (SettingsView's "App icon colors") — same switch that
     /// recolors the More tab and the rest of Coach's screens. See `CoachIconColors`.
@@ -131,21 +143,7 @@ struct CoachSettingsView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if coach.isConfigured {
-                    hub
-                } else {
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            coachFeatureBar
-                            setupCard
-                            privacyFootnote
-                        }
-                        .padding(16)
-                    }
-                    .background(StrandPalette.surfaceBase.ignoresSafeArea())
-                }
-            }
+            rootContent
             // Drop an explicit "Custom…" pick made on the OLD provider — otherwise `customModel` stays
             // true after switching away and forces the free-text field open even though the new
             // provider's model list is perfectly valid. `isCustomModelSelected` still catches the new
@@ -945,6 +943,34 @@ struct CoachSettingsView: View {
                     showingDonorProfileReview = false
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var rootContent: some View {
+        if let initialPage {
+            switch initialPage {
+            case .connection:
+                connectionSubpage
+            case .memory:
+                memorySubpage
+            case .privacy:
+                privacySubpage
+            case .dataAccess:
+                dataAccessSubpage
+            }
+        } else if coach.isConfigured {
+            hub
+        } else {
+            ScrollView {
+                VStack(spacing: 16) {
+                    coachFeatureBar
+                    setupCard
+                    privacyFootnote
+                }
+                .padding(16)
+            }
+            .background(StrandPalette.surfaceBase.ignoresSafeArea())
         }
     }
 

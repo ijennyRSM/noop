@@ -515,6 +515,26 @@ private struct MuscleLoadDetail: View {
     }
 }
 
+#if DEBUG
+struct MuscleLoadDetailDemoHost: View {
+    var body: some View {
+        MuscleLoadDetail(summary: summary)
+    }
+
+    private var summary: MuscleBodyMapModel.MuscleSummary {
+        var value = MuscleBodyMapModel.MuscleSummary(muscle: .quadriceps)
+        value.today = 67
+        value.week = 82
+        value.residual = 43
+        value.workingSets = 8
+        value.lastTrainedAt = Date().addingTimeInterval(-19 * 3_600)
+        value.confidence = .high
+        value.exercises = ["Back Squat", "Bulgarian Split Squat"]
+        return value
+    }
+}
+#endif
+
 /// Optional local-only soreness and pain check-in. This is deliberately a
 /// presentation over `LocalCoachPreferences`; it does not create another
 /// profile/check-in store. Pain remains a separate field and never becomes
@@ -528,6 +548,10 @@ struct SorenessCheckInSheet: View {
     @State private var painPresent = false
     @State private var painNote = ""
     @State private var hasExisting = false
+
+    init(initialPainPresent: Bool = false) {
+        _painPresent = State(initialValue: initialPainPresent)
+    }
 
     var body: some View {
         NavigationStack {
