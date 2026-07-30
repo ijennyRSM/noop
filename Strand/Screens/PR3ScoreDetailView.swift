@@ -48,9 +48,9 @@ struct PR3ScoreDetailView: View {
 
     private var overline: LocalizedStringKey {
         switch metric {
-        case .charge: return "RECOVERY"
-        case .rest: return "SLEEP PERFORMANCE"
-        case .effort: return "DAY STRAIN"
+        case .charge: return "Recovery"
+        case .rest: return "Sleep performance"
+        case .effort: return "Day Strain"
         }
     }
 
@@ -89,18 +89,16 @@ struct PR3ScoreDetailView: View {
                     Text(overline)
                         .font(StrandFont.overline)
                         .tracking(1.6)
+                        .textCase(.uppercase)
                         .foregroundStyle(StrandPalette.textSecondary)
-                    Text(title)
-                        .font(StrandFont.title1)
-                        .foregroundStyle(StrandPalette.textPrimary)
                 }
                 .padding(.top, 12)
 
                 detailRing
 
                 HStack(spacing: 12) {
-                    detailTile("STATUS", state, tint: tint)
-                    detailTile("SOURCE", sourceLabel, tint: StrandPalette.textPrimary)
+                    detailTile("State", state, tint: tint)
+                    detailTile("Source", sourceLabel, tint: StrandPalette.textPrimary)
                 }
 
                 supportingCard
@@ -204,15 +202,15 @@ struct PR3ScoreDetailView: View {
 
     private var supportingSummary: String {
         guard score != nil else {
-            return String(localized: "Wear your device to build this score.")
+            return String(localized: "Calibrating")
         }
         switch metric {
         case .charge:
-            return String(localized: "Charge combines your current recovery signals with your personal baseline.")
+            return String(localized: "How recovered you are, led by HRV versus your personal baseline.")
         case .rest:
-            return String(localized: "Rest reflects your sleep performance for the latest main sleep.")
+            return String(localized: "Sleep performance")
         case .effort:
-            return String(localized: "Effort is today's cardiovascular load. It is separate from Muscular Load.")
+            return String(localized: "Heart rate plus active energy give a solid daily cardiovascular load. An on-watch workout sharpens it further.")
         }
     }
 
