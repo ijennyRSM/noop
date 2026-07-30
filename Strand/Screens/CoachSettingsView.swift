@@ -361,7 +361,7 @@ struct CoachSettingsView: View {
     /// scanner-visibility reason as the hub rows above.
     private func subpageScaffold<Content: View>(
         scrollTarget: String? = nil,
-        @ViewBuilder _ content: () -> Content
+        @ViewBuilder _ content: @escaping () -> Content
     ) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
