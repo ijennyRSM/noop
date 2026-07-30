@@ -6,10 +6,10 @@ import SwiftUI
 // the uniform, instrument-grade look from the reference. Do not invent ad-hoc cards.
 
 public enum NoopMetrics {
-    public static let cardRadius: CGFloat = 22   // Apple x WHOOP rounded cards — matches the liquid home card (LiquidTodayView.card)   // Apple x WHOOP: rounded cards
-    public static let cardPadding: CGFloat = 16  // Apple x WHOOP: roomier card interior
-    public static let gap: CGFloat = 12          // gap between cards
-    public static let sectionGap: CGFloat = 22   // Apple x WHOOP: breathing room (not cramped)
+    public static let cardRadius: CGFloat = 22   // Approved PR #9 primary-card geometry.
+    public static let cardPadding: CGFloat = 16
+    public static let gap: CGFloat = 12
+    public static let sectionGap: CGFloat = 22
     public static let screenPadding: CGFloat = 18
     public static let tileHeight: CGFloat = 96   // Design Reset: tighter metric tile
     // Key Metrics grid: one fixed height every tile snaps to, so a sparkline-and-caption tile and a

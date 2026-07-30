@@ -209,10 +209,12 @@ struct CoachView: View {
     /// Set once the goal onboarding has been offered — saved or skipped — so it never nags twice.
     static let goalOnboardingAskedKey = "coach.goalOnboardingAsked"
 
-    /// The full-bleed day-of-sky backdrop the liquid tabs carry, so Coach sits in one atmosphere.
+    /// PR #9 keeps the transcript on the same near-black performance canvas as
+    /// Today and the score details. The chat remains purpose-built; this is
+    /// presentation only and does not affect provider or transcript state.
     private var chatBackground: some View {
-        liquidScaffoldSky(height: 240)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        StrandPalette.surfaceBase
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea()
     }
 
@@ -319,8 +321,11 @@ struct CoachView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .liquidGlass(in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+        .background(
+            StrandPalette.surfaceRaised,
+            in: RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+        )
+        .overlay(RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
             .strokeBorder(StrandPalette.hairline, lineWidth: 1))
         .padding(.horizontal, 12)
         .padding(.top, 6)
@@ -506,14 +511,7 @@ struct CoachView: View {
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
-                    // A tail-side corner pulled tight (and a soft gradient instead of a flat fill) is what
-                    // makes a rectangle read as a spoken turn rather than as a table cell.
-                    .background(
-                        LinearGradient(colors: [StrandPalette.accent,
-                                                StrandPalette.accent.opacity(0.86)],
-                                       startPoint: .top, endPoint: .bottom),
-                        in: CoachBubbleShape(side: .user)
-                    )
+                    .background(PR3SecondaryPalette.action, in: CoachBubbleShape(side: .user))
                     .frame(maxWidth: 520, alignment: .trailing)
                     .contextMenu {
                         copyButton(message.text)
@@ -566,7 +564,7 @@ struct CoachView: View {
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 11)
-                            .frostedCardSurface(tint: StrandPalette.chargeColor, cornerRadius: CoachRadius.card)
+                            .frostedCardSurface(cornerRadius: CoachRadius.card)
                             .clipShape(CoachBubbleShape(side: .coach))
                             .frame(maxWidth: 560, alignment: .leading)
                             .contextMenu {
@@ -928,7 +926,7 @@ struct CoachView: View {
             typingDots
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
-                .frostedCardSurface(tint: StrandPalette.chargeColor, cornerRadius: CoachRadius.card)
+                .frostedCardSurface(cornerRadius: CoachRadius.card)
                 .clipShape(CoachBubbleShape(side: .coach))
             Spacer(minLength: 0)
         }
@@ -1059,7 +1057,7 @@ struct CoachView: View {
                         .foregroundStyle(StrandPalette.textSecondary)
                         .padding(.horizontal, 13)
                         .padding(.vertical, 8)
-                        .liquidGlass(in: Capsule(style: .continuous))
+                        .background(StrandPalette.surfaceInset, in: Capsule(style: .continuous))
                         .overlay(Capsule(style: .continuous).strokeBorder(StrandPalette.hairline, lineWidth: 1))
                 }
                 .buttonStyle(LiquidPressStyle())
@@ -1108,10 +1106,11 @@ struct CoachView: View {
             sendOrStopButton
         }
         .padding(10)
-        // A floating glass capsule instead of a bordered box: on iOS 26 this is real Liquid Glass, below
-        // it the same `.ultraThinMaterial` the composer always had.
-        .liquidGlass(in: RoundedRectangle(cornerRadius: 26, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous)
+        .background(
+            StrandPalette.surfaceRaised,
+            in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+        )
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous)
             .strokeBorder(composerFocused ? StrandPalette.focusRing : StrandPalette.hairline, lineWidth: 1))
         .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: composerFocused)
         .padding(.horizontal, 12)

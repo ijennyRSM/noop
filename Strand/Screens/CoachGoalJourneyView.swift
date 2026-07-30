@@ -209,7 +209,9 @@ struct CoachGoalJourneyView: View {
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
                             Text(goal.title.isEmpty ? goal.kind.label.localizedCatalogValue : goal.title)
-                                .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                                .font(StrandFont.title2)
+                                .tracking(-0.25)
+                                .foregroundStyle(StrandPalette.textPrimary)
                                 .lineLimit(1)
                             Text(goalSubtitle(goal))
                                 .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)

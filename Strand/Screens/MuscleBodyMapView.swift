@@ -123,11 +123,16 @@ private final class MuscleBodyMapModel: ObservableObject {
 struct MuscleBodyMapCard: View {
     @EnvironmentObject private var repository: Repository
     @StateObject private var model = MuscleBodyMapModel()
-    @State private var bodySide: AnatomicalMuscleMap.Side = .front
+    @State private var bodySide: AnatomicalMuscleMap.Side
+    @State private var showingCheckIn = false
+
+    init(initialSide: AnatomicalMuscleMap.Side = .front) {
+        _bodySide = State(initialValue: initialSide)
+    }
 
     var body: some View {
-        NoopCard(padding: NoopMetrics.space4, tint: StrandPalette.metricCyan) {
-            VStack(alignment: .leading, spacing: 16) {
+        NoopCard(padding: NoopMetrics.cardPadding, tint: StrandPalette.metricCyan) {
+            VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("MUSCLE MAP")
@@ -135,7 +140,8 @@ struct MuscleBodyMapCard: View {
                             .tracking(StrandFont.overlineTracking)
                             .foregroundStyle(StrandPalette.metricCyan)
                         Text("Estimated muscular load")
-                            .font(StrandFont.title2)
+                            .font(StrandFont.title1)
+                            .tracking(-0.35)
                             .foregroundStyle(StrandPalette.textPrimary)
                     }
                     Spacer()
@@ -175,46 +181,46 @@ struct MuscleBodyMapCard: View {
                 .padding(3)
                 .background(Capsule(style: .continuous).fill(Color.black.opacity(0.28)))
 
-                HStack(alignment: .center, spacing: 14) {
+                VStack(spacing: 10) {
                     AnatomicalMuscleMap(
                         side: bodySide,
                         values: muscleValues,
                         onSelect: select
                     )
-                    .frame(maxWidth: 174)
-
-                    VStack(alignment: .leading, spacing: 13) {
-                        Text("HIGHEST LOAD")
-                            .font(StrandFont.overline)
-                            .tracking(StrandFont.overlineTracking)
-                            .foregroundStyle(StrandPalette.textTertiary)
-
-                        if strongestMuscles.isEmpty {
-                            Text("No training load yet")
-                                .font(StrandFont.footnote)
-                                .foregroundStyle(StrandPalette.textTertiary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        } else {
-                            ForEach(strongestMuscles) { summary in
-                                muscleLoadRow(summary)
-                            }
-                        }
-                        Spacer(minLength: 0)
-                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 390)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 14)
-                .frame(maxWidth: .infinity, minHeight: 350, maxHeight: 390)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 12)
                 .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .fill(Color.black.opacity(0.24))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .strokeBorder(Color.white.opacity(0.055), lineWidth: 1)
                         )
                 )
 
                 legend
+                PR3SectionLabel("HIGHEST LOAD")
+                if strongestMuscles.isEmpty {
+                    Text("No training load yet")
+                        .font(StrandFont.subhead)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    VStack(spacing: 10) {
+                        ForEach(strongestMuscles) { summary in
+                            muscleLoadRow(summary)
+                        }
+                    }
+                }
+                Button {
+                    showingCheckIn = true
+                } label: {
+                    Label("Soreness", systemImage: "figure.mind.and.body")
+                }
+                .buttonStyle(PR3PrimaryButtonStyle())
                 Text("Estimated from logged training. Colors are not direct measurements of muscle activation, damage, inflammation, or injury risk.")
                     .font(StrandFont.footnote)
                     .foregroundStyle(StrandPalette.textTertiary)
@@ -227,6 +233,11 @@ struct MuscleBodyMapCard: View {
                 MuscleLoadDetail(summary: summary)
             }
             .strengthSheetPresentation(largeFirst: false)
+        }
+        .sheet(isPresented: $showingCheckIn) {
+            SorenessCheckInSheet()
+                .environmentObject(repository)
+                .strengthSheetPresentation(largeFirst: true)
         }
     }
 
@@ -260,13 +271,13 @@ struct MuscleBodyMapCard: View {
             VStack(alignment: .leading, spacing: 5) {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(summary.muscle.localizedName)
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textSecondary)
                         .lineLimit(2)
                         .minimumScaleFactor(0.75)
                     Spacer(minLength: 2)
                     Text("\(Int(value.rounded()))")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .font(StrandFont.number(17))
                         .foregroundStyle(MuscleLoadColorScale.color(value))
                 }
                 GeometryReader { geometry in
@@ -492,7 +503,8 @@ private struct MuscleLoadDetail: View {
 
     private func detailRow(_ title: String, _ value: String) -> some View {
         HStack {
-            Text(title).foregroundStyle(StrandPalette.textSecondary)
+            Text(title.localizedCatalogValue)
+                .foregroundStyle(StrandPalette.textSecondary)
             Spacer()
             Text(value).foregroundStyle(StrandPalette.textPrimary)
         }
@@ -501,5 +513,253 @@ private struct MuscleLoadDetail: View {
     private var lastTrained: String {
         guard let date = summary.lastTrainedAt else { return String(localized: "No data") }
         return date.formatted(.relative(presentation: .named))
+    }
+}
+
+#if DEBUG
+struct MuscleLoadDetailDemoHost: View {
+    var body: some View {
+        MuscleLoadDetail(summary: summary)
+    }
+
+    private var summary: MuscleBodyMapModel.MuscleSummary {
+        var value = MuscleBodyMapModel.MuscleSummary(muscle: .quadriceps)
+        value.today = 67
+        value.week = 82
+        value.residual = 43
+        value.workingSets = 8
+        value.lastTrainedAt = Date().addingTimeInterval(-19 * 3_600)
+        value.confidence = .high
+        value.exercises = ["Back Squat", "Bulgarian Split Squat"]
+        return value
+    }
+}
+#endif
+
+/// Optional local-only soreness and pain check-in. This is deliberately a
+/// presentation over `LocalCoachPreferences`; it does not create another
+/// profile/check-in store. Pain remains a separate field and never becomes
+/// muscular load.
+struct SorenessCheckInSheet: View {
+    @EnvironmentObject private var repository: Repository
+    @Environment(\.dismiss) private var dismiss
+    @State private var overall = 0
+    @State private var perMuscle: [String: Int] = [:]
+    @State private var note = ""
+    @State private var painPresent = false
+    @State private var painNote = ""
+    @State private var hasExisting = false
+
+    init(initialPainPresent: Bool = false) {
+        _painPresent = State(initialValue: initialPainPresent)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+                    PR3PageHeading(
+                        "Coach profile & check-in",
+                        overline: "OPTIONAL CHECK-IN"
+                    )
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text("Overall soreness")
+                                .font(StrandFont.headline)
+                            Spacer()
+                            Text(verbatim: "\(overall)/10")
+                                .font(StrandFont.number(28))
+                                .foregroundStyle(sorenessColor(overall))
+                        }
+                        Slider(
+                            value: Binding(
+                                get: { Double(overall) },
+                                set: { overall = Int($0.rounded()) }
+                            ),
+                            in: 0...10,
+                            step: 1
+                        )
+                        .tint(sorenessColor(overall))
+                    }
+                    .padding(14)
+                    .background(
+                        StrandPalette.surfaceRaised,
+                        in: RoundedRectangle(
+                            cornerRadius: NoopMetrics.cardRadius,
+                            style: .continuous
+                        )
+                    )
+
+                    DisclosureGroup {
+                        VStack(spacing: 0) {
+                            ForEach(NOOPMuscle.allCases, id: \.rawValue) { muscle in
+                                muscleRow(muscle)
+                                if muscle.rawValue != NOOPMuscle.allCases.last?.rawValue {
+                                    Divider().overlay(StrandPalette.hairline)
+                                }
+                            }
+                        }
+                        .padding(.top, 8)
+                    } label: {
+                        Text("Muscles")
+                            .font(StrandFont.headline)
+                            .foregroundStyle(StrandPalette.textPrimary)
+                    }
+                    .tint(PR3SecondaryPalette.action)
+                    .padding(14)
+                    .background(
+                        StrandPalette.surfaceRaised,
+                        in: RoundedRectangle(
+                            cornerRadius: NoopMetrics.cardRadius,
+                            style: .continuous
+                        )
+                    )
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Toggle("Pain or discomfort", isOn: $painPresent)
+                            .font(StrandFont.headline)
+                            .tint(PR3SecondaryPalette.danger)
+                        Text("Pain-sensitive check-ins")
+                            .font(StrandFont.footnote)
+                            .foregroundStyle(PR3SecondaryPalette.danger)
+                        if painPresent {
+                            TextField("Notes", text: $painNote, axis: .vertical)
+                                .textFieldStyle(.plain)
+                                .padding(12)
+                                .background(
+                                    StrandPalette.surfaceInset,
+                                    in: RoundedRectangle(cornerRadius: 10)
+                                )
+                        }
+                    }
+                    .padding(14)
+                    .background(
+                        PR3SecondaryPalette.danger.opacity(0.055),
+                        in: RoundedRectangle(
+                            cornerRadius: NoopMetrics.cardRadius,
+                            style: .continuous
+                        )
+                    )
+                    .overlay(
+                        RoundedRectangle(
+                            cornerRadius: NoopMetrics.cardRadius,
+                            style: .continuous
+                        )
+                        .strokeBorder(PR3SecondaryPalette.danger.opacity(0.32), lineWidth: 1)
+                    )
+
+                    TextField("Notes", text: $note, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .padding(14)
+                        .background(
+                            StrandPalette.surfaceRaised,
+                            in: RoundedRectangle(
+                                cornerRadius: NoopMetrics.cardRadius,
+                                style: .continuous
+                            )
+                        )
+
+                    Button("Save") { save() }
+                        .buttonStyle(PR3PrimaryButtonStyle())
+
+                    if hasExisting {
+                        Button("Delete check-in", role: .destructive) {
+                            LocalCoachPreferences.saveCheckIn(nil)
+                            invalidateResidual()
+                            dismiss()
+                        }
+                        .font(StrandFont.headline)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                }
+                .screenPadding()
+                .padding(.vertical, 16)
+            }
+            .background(StrandPalette.surfaceBase.ignoresSafeArea())
+            .navigationTitle("Soreness")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Skip") { dismiss() }
+                }
+            }
+            .onAppear(perform: load)
+        }
+    }
+
+    private func muscleRow(_ muscle: NOOPMuscle) -> some View {
+        HStack(spacing: 10) {
+            Text(muscle.localizedName)
+                .font(StrandFont.subhead)
+                .foregroundStyle(StrandPalette.textPrimary)
+            Spacer()
+            Button {
+                perMuscle[muscle.rawValue] = max(
+                    0, (perMuscle[muscle.rawValue] ?? overall) - 1
+                )
+            } label: {
+                Image(systemName: "minus")
+                    .frame(width: 36, height: 36)
+                    .background(StrandPalette.surfaceInset, in: Circle())
+            }
+            .buttonStyle(.plain)
+            Text(verbatim: "\(perMuscle[muscle.rawValue] ?? overall)")
+                .font(StrandFont.number(20))
+                .frame(width: 30)
+            Button {
+                perMuscle[muscle.rawValue] = min(
+                    10, (perMuscle[muscle.rawValue] ?? overall) + 1
+                )
+            } label: {
+                Image(systemName: "plus")
+                    .frame(width: 36, height: 36)
+                    .background(StrandPalette.surfaceInset, in: Circle())
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(minHeight: 48)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func load() {
+        guard let value = LocalCoachPreferences.loadCheckIn() else { return }
+        hasExisting = true
+        overall = value.overallSoreness ?? 0
+        perMuscle = value.perMuscleSoreness
+        note = value.note
+        painPresent = value.painPresent ?? false
+        painNote = value.painNote
+    }
+
+    private func save() {
+        LocalCoachPreferences.saveCheckIn(.init(
+            overallSoreness: overall,
+            perMuscleSoreness: perMuscle,
+            recordedAt: Date(),
+            note: note,
+            painPresent: painPresent,
+            painNote: painPresent ? painNote : ""
+        ))
+        invalidateResidual()
+        dismiss()
+    }
+
+    private func invalidateResidual() {
+        Task {
+            await CurrentMuscleResidualService.shared.invalidate(
+                deviceId: repository.deviceId
+            )
+        }
+    }
+
+    private func sorenessColor(_ value: Int) -> Color {
+        switch value {
+        case 8...: PR3SecondaryPalette.danger
+        case 5...: PR3SecondaryPalette.warning
+        default: PR3SecondaryPalette.action
+        }
     }
 }

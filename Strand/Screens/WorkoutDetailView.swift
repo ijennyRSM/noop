@@ -70,12 +70,7 @@ struct WorkoutDetailView: View {
                        // zone-split chart and the effort card). The LazyVStack path builds the off-screen
                        // ones on demand — byte-identical layout — so a tall detail doesn't materialise the
                        // map + both charts before the header is even on screen.
-                       lazy: true,
-                       // The day-of-sky liquid backdrop, matching the Workouts list this detail opens from
-                       // and every other liquid screen. Fixed and full-bleed; it does not scroll. This
-                       // screen is presented in a sheet wrapped in a NavigationStack by WorkoutsView, so it
-                       // needs no extra macOS NavigationStack of its own.
-                       topBackground: liquidScaffoldSky()) {
+                       lazy: true) {
             headerCard
             if WorkoutSource.classify(row.source) == .detected
                 || row.sport.localizedCaseInsensitiveContains("strength") {
@@ -246,7 +241,8 @@ struct WorkoutDetailView: View {
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 3) {
                     Text(WorkoutSource.displaySport(row.sport))
-                        .font(StrandFont.title2)
+                        .font(StrandFont.title1)
+                        .tracking(-0.35)
                         .foregroundStyle(StrandPalette.textPrimary)
                         .lineLimit(1)
                     Text("\(dateLabel(row.startTs)) · \(timeRangeLabel(row.startTs, row.endTs))")
@@ -262,38 +258,55 @@ struct WorkoutDetailView: View {
     // MARK: - Stat strip
 
     @ViewBuilder private var statStrip: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: NoopMetrics.gap)],
-                  alignment: .leading, spacing: NoopMetrics.gap) {
-            StatTile(label: "Duration",
-                     value: durationLabel(row.durationS),
-                     caption: String(localized: "active"),
-                     accent: StrandPalette.effortColor)
-            StatTile(label: "Avg HR",
-                     value: row.avgHr.map { "\($0)" } ?? "–",
-                     caption: row.avgHr != nil ? "bpm" : nil,
-                     accent: row.avgHr != nil ? StrandPalette.metricRose : StrandPalette.textTertiary)
-            StatTile(label: "Max HR",
-                     value: row.maxHr.map { "\($0)" } ?? "–",
-                     caption: row.maxHr != nil ? "bpm" : nil,
-                     accent: row.maxHr != nil ? StrandPalette.metricRose : StrandPalette.textTertiary)
-            StatTile(label: "Calories",
-                     value: row.energyKcal.map { grouped($0) } ?? "–",
-                     caption: row.energyKcal != nil ? "kcal" : nil,
-                     accent: row.energyKcal != nil ? StrandPalette.metricAmber : StrandPalette.textTertiary)
-            if row.distanceM != nil {
-                StatTile(label: "Distance",
-                         value: distanceLabel(row.distanceM),
-                         caption: String(localized: "covered"),
-                         accent: StrandPalette.metricCyan)
-            }
-            // Steps for an on-foot sport (#398). Shown for the on-foot set even before the value lands, so
-            // the tile doesn't pop in; "–" until a source has data. Caption is honest about the source.
-            if WorkoutCatalog.isOnFoot(row.sport) {
-                StatTile(label: "Steps",
-                         value: steps.map { grouped(Double($0.count)) } ?? "–",
-                         caption: steps.map { $0.fromStrap ? String(localized: "strap")
-                                                          : String(localized: "phone") },
-                         accent: steps != nil ? StrandPalette.metricCyan : StrandPalette.textTertiary)
+        NoopCard {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 26) {
+                    PR3InlineMetric(
+                        "Duration",
+                        value: durationLabel(row.durationS),
+                        color: PR3ScorePalette.effort
+                    )
+                    PR3InlineMetric(
+                        "Avg HR",
+                        value: row.avgHr.map { "\($0)" } ?? "–",
+                        unit: row.avgHr != nil ? "bpm" : nil,
+                        color: row.avgHr != nil
+                            ? StrandPalette.metricRose
+                            : StrandPalette.textTertiary
+                    )
+                    PR3InlineMetric(
+                        "Max HR",
+                        value: row.maxHr.map { "\($0)" } ?? "–",
+                        unit: row.maxHr != nil ? "bpm" : nil,
+                        color: row.maxHr != nil
+                            ? StrandPalette.metricRose
+                            : StrandPalette.textTertiary
+                    )
+                    PR3InlineMetric(
+                        "Calories",
+                        value: row.energyKcal.map { grouped($0) } ?? "–",
+                        unit: row.energyKcal != nil ? "kcal" : nil,
+                        color: row.energyKcal != nil
+                            ? StrandPalette.metricAmber
+                            : StrandPalette.textTertiary
+                    )
+                    if row.distanceM != nil {
+                        PR3InlineMetric(
+                            "Distance",
+                            value: distanceLabel(row.distanceM),
+                            color: StrandPalette.metricCyan
+                        )
+                    }
+                    if WorkoutCatalog.isOnFoot(row.sport) {
+                        PR3InlineMetric(
+                            "Steps",
+                            value: steps.map { grouped(Double($0.count)) } ?? "–",
+                            color: steps != nil
+                                ? StrandPalette.metricCyan
+                                : StrandPalette.textTertiary
+                        )
+                    }
+                }
             }
         }
     }

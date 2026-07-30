@@ -21,7 +21,7 @@ struct UpdatesInboxView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-                .background(StrandPalette.surfaceRaised)
+                .background(StrandPalette.surfaceBase)
             Divider().overlay(StrandPalette.hairline)
             content
             if !updateStore.items.isEmpty {
@@ -50,7 +50,8 @@ struct UpdatesInboxView: View {
                     .tracking(StrandFont.overlineTracking)
                     .foregroundStyle(StrandPalette.textTertiary)
                 Text("Updates")
-                    .font(StrandFont.rounded(26, weight: .bold))
+                    .font(StrandFont.title1)
+                    .tracking(-0.35)
                     .foregroundStyle(StrandPalette.textPrimary)
                 Text(subtitle).font(StrandFont.caption)
                     .foregroundStyle(StrandPalette.textSecondary)
@@ -64,7 +65,8 @@ struct UpdatesInboxView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Close")
         }
-        .padding(20)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
     }
 
     private var subtitle: String {
@@ -88,7 +90,7 @@ struct UpdatesInboxView: View {
                         section("EARLIER", items: read)
                     }
                 }
-                .padding(20)
+                .padding(16)
             }
         }
     }
@@ -200,7 +202,7 @@ private struct UpdateRow: View {
     @ObservedObject private var planStore = CoachPlanStore.shared
 
     var body: some View {
-        NoopCard(tint: item.read ? nil : tint) {
+        NoopCard(padding: 12, tint: item.read ? nil : tint) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .top, spacing: 12) {
                     Image(systemName: symbol)

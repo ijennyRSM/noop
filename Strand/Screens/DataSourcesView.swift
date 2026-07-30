@@ -921,7 +921,7 @@ struct DataSourcesView: View {
                               status: S = EmptyView(),
                               subtitle: String,
                               @ViewBuilder content: @escaping () -> C) -> some View {
-        NoopCard(padding: 18, tint: tint) {
+        NoopCard(padding: NoopMetrics.cardPadding) {
             VStack(alignment: .leading, spacing: NoopMetrics.cardInnerSpacing) {
                 HStack(spacing: NoopMetrics.space2 + 2) {
                     Image(systemName: icon)
@@ -930,7 +930,10 @@ struct DataSourcesView: View {
                         .frame(width: 30, height: 30)
                         .background(tint.opacity(0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                         .accessibilityHidden(true)
-                    Text(title).font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                    Text(title)
+                        .font(StrandFont.title2)
+                        .tracking(-0.2)
+                        .foregroundStyle(StrandPalette.textPrimary)
                     Spacer(minLength: 8)
                     status
                 }

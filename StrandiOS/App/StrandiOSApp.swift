@@ -3,6 +3,7 @@ import SwiftUI
 import StrandDesign
 import UserNotifications
 import UIKit
+import WhoopStore
 
 /// iOS entry point. Unlike the macOS app (which adds a `MenuBarExtra` scene), iOS uses a single
 /// `WindowGroup`; the glanceable menu-bar role is filled by the Home/Lock-Screen widget instead.
@@ -380,12 +381,18 @@ enum DemoScreens {
         let args = CommandLine.arguments
         guard let i = args.firstIndex(of: "--demo-screen"), i + 1 < args.count else { return nil }
         switch args[i + 1].lowercased() {
+        case "root": return AnyView(RootTabView())
         case "today":    return AnyView(TodayView())
         // The DEFAULT iOS Today (`noop.liquidTodayEnabled` ships true), so it needs its own entry — plain
         // "today" renders the CLASSIC screen, which is exactly the screen whose behaviour Liquid was found
         // to have diverged from. Without this, the default Today was the one screen the harness could not
         // capture.
         case "liquidtoday": return AnyView(LiquidTodayView())
+        case "pr3today": return AnyView(LiquidTodayView())
+        case "pr3scrolled": return AnyView(LiquidTodayView())
+        case "pr3charge": return AnyView(PR3ScoreDetailDemoHost(metric: .charge))
+        case "pr3rest": return AnyView(PR3ScoreDetailDemoHost(metric: .rest))
+        case "pr3effort": return AnyView(PR3ScoreDetailDemoHost(metric: .effort))
         case "trends":   return AnyView(TrendsView())
         case "sleep":    return AnyView(SleepView())
         case "live":     return AnyView(LiveView())
@@ -397,11 +404,51 @@ enum DemoScreens {
         case "compare":  return AnyView(CompareView())
         case "settings": return AnyView(SettingsView())
         case "strength": return AnyView(StrengthHistoryView())
+        case "strengthhistory":
+            return AnyView(StrengthHistoryView(initialSection: .history))
         case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
-        case "bodymap": return AnyView(BodyMapDemoHost())
-        case "coach": return AnyView(CoachView())
+        case "strengthpicker": return AnyView(StrengthPickerDemoHost())
+        case "strengthtemplates": return AnyView(StrengthTemplatesDemoHost())
+        case "strengthdetail": return AnyView(StrengthCompletedDemoHost())
+        case "bodymap": return AnyView(BodyMapDemoHost(side: .front))
+        case "bodymapback": return AnyView(BodyMapDemoHost(side: .back))
+        case "muscledetail": return AnyView(MuscleLoadDetailDemoHost())
+        case "soreness": return AnyView(SorenessCheckInSheet())
+        case "pain": return AnyView(SorenessCheckInSheet(initialPainPresent: true))
+        case "coach": return AnyView(CoachSeededDemoHost(mode: .conversation))
+        case "coachtool": return AnyView(CoachSeededDemoHost(mode: .tool))
+        case "coachproposal": return AnyView(CoachSeededDemoHost(mode: .proposal))
+        case "coachhistory": return AnyView(CoachSeededDemoHost(mode: .history))
+        case "coachsettings": return AnyView(CoachSettingsView())
+        case "semanticmemory":
+            return AnyView(CoachSettingsView(initialPage: .memory))
+        case "providersettings":
+            return AnyView(CoachSettingsView(initialPage: .connection))
+        case "privacy":
+            return AnyView(CoachSettingsView(initialPage: .privacy))
+        case "consent":
+            return AnyView(CoachSettingsView(initialPage: .dataAccess))
+        case "strengthconsent":
+            return AnyView(CoachSettingsView(initialPage: .strengthConsent))
+        case "painconsent":
+            return AnyView(CoachSettingsView(initialPage: .painSensitiveConsent))
         case "goalplan": return AnyView(CoachGoalJourneyScreen())
-        case "privacy": return AnyView(CoachSettingsView())
+        case "goaleditor": return AnyView(CoachGoalEditorView(isOnboarding: false))
+        case "planbook": return AnyView(PlanBookDemoHost())
+        case "journey": return AnyView(JourneyDemoHost())
+        case "updates": return AnyView(UpdatesDemoHost())
+        case "workoutdetail": return AnyView(WorkoutDetailDemoHost())
+        case "workoutzones": return AnyView(WorkoutDetailDemoHost())
+        case "detectedstrength": return AnyView(DetectedStrengthDemoHost())
+        case "datasources": return AnyView(DataSourcesView())
+        case "backup": return AnyView(BackupSyncView())
+        case "restorepreview": return AnyView(PR3ReviewStateDemoHost(kind: .restore))
+        case "importvalidation": return AnyView(PR3ReviewStateDemoHost(kind: .importing))
+        case "exportsuccess": return AnyView(PR3ReviewStateDemoHost(kind: .exported))
+        case "loadingstate": return AnyView(PR3ReviewStateDemoHost(kind: .loading))
+        case "emptystate": return AnyView(PR3ReviewStateDemoHost(kind: .empty))
+        case "errorstate": return AnyView(PR3ReviewStateDemoHost(kind: .error))
+        case "destructive": return AnyView(PR3DestructiveConfirmationDemoHost())
         case "chargebreakdown": return AnyView(ChargeBreakdownDemoHost())
         case "devices":  return AnyView(DevicesView())
         case "devicescatalog": return AnyView(DeviceCardCatalog())
@@ -450,16 +497,377 @@ private struct StrengthLoggerDemoHost: View {
                 deviceId: repository.deviceId,
                 startedAt: Date().addingTimeInterval(-38 * 60),
                 bodyweightKg: ProfileStore().weightKg)
+            populateStrengthReview(viewModel)
         }
     }
 }
 
 private struct BodyMapDemoHost: View {
+    let side: AnatomicalMuscleMap.Side
+
     var body: some View {
         ScrollView {
-            MuscleBodyMapCard()
+            MuscleBodyMapCard(initialSide: side)
                 .padding()
         }
+    }
+}
+
+private struct StrengthPickerDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+
+    var body: some View {
+        ExercisePicker(viewModel: viewModel)
+            .task {
+                await loadStrengthReview(viewModel, repository: repository)
+            }
+    }
+}
+
+private struct StrengthTemplatesDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+
+    var body: some View {
+        StrengthTemplateSheet(viewModel: viewModel)
+            .task {
+                await loadStrengthReview(viewModel, repository: repository)
+                viewModel.templateName = String(localized: "Full body")
+                if viewModel.templates.isEmpty {
+                    await viewModel.saveTemplate()
+                }
+            }
+    }
+}
+
+private struct StrengthCompletedDemoHost: View {
+    @EnvironmentObject private var repository: Repository
+    @StateObject private var viewModel = StrengthTrainingViewModel()
+    @State private var completedSessionID: String?
+
+    var body: some View {
+        Group {
+            if let completedSessionID {
+                StrengthCompletedEditor(sessionId: completedSessionID, onDone: {})
+            } else {
+                PR3TruthfulState(
+                    .loading,
+                    title: "Loading strength workout…",
+                    message: "Loading offline exercise library…"
+                )
+                .padding()
+            }
+        }
+        .task {
+            await loadStrengthReview(viewModel, repository: repository)
+            guard let id = viewModel.session?.id else { return }
+            _ = await viewModel.finish(cardiovascularEffort: 58)
+            completedSessionID = id
+        }
+    }
+}
+
+@MainActor
+private func loadStrengthReview(
+    _ viewModel: StrengthTrainingViewModel,
+    repository: Repository
+) async {
+    await viewModel.load(
+        repository: repository,
+        deviceId: repository.deviceId,
+        startedAt: Date().addingTimeInterval(-38 * 60),
+        bodyweightKg: ProfileStore().weightKg
+    )
+    populateStrengthReview(viewModel)
+}
+
+@MainActor
+private func populateStrengthReview(_ viewModel: StrengthTrainingViewModel) {
+    guard viewModel.session?.exercises.isEmpty == true else { return }
+    for exercise in viewModel.orderedSearchResults.prefix(2) {
+        viewModel.addExercise(exercise)
+    }
+    guard let session = viewModel.session else { return }
+    for exercise in session.exercises {
+        guard let first = exercise.sets.first else { continue }
+        viewModel.updateSet(exerciseId: exercise.id, setId: first.id) {
+            $0.weightKg = exercise.orderIndex == 0 ? 60 : 22.5
+            $0.reps = exercise.orderIndex == 0 ? 8 : 10
+            $0.rpe = 7.5
+            $0.rir = 2
+            $0.completed = true
+        }
+        viewModel.addSet(to: exercise.id)
+    }
+    viewModel.setSessionRPE(7.5)
+}
+
+private struct CoachSeededDemoHost: View {
+    enum Mode: Equatable { case conversation, tool, proposal, history }
+    @EnvironmentObject private var coach: AICoachEngine
+    let mode: Mode
+
+    var body: some View {
+        Group {
+            if mode == .history {
+                CoachHistoryView()
+            } else {
+                CoachView()
+            }
+        }
+        .task {
+            // A local Custom provider keeps this DEBUG-only visual route deterministic without
+            // writing a fake cloud key to Keychain or making a network request.
+            coach.provider = .custom
+            coach.customBaseURL = "http://127.0.0.1:11434/v1"
+            coach.customConnected = true
+            coach.messages = [
+                ChatMessage(
+                    role: .user,
+                    text: "วันนี้ควรฝึกแบบไหน เมื่อคืนนี้ฉันนอนน้อยกว่าปกติ"
+                ),
+                ChatMessage(
+                    role: .assistant,
+                    text: "วันนี้เน้นการฝึกเบาถึงปานกลางประมาณ 45 นาทีได้ครับ "
+                        + "ค่า Charge และการนอนบอกว่าร่างกายยังต้องการเวลาฟื้นตัว "
+                        + "จึงควรหลีกเลี่ยงเซตหนักจนหมดแรง",
+                    toolsUsed: mode == .tool
+                        ? [CoachTool.readiness.rawValue, CoachTool.sleepDetail.rawValue]
+                        : []
+                ),
+            ]
+            if mode == .proposal {
+                seedPlanProposal()
+            }
+        }
+    }
+}
+
+private struct PlanBookDemoHost: View {
+    var body: some View {
+        CoachPlanView()
+            .task { seedPlanProposal() }
+    }
+}
+
+@MainActor
+private func seedPlanProposal() {
+    guard CoachPlanStore.shared.pending.isEmpty else { return }
+    _ = CoachPlanStore.shared.propose(PlanProposal(
+        day: Repository.localDayKey(Date()),
+        time: Calendar.current.date(byAdding: .hour, value: 2, to: Date()),
+        sport: "Strength Training",
+        intent: .moderate,
+        targetEffort: 55,
+        rationale: "รักษาความสม่ำเสมอโดยไม่เพิ่มภาระมากเกินไปในวันที่พักผ่อนน้อย",
+        strength: StrengthPlanMetadata(
+            trainingIntent: .full,
+            targetRPE: 6.5,
+            musclesToAvoid: ["quadriceps"]
+        )
+    ))
+}
+
+private struct JourneyDemoHost: View {
+    @EnvironmentObject private var coach: AICoachEngine
+    @State private var goalID: UUID?
+
+    var body: some View {
+        Group {
+            if let goalID {
+                JourneyView(goalId: goalID)
+                    .environmentObject(coach)
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if let existing = CoachGoalStore.shared.activeGoals.first {
+                goalID = existing.id
+                return
+            }
+            let goal = CoachGoal(
+                kind: .consistency,
+                title: "ออกกำลังกายให้สม่ำเสมอ",
+                baseline: 2,
+                target: 4,
+                targetDate: Calendar.current.date(byAdding: .day, value: 60, to: Date()),
+                motivationTags: [.buildRoutine, .moreEnergy]
+            )
+            CoachGoalStore.shared.commit(goal)
+            goalID = goal.id
+        }
+    }
+}
+
+private struct UpdatesDemoHost: View {
+    @EnvironmentObject private var updateStore: UpdateStore
+    @EnvironmentObject private var router: NavRouter
+
+    var body: some View {
+        UpdatesInboxView(onClose: {})
+            .environmentObject(updateStore)
+            .environmentObject(router)
+            .task {
+                updateStore.clearAll()
+                updateStore.post(UpdateItem(
+                    kind: .reading,
+                    title: "ข้อมูลใหม่พร้อมแล้ว",
+                    message: "ซิงค์ข้อมูลการนอนและการฟื้นตัวของวันนี้เรียบร้อยแล้ว",
+                    deepLink: "trends"
+                ))
+                updateStore.post(UpdateItem(
+                    kind: .strapAlert,
+                    title: "ซิงค์ประวัติสำเร็จ",
+                    message: "ดึงข้อมูลย้อนหลังจากสายรัดเสร็จแล้ว"
+                ))
+            }
+    }
+}
+
+private struct WorkoutDetailDemoHost: View {
+    var body: some View {
+        WorkoutDetailView(row: reviewWorkout)
+    }
+}
+
+private struct DetectedStrengthDemoHost: View {
+    var body: some View {
+        DetectedStrengthDetailsSheet(workout: reviewWorkout)
+    }
+}
+
+private var reviewWorkout: WorkoutRow {
+    let end = Int(Date().timeIntervalSince1970)
+    return WorkoutRow(
+        startTs: end - 64 * 60,
+        endTs: end,
+        sport: "Strength Training",
+        source: "whoop",
+        durationS: 64 * 60,
+        energyKcal: 418,
+        avgHr: 132,
+        maxHr: 171,
+        strain: 59.8,
+        distanceM: nil,
+        zonesJSON: #"{"z1":15.0,"z2":31.0,"z3":28.0,"z4":18.0,"z5":8.0}"#,
+        notes: nil
+    )
+}
+
+private struct PR3ReviewStateDemoHost: View {
+    enum Kind: Equatable { case restore, importing, exported, loading, empty, error }
+    let kind: Kind
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+            PR3PageHeading(title, overline: "NOOP AI FULL BETA", detail: detail)
+            PR3TruthfulState(stateKind, title: stateTitle, message: stateMessage)
+            if kind == .restore {
+                VStack(alignment: .leading, spacing: 10) {
+                    PR3SectionLabel("Restore preview")
+                    row("Source", "NOOP AI Full Beta 9.2.1")
+                    row("Workouts", "42")
+                    row("Strength sessions", "8")
+                    row("Goals and plans", "Available")
+                    row("Rollback", "Available")
+                }
+                .padding(14)
+                .background(
+                    StrandPalette.surfaceRaised,
+                    in: RoundedRectangle(cornerRadius: NoopMetrics.cardRadius)
+                )
+            }
+        }
+        .screenPadding()
+        .padding(.vertical, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(StrandPalette.surfaceBase.ignoresSafeArea())
+    }
+
+    private var title: LocalizedStringKey {
+        switch kind {
+        case .restore: "Restore"
+        case .importing: "Import"
+        case .exported: "Export"
+        case .loading: "Loading"
+        case .empty: "No data"
+        case .error: "Something went wrong"
+        }
+    }
+
+    private var detail: LocalizedStringKey {
+        switch kind {
+        case .restore: "Review what will be replaced before continuing."
+        case .importing: "The backup is checked before any data is changed."
+        case .exported: "Your backup is ready to share."
+        case .loading: "Reading on-device data."
+        case .empty: "There is nothing to show yet."
+        case .error: "Your existing data has not been changed."
+        }
+    }
+
+    private var stateKind: PR3TruthfulState.Kind {
+        switch kind {
+        case .loading, .importing: .loading
+        case .empty: .empty
+        case .error: .error
+        case .restore, .exported: .warning
+        }
+    }
+
+    private var stateTitle: LocalizedStringKey {
+        switch kind {
+        case .restore: "Ready to review"
+        case .importing: "Validating backup…"
+        case .exported: "Export complete"
+        case .loading: "Loading your data…"
+        case .empty: "No records yet"
+        case .error: "Import failed"
+        }
+    }
+
+    private var stateMessage: LocalizedStringKey {
+        switch kind {
+        case .restore: "Nothing is restored until you confirm."
+        case .importing: "Checking the manifest, checksums, and database integrity."
+        case .exported: "Secrets and derived caches were not included."
+        case .loading: "NOOP is opening your local database."
+        case .empty: "Connect a data source or import a backup to begin."
+        case .error: "The file could not be validated. No data was imported."
+        }
+    }
+
+    private func row(_ title: LocalizedStringKey, _ value: LocalizedStringKey) -> some View {
+        HStack {
+            Text(title)
+                .font(StrandFont.subhead)
+                .foregroundStyle(StrandPalette.textSecondary)
+            Spacer()
+            Text(value)
+                .font(StrandFont.captionNumber)
+                .foregroundStyle(StrandPalette.textPrimary)
+        }
+    }
+}
+
+private struct PR3DestructiveConfirmationDemoHost: View {
+    @State private var showing = true
+
+    var body: some View {
+        PR3ReviewStateDemoHost(kind: .restore)
+            .confirmationDialog(
+                "Restore this backup?",
+                isPresented: $showing,
+                titleVisibility: .visible
+            ) {
+                Button("Restore", role: .destructive) {}
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Replace this device's data with one of the backups in your folder. This overwrites current data, so back up first if you're unsure.")
+            }
+            .onAppear { showing = true }
     }
 }
 

@@ -557,14 +557,15 @@ struct StrengthWorkoutLogger: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: NoopMetrics.space4) {
+        VStack(alignment: .leading, spacing: NoopMetrics.space3) {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("STRENGTH TRAINING")
                         .font(StrandFont.overline).tracking(StrandFont.overlineTracking)
                         .foregroundStyle(StrandPalette.metricCyan)
                     Text("Exercise and set log")
-                        .font(StrandFont.title2)
+                        .font(StrandFont.title1)
+                        .tracking(-0.35)
                         .foregroundStyle(StrandPalette.textPrimary)
                 }
                 Spacer()
@@ -581,11 +582,19 @@ struct StrengthWorkoutLogger: View {
             }
 
             if let error = viewModel.errorMessage {
-                Text(error).font(StrandFont.footnote).foregroundStyle(StrandPalette.metricRose)
+                PR3TruthfulState(
+                    .error,
+                    title: "Could not save strength workout",
+                    message: LocalizedStringKey(error)
+                )
             }
 
             if viewModel.loading {
-                ProgressView("Loading offline exercise library…")
+                PR3TruthfulState(
+                    .loading,
+                    title: "Loading strength workout…",
+                    message: "Loading offline exercise library…"
+                )
             } else if let session = viewModel.session {
                 ForEach(session.exercises) { exercise in
                     exerciseCard(exercise)
@@ -629,7 +638,7 @@ struct StrengthWorkoutLogger: View {
     }
 
     private func exerciseCard(_ exercise: StrengthSessionExerciseRecord) -> some View {
-        NoopCard(padding: 14, tint: StrandPalette.metricCyan) {
+        NoopCard(padding: 0, tint: StrandPalette.metricCyan) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text(viewModel.displayName(for: exercise))
@@ -651,7 +660,10 @@ struct StrengthWorkoutLogger: View {
                         "Exercise actions for \(viewModel.displayName(for: exercise))"
                     )
                 }
+                .padding(.horizontal, 14)
+                .padding(.top, 12)
                 setHeader
+                    .padding(.horizontal, 10)
                 ForEach(exercise.sets) { set in
                     StrengthSetRow(
                         set: set,
@@ -665,7 +677,9 @@ struct StrengthWorkoutLogger: View {
                             }
                             viewModel.startRest()
                         })
+                        .padding(.horizontal, 8)
                 }
+                Divider().overlay(StrandPalette.hairline)
                 HStack {
                     Button("Copy previous set") { viewModel.addSet(to: exercise.id) }
                     Spacer()
@@ -673,6 +687,7 @@ struct StrengthWorkoutLogger: View {
                 }
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.metricCyan)
+                .padding(.horizontal, 14)
                 HStack(spacing: 8) {
                     quickAdjust("−2.5 kg") {
                         viewModel.adjustLastSet(exerciseId: exercise.id, weightDelta: -2.5)
@@ -687,6 +702,8 @@ struct StrengthWorkoutLogger: View {
                         viewModel.adjustLastSet(exerciseId: exercise.id, repsDelta: 1)
                     }
                 }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 12)
             }
         }
     }
@@ -696,7 +713,7 @@ struct StrengthWorkoutLogger: View {
             .buttonStyle(.plain)
             .font(StrandFont.footnote)
             .foregroundStyle(StrandPalette.textSecondary)
-            .frame(maxWidth: .infinity, minHeight: 34)
+            .frame(maxWidth: .infinity, minHeight: 38)
             .background(StrandPalette.surfaceInset, in: RoundedRectangle(cornerRadius: 8))
     }
 
@@ -771,7 +788,7 @@ struct StrengthWorkoutLogger: View {
     }
 }
 
-private struct StrengthTemplateSheet: View {
+struct StrengthTemplateSheet: View {
     @ObservedObject var viewModel: StrengthTrainingViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -817,7 +834,13 @@ private struct StrengthTemplateSheet: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(StrandPalette.surfaceBase)
+            .tint(PR3SecondaryPalette.action)
             .navigationTitle("Workout templates")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
@@ -899,13 +922,13 @@ private struct StrengthSetRow: View {
             .multilineTextAlignment(.center)
             .textFieldStyle(.plain)
             .keyboardTypeCompat(keyboard)
-            .font(StrandFont.captionNumber)
-            .frame(maxWidth: .infinity, minHeight: 36)
+            .font(StrandFont.number(17))
+            .frame(maxWidth: .infinity, minHeight: 40)
             .background(StrandPalette.surfaceInset, in: RoundedRectangle(cornerRadius: 8))
     }
 }
 
-private struct ExercisePicker: View {
+struct ExercisePicker: View {
     @ObservedObject var viewModel: StrengthTrainingViewModel
     @Environment(\.dismiss) private var dismiss
 
@@ -916,9 +939,19 @@ private struct ExercisePicker: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 10) {
                 TextField("Search exercises or aliases", text: $viewModel.query)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 44)
+                    .background(
+                        StrandPalette.surfaceRaised,
+                        in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(StrandPalette.hairline, lineWidth: 1)
+                    )
                     .onChangeCompat(of: viewModel.query) { _ in Task { await viewModel.search() } }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -950,7 +983,8 @@ private struct ExercisePicker: View {
                     viewModel.showingCustomExercise = true
                 } label: {
                     Label("Create custom exercise", systemImage: "plus.square.on.square")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(StrandFont.headline)
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(StrandPalette.metricCyan)
@@ -962,6 +996,7 @@ private struct ExercisePicker: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(exercise.strengthDisplayName)
+                                    .font(StrandFont.headline)
                                     .foregroundStyle(StrandPalette.textPrimary)
                                 Text(exercise.equipment.joined(separator: " · ")
                                      + " · "
@@ -982,11 +1017,18 @@ private struct ExercisePicker: View {
                         }
                     }
                     .buttonStyle(.plain)
+                    .listRowBackground(StrandPalette.surfaceRaised)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
-            .padding()
+            .screenPadding()
+            .padding(.top, 10)
+            .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Add exercise")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -1014,7 +1056,7 @@ private struct ExercisePicker: View {
     }
 }
 
-private struct CustomExerciseSheet: View {
+struct CustomExerciseSheet: View {
     @ObservedObject var viewModel: StrengthTrainingViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
@@ -1064,7 +1106,13 @@ private struct CustomExerciseSheet: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(StrandPalette.surfaceBase)
+            .tint(PR3SecondaryPalette.action)
             .navigationTitle("Create custom exercise")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -1091,6 +1139,11 @@ private struct CustomExerciseSheet: View {
 }
 
 struct StrengthHistoryView: View {
+    enum InitialSection: Equatable {
+        case overview
+        case history
+    }
+
     @EnvironmentObject private var repository: Repository
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -1098,76 +1151,108 @@ struct StrengthHistoryView: View {
     @State private var selected: StrengthSessionRecord?
     @State private var muscleLoads: [String: [DailyMuscleLoadRecord]] = [:]
     @State private var exerciseNames: [String: String] = [:]
+    @State private var showLiveWorkout = false
+    private let initialSection: InitialSection
+
+    init(initialSection: InitialSection = .overview) {
+        self.initialSection = initialSection
+    }
 
     var body: some View {
         NavigationStack {
-            Group {
-                if sessions.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "dumbbell")
-                            .font(.system(size: 34))
-                            .foregroundStyle(StrandPalette.metricCyan)
-                        Text("No strength workouts yet").font(StrandFont.title2)
-                        Text("Start Strength Training to log exercises, sets, reps, and load.")
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+                    PR3PageHeading(
+                        "Strength Training",
+                        overline: "TRAINING",
+                        detail: "Exercise and set log"
+                    )
+
+                    if let latest = sessions.first {
+                        strengthStatus(latest)
+                    } else {
+                        PR3TruthfulState(
+                            .empty,
+                            title: "No strength workouts yet",
+                            message: "Start Strength Training to log exercises, sets, reps, and load."
+                        )
+                    }
+
+                    Button {
+                        if model.activeWorkout == nil {
+                            model.startWorkout(sport: "Strength Training")
+                        }
+                        showLiveWorkout = true
+                    } label: {
+                        Label("Start workout", systemImage: "play.fill")
+                    }
+                    .buttonStyle(PR3PrimaryButtonStyle())
+
+                    PR3SectionLabel("MUSCLE MAP")
+                    MuscleBodyMapCard()
+
+                    PR3SectionLabel("Recent workouts")
+                        .id("strength-history")
+                    if sessions.isEmpty {
+                        Text("No previous sessions")
                             .font(StrandFont.subhead)
                             .foregroundStyle(StrandPalette.textSecondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                } else {
-                    List(sessions) { session in
-                        Button {
-                            selected = session
-                        } label: {
-                            VStack(alignment: .leading, spacing: 8) {
-                                HStack {
-                                    Text(session.title).font(StrandFont.headline)
-                                    Spacer()
-                                    Text(date(session.startedAt))
-                                        .font(StrandFont.footnote)
-                                        .foregroundStyle(StrandPalette.textSecondary)
+                    } else {
+                        VStack(spacing: 0) {
+                            ForEach(sessions) { session in
+                                Button {
+                                    selected = session
+                                } label: {
+                                    sessionRow(session)
                                 }
-                                Text(session.exercises.map(displayName)
-                                    .prefix(3).joined(separator: " · "))
-                                    .font(StrandFont.subhead)
-                                    .foregroundStyle(StrandPalette.textSecondary)
-                                    .lineLimit(2)
-                                HStack {
-                                    historyStat(String(localized: "Sets"), "\(workingSets(session))")
-                                    historyStat(String(localized: "Volume"), volume(session))
-                                    historyStat(String(localized: "Effort"), score(session.cardiovascularEffort))
-                                    historyStat(String(localized: "Muscular"), score(session.muscularLoad))
-                                    historyStat(String(localized: "Total"), score(session.totalTrainingLoad))
+                                .buttonStyle(.plain)
+                                if session.id != sessions.last?.id {
+                                    Divider().overlay(StrandPalette.hairline)
+                                        .padding(.leading, 14)
                                 }
-                                Text(historyDetails(session))
-                                    .font(StrandFont.footnote)
-                                    .foregroundStyle(StrandPalette.textSecondary)
-                                    .lineLimit(2)
-                                Text(
-                                    String(
-                                        format: String(localized: "Confidence: %@"),
-                                        localizedConfidence(session.confidence)
-                                    )
-                                )
-                                    .font(StrandFont.footnote)
-                                    .foregroundStyle(StrandPalette.textTertiary)
                             }
-                            .padding(.vertical, 5)
                         }
-                        .buttonStyle(.plain)
+                        .background(
+                            StrandPalette.surfaceRaised,
+                            in: RoundedRectangle(
+                                cornerRadius: NoopMetrics.cardRadius,
+                                style: .continuous
+                            )
+                        )
+                        .overlay(
+                            RoundedRectangle(
+                                cornerRadius: NoopMetrics.cardRadius,
+                                style: .continuous
+                            )
+                            .strokeBorder(StrandPalette.hairline, lineWidth: 1)
+                        )
                     }
-                    .listStyle(.plain)
+                }
+                    .screenPadding()
+                    .padding(.vertical, 16)
+                }
+                .task(id: initialSection) {
+                    guard initialSection == .history else { return }
+                    await Task.yield()
+                    proxy.scrollTo("strength-history", anchor: .top)
                 }
             }
-            .background(StrandPalette.surfaceBase)
+            .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Strength history")
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }
             .task { await reload() }
+            .sheet(isPresented: $showLiveWorkout) {
+                LiveWorkoutView(onClose: { showLiveWorkout = false })
+                    .environmentObject(model.live)
+            }
             .sheet(item: $selected) { session in
                 StrengthCompletedEditor(sessionId: session.id) {
                     selected = nil
@@ -1178,6 +1263,94 @@ struct StrengthHistoryView: View {
                 .strengthSheetPresentation(largeFirst: true)
             }
         }
+    }
+
+    private func strengthStatus(_ session: StrengthSessionRecord) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Latest").strandOverline()
+                    Text(session.title)
+                        .font(StrandFont.title2)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                }
+                Spacer()
+                PR3StatusTag(
+                    LocalizedStringKey(localizedConfidence(session.confidence)),
+                    tone: .action
+                )
+            }
+            HStack(spacing: 0) {
+                PR3InlineMetric(
+                    "Muscular",
+                    value: score(session.muscularLoad),
+                    color: StrandPalette.metricCyan
+                )
+                Spacer()
+                PR3InlineMetric(
+                    "Total",
+                    value: score(session.totalTrainingLoad),
+                    color: StrandPalette.textPrimary
+                )
+                Spacer()
+                PR3InlineMetric(
+                    "Effort",
+                    value: score(session.cardiovascularEffort),
+                    color: PR3ScorePalette.effort
+                )
+            }
+            Text(historyDetails(session))
+                .font(StrandFont.footnote)
+                .foregroundStyle(StrandPalette.textSecondary)
+        }
+        .padding(14)
+        .background(
+            StrandPalette.surfaceRaised,
+            in: RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: NoopMetrics.cardRadius, style: .continuous)
+                .strokeBorder(StrandPalette.hairline, lineWidth: 1)
+        )
+    }
+
+    private func sessionRow(_ session: StrengthSessionRecord) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 2) {
+                Text("\(workingSets(session))")
+                    .font(StrandFont.number(25))
+                    .foregroundStyle(StrandPalette.metricCyan)
+                Text("Sets")
+                    .font(StrandFont.footnote)
+                    .foregroundStyle(StrandPalette.textTertiary)
+            }
+            .frame(width: 48)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(session.title)
+                        .font(StrandFont.headline)
+                        .foregroundStyle(StrandPalette.textPrimary)
+                    Spacer()
+                    Text(date(session.startedAt))
+                        .font(StrandFont.footnote)
+                        .foregroundStyle(StrandPalette.textTertiary)
+                }
+                Text(session.exercises.map(displayName).prefix(3).joined(separator: " · "))
+                    .font(StrandFont.subhead)
+                    .foregroundStyle(StrandPalette.textSecondary)
+                    .lineLimit(2)
+                Text(historyDetails(session))
+                    .font(StrandFont.footnote)
+                    .foregroundStyle(StrandPalette.textTertiary)
+            }
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(StrandPalette.textTertiary)
+                .padding(.top, 5)
+        }
+        .padding(14)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 
     private func reload() async {
@@ -1416,7 +1589,7 @@ extension View {
     }
 }
 
-private struct ExerciseHistorySheet: View {
+struct ExerciseHistorySheet: View {
     let exerciseId: String
     let exerciseName: String
     @EnvironmentObject private var repository: Repository
@@ -1457,7 +1630,12 @@ private struct ExerciseHistorySheet: View {
                     .padding(.vertical, 4)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(StrandPalette.surfaceBase)
             .navigationTitle(exerciseName)
+            #if !os(macOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

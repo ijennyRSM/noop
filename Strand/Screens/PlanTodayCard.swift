@@ -67,7 +67,7 @@ struct PlanTodayCard: View {
                             .foregroundStyle(emphasis == .none ? StrandPalette.accent : accent(for: emphasis))
                             .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("Next up: \(p.summary())")
+                            Text("Next up: \(p.localizedPresentationSummary())")
                                 .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                                 .lineLimit(1)
                             // A committed session with no time is a real commitment the user just hasn't
@@ -128,7 +128,7 @@ struct PlanTodayCard: View {
         case .approaching: state = String(localized: "starting soon")
         case .none:        state = dayLabel(p.day)
         }
-        return Text("Next planned session: \(p.summary()), \(state). Opens your plan.")
+        return Text("Next planned session: \(p.localizedPresentationSummary()), \(state). Opens your plan.")
     }
 
     private func dayLabel(_ day: String) -> String {

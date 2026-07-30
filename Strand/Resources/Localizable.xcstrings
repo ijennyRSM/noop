@@ -241574,6 +241574,270 @@
           }
         }
       }
+    },
+    "Loading": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังโหลด"
+          }
+        }
+      }
+    },
+    "Something went wrong": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เกิดข้อผิดพลาด"
+          }
+        }
+      }
+    },
+    "Strength sessions": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซสชันฝึกความแข็งแรง"
+          }
+        }
+      }
+    },
+    "Goals and plans": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เป้าหมายและแผน"
+          }
+        }
+      }
+    },
+    "Rollback": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ย้อนคืน"
+          }
+        }
+      }
+    },
+    "Available": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พร้อมใช้งาน"
+          }
+        }
+      }
+    },
+    "Ready to review": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พร้อมตรวจสอบ"
+          }
+        }
+      }
+    },
+    "Validating backup…": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังตรวจสอบข้อมูลสำรอง…"
+          }
+        }
+      }
+    },
+    "Export complete": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ส่งออกเสร็จแล้ว"
+          }
+        }
+      }
+    },
+    "Loading your data…": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังโหลดข้อมูลของคุณ…"
+          }
+        }
+      }
+    },
+    "No records yet": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีรายการ"
+          }
+        }
+      }
+    },
+    "Import failed": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นำเข้าล้มเหลว"
+          }
+        }
+      }
+    },
+    "Review what will be replaced before continuing.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตรวจสอบข้อมูลที่จะถูกแทนที่ก่อนดำเนินการต่อ"
+          }
+        }
+      }
+    },
+    "The backup is checked before any data is changed.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระบบจะตรวจสอบข้อมูลสำรองก่อนเปลี่ยนแปลงข้อมูลใด ๆ"
+          }
+        }
+      }
+    },
+    "Your backup is ready to share.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลสำรองพร้อมแชร์แล้ว"
+          }
+        }
+      }
+    },
+    "Reading on-device data.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังอ่านข้อมูลภายในอุปกรณ์"
+          }
+        }
+      }
+    },
+    "There is nothing to show yet.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีข้อมูลให้แสดง"
+          }
+        }
+      }
+    },
+    "Your existing data has not been changed.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลเดิมของคุณยังไม่ถูกเปลี่ยนแปลง"
+          }
+        }
+      }
+    },
+    "Nothing is restored until you confirm.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระบบจะยังไม่คืนค่าจนกว่าคุณจะยืนยัน"
+          }
+        }
+      }
+    },
+    "Checking the manifest, checksums, and database integrity.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังตรวจสอบรายการไฟล์ เช็กซัม และความสมบูรณ์ของฐานข้อมูล"
+          }
+        }
+      }
+    },
+    "Secrets and derived caches were not included.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่รวมข้อมูลลับและแคชที่คำนวณขึ้นใหม่ได้"
+          }
+        }
+      }
+    },
+    "NOOP is opening your local database.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP กำลังเปิดฐานข้อมูลภายในอุปกรณ์"
+          }
+        }
+      }
+    },
+    "Connect a data source or import a backup to begin.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เชื่อมต่อแหล่งข้อมูลหรือนำเข้าข้อมูลสำรองเพื่อเริ่มใช้งาน"
+          }
+        }
+      }
+    },
+    "The file could not be validated. No data was imported.": {
+      "shouldTranslate": false,
+      "localizations": {
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตรวจสอบไฟล์ไม่สำเร็จ จึงไม่มีการนำเข้าข้อมูล"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

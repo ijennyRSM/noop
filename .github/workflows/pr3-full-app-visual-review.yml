@@ -1,0 +1,413 @@
+name: PR3 Full App Visual Review and Unsigned IPA
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - integration/dx-thai-strength-full
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  REQUESTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+concurrency:
+  group: pr3-full-app-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  review:
+    name: Validate, capture 47 Thai screens, and package IPA
+    runs-on: macos-26
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out requested commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.REQUESTED_SHA }}
+
+      - name: Validate source resources
+        run: |
+          set -euo pipefail
+          python3 Tools/validate-thai-localization.py
+          python3 Tools/i18n_audit.py --platform ios
+          python3 Tools/validate-exercise-library.py
+          git diff --check
+
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          for candidate in \
+            /Applications/Xcode_26.5.app/Contents/Developer \
+            /Applications/Xcode_26.4.1.app/Contents/Developer \
+            /Applications/Xcode_26.4.app/Contents/Developer \
+            /Applications/Xcode.app/Contents/Developer
+          do
+            if [[ -d "$candidate" ]]; then
+              sudo xcode-select -s "$candidate"
+              break
+            fi
+          done
+          xcodebuild -version
+
+      - name: Bootstrap pinned Nomic and generate project
+        run: |
+          set -euo pipefail
+          Tools/bootstrap-nomic.sh
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+
+      - name: Build simulator application
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          udid="$(xcrun simctl list devices available -j | jq -r \
+            '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          [[ -n "$udid" && "$udid" != null ]] || {
+            echo "::error::No available iPhone simulator" >&2
+            exit 1
+          }
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          set +e
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$udid" \
+            -derivedDataPath build/preview-dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee build/preview-xcodebuild.log
+          status="${PIPESTATUS[0]}"
+          set -e
+          exit "$status"
+
+      - name: Install and capture 47 real SwiftUI screens
+        run: |
+          set -euo pipefail
+          apps=()
+          while IFS= read -r -d '' candidate; do
+            apps+=("$candidate")
+          done < <(find build/preview-dd/Build/Products/Debug-iphonesimulator \
+            -maxdepth 1 -type d -name '*.app' -print0)
+          [[ ${#apps[@]} -eq 1 ]] || {
+            echo "::error::Expected exactly one simulator app; found ${#apps[@]}" >&2
+            exit 1
+          }
+          app="${apps[0]}"
+          rm -rf "$app/Watch" "$app/PlugIns"
+          xcrun simctl install "$UDID" "$app"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          mkdir -p build/screens
+          xcrun simctl ui "$UDID" appearance dark
+          xcrun simctl status_bar "$UDID" override \
+            --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
+
+          capture() {
+            local output="$1"
+            local screen="$2"
+            local settle_seconds=7
+            shift 2
+            xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
+            if [[ -n "$screen" ]]; then
+              xcrun simctl launch "$UDID" "$bundle_id" \
+                --demo-seed --demo-hour 14 --demo-screen "$screen" "$@" \
+                -AppleLanguages "(th)" -AppleLocale th_TH
+            else
+              xcrun simctl launch "$UDID" "$bundle_id" \
+                --demo-seed --demo-hour 14 "$@" \
+                -AppleLanguages "(th)" -AppleLocale th_TH
+            fi
+            [[ "$output" == "01-root" ]] && settle_seconds=9
+            sleep "$settle_seconds"
+            xcrun simctl io "$UDID" screenshot "build/screens/${output}.png"
+          }
+
+          capture 01-root ""
+          capture 02-today pr3today
+          capture 03-today-scrolled pr3scrolled --pr3-scroll
+          capture 04-charge pr3charge
+          capture 05-rest pr3rest
+          capture 06-effort pr3effort
+          capture 07-strength-home strength
+          capture 08-active-logger strengthlogger
+          capture 09-exercise-picker strengthpicker
+          capture 10-templates strengthtemplates
+          capture 11-strength-history strengthhistory
+          capture 12-strength-session-detail strengthdetail
+          capture 13-body-map-front bodymap
+          capture 14-body-map-back bodymapback
+          capture 15-muscle-detail muscledetail
+          capture 16-soreness-check-in soreness
+          capture 17-pain-discomfort pain
+          capture 18-coach-conversation coach
+          capture 19-coach-tool-call coachtool
+          capture 20-coach-plan-proposal coachproposal
+          capture 21-conversation-history coachhistory
+          capture 22-coach-settings coachsettings
+          capture 23-semantic-memory semanticmemory
+          capture 24-goal goaleditor
+          capture 25-plan-book planbook
+          capture 26-pending-proposal planbook
+          capture 27-journey journey
+          capture 28-updates updates
+          capture 29-workout-history workouts
+          capture 30-workout-detail workoutdetail
+          capture 31-hr-graph-zones workoutzones
+          capture 32-detected-strength detectedstrength
+          capture 33-privacy-presets privacy
+          capture 34-individual-consent consent
+          capture 35-strength-consent strengthconsent
+          capture 36-pain-sensitive-consent painconsent
+          capture 37-backup-home backup
+          capture 38-restore-preview restorepreview
+          capture 39-import-validation importvalidation
+          capture 40-export-success exportsuccess
+          capture 41-settings-root settings
+          capture 42-device-data-sources datasources
+          capture 43-provider-model providersettings
+          capture 44-loading loadingstate
+          capture 45-empty-no-data emptystate
+          capture 46-error errorstate
+          capture 47-destructive-confirmation destructive
+
+          count="$(find build/screens -maxdepth 1 -type f -name '*.png' | wc -l | tr -d ' ')"
+          [[ "$count" == 47 ]] || {
+            echo "::error::Expected 47 screenshots; found $count" >&2
+            exit 1
+          }
+          find build/screens -type f -name '*.png' -size 0 -print | grep -q . && {
+            echo "::error::One or more screenshots are empty" >&2
+            exit 1
+          } || true
+
+      - name: Download approved Milestone 1 baseline
+        uses: actions/download-artifact@v4
+        with:
+          name: NOOP-PR3-Visual-Port-Milestone-1
+          path: build/approved-download
+          github-token: ${{ github.token }}
+          repository: ijennyRSM/noop
+          run-id: "30506910424"
+
+      - name: Build contact sheets and approved-screen comparison
+        run: |
+          set -euo pipefail
+          python3 -m venv build/visual-review-venv
+          build/visual-review-venv/bin/python -m pip install --quiet pillow
+          mkdir -p build/contact-sheets build/regression/approved-pr9 build/regression/current-final
+          for pair in \
+            "root:01-root" \
+            "today:02-today" \
+            "todayscrolled:03-today-scrolled" \
+            "charge:04-charge" \
+            "rest:05-rest" \
+            "effort:06-effort"
+          do
+            approved="${pair%%:*}"
+            current="${pair##*:}"
+            source="$(find build/approved-download -type f -name "${approved}.png" -print -quit)"
+            [[ -n "$source" ]] || {
+              echo "::error::Approved baseline ${approved}.png was not found" >&2
+              exit 1
+            }
+            cp "$source" "build/regression/approved-pr9/${approved}.png"
+            cp "build/screens/${current}.png" "build/regression/current-final/${approved}.png"
+          done
+
+          cat > build/regression/difference-report.md <<EOF
+          # PR #9 approved-screen regression
+
+          - Approved baseline SHA: \`51c5df894d164f040233325ba2297f417bffbe91\`
+          - Current SHA: \`${REQUESTED_SHA}\`
+          - Baseline screens: root, Today, Today scrolled, Charge, Rest, Effort
+          - Intentional geometry changes: none
+          - Shared secondary-screen metrics are isolated from the approved baseline metrics.
+          - Review the paired images and generated pixel-difference overlays before approving the PR.
+          EOF
+
+          build/visual-review-venv/bin/python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageChops, ImageDraw, ImageFont
+
+          root = Path("build")
+          groups = {
+              "01-approved-baseline": range(1, 7),
+              "02-strength": range(7, 18),
+              "03-coach-planning": range(18, 29),
+              "04-workouts": range(29, 33),
+              "05-privacy-data": range(33, 41),
+              "06-settings-states": range(41, 48),
+          }
+          files = sorted((root / "screens").glob("*.png"))
+          font = ImageFont.load_default()
+          for name, numbers in groups.items():
+              chosen = [p for p in files if int(p.name[:2]) in numbers]
+              thumbs = []
+              for path in chosen:
+                  image = Image.open(path).convert("RGB")
+                  image.thumbnail((300, 650))
+                  tile = Image.new("RGB", (324, 710), "#111518")
+                  tile.paste(image, ((324-image.width)//2, 38))
+                  ImageDraw.Draw(tile).text((12, 12), path.stem, fill="white", font=font)
+                  thumbs.append(tile)
+              cols = min(4, max(1, len(thumbs)))
+              rows = (len(thumbs) + cols - 1) // cols
+              sheet = Image.new("RGB", (cols * 324, rows * 710), "#090b0d")
+              for index, tile in enumerate(thumbs):
+                  sheet.paste(tile, ((index % cols) * 324, (index // cols) * 710))
+              sheet.save(root / "contact-sheets" / f"{name}.jpg", quality=90)
+
+          report = root / "regression" / "difference-report.md"
+          with report.open("a", encoding="utf-8") as out:
+              out.write("\n## Pixel comparison\n\n")
+              for name in ("root", "today", "todayscrolled", "charge", "rest", "effort"):
+                  approved = Image.open(root / "regression" / "approved-pr9" / f"{name}.png").convert("RGB")
+                  current = Image.open(root / "regression" / "current-final" / f"{name}.png").convert("RGB")
+                  if current.size != approved.size:
+                      current = current.resize(approved.size)
+                  diff = ImageChops.difference(approved, current)
+                  diff.save(root / "regression" / f"diff-{name}.png")
+                  histogram = diff.histogram()
+                  changed = sum(count for value, count in enumerate(histogram) if value % 256 != 0)
+                  total = approved.width * approved.height * 3
+                  out.write(f"- {name}: {100 * changed / total:.3f}% changed RGB channels\n")
+          PY
+
+      - name: Build real-device Release app
+        run: |
+          set -euo pipefail
+          set +e
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            build 2>&1 | tee build/xcodebuild.log
+          status="${PIPESTATUS[0]}"
+          set -e
+          exit "$status"
+
+      - name: Package and verify unsigned Full Beta IPA
+        id: package
+        run: |
+          set -euo pipefail
+          product="build/dd/Build/Products/Release-iphoneos"
+          apps=()
+          while IFS= read -r -d '' candidate; do apps+=("$candidate"); done \
+            < <(find "$product" -maxdepth 1 -type d -name '*.app' -print0)
+          [[ ${#apps[@]} -eq 1 ]] || {
+            echo "::error::Expected exactly one main iPhone app; found ${#apps[@]}" >&2
+            exit 1
+          }
+          app="${apps[0]}"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Info.plist")"
+          build_number="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Info.plist")"
+          [[ "$bundle_id" == *.noopfull ]] || {
+            echo "::error::Expected Full Beta .noopfull bundle id; got $bundle_id" >&2
+            exit 1
+          }
+          [[ ! -e "$app/embedded.mobileprovision" ]] || {
+            echo "::error::Provisioning profile found in unsigned build" >&2
+            exit 1
+          }
+          ! codesign -dvv "$app" >/dev/null 2>&1 || {
+            echo "::error::Signing identity unexpectedly present" >&2
+            exit 1
+          }
+          find "$app" -path '*th.lproj*' -print -quit | grep -q . || {
+            echo "::error::Thai resources are missing" >&2; exit 1;
+          }
+          find "$app" -name 'exercise-library-v1.json' -print -quit | grep -q . || {
+            echo "::error::Exercise Library is missing" >&2; exit 1;
+          }
+          find "$app" -name '*.gguf' -print -quit | grep -q . || {
+            echo "::error::Nomic model is missing" >&2; exit 1;
+          }
+          find "$app" -iname '*llama*' -print -quit | grep -q . || {
+            echo "::error::llama runtime is missing" >&2; exit 1;
+          }
+
+          rm -rf "$app/Watch" "$app/PlugIns"
+          short_sha="${REQUESTED_SHA:0:7}"
+          ipa="NOOP-AI-Full-Thai-Strength-PR3UI-v${version}-${short_sha}-unsigned.ipa"
+          rm -rf build/ipa
+          mkdir -p build/ipa/Payload
+          ditto "$app" build/ipa/Payload/NOOP.app
+          [[ "$(find build/ipa/Payload -maxdepth 1 -type d -name '*.app' | wc -l | tr -d ' ')" == 1 ]] || {
+            echo "::error::Payload must contain exactly one main app" >&2
+            exit 1
+          }
+          (cd build/ipa && /usr/bin/zip -qry "$GITHUB_WORKSPACE/$ipa" Payload)
+          /usr/bin/unzip -t "$ipa"
+          size="$(du -h "$ipa" | awk '{print $1}')"
+          echo "ipa=$ipa" >> "$GITHUB_OUTPUT"
+          {
+            echo "## PR3 Full App Visual Review"
+            echo ""
+            echo "- Commit: \`$REQUESTED_SHA\`"
+            echo "- Screenshots: 47 seeded Thai SwiftUI screens"
+            echo "- IPA: \`$ipa\` ($size)"
+            echo "- Bundle: \`$bundle_id\`"
+            echo "- Version/build: \`$version ($build_number)\`"
+            echo "- Signing: disabled"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload 47-screen Thai visual review
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Full-App-Thai-Screens
+          path: build/screens/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload module contact sheets
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Full-App-Contact-Sheets
+          path: build/contact-sheets/*.jpg
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload approved-screen regression comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Approved-Baseline-Regression
+          path: build/regression
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload unsigned PR3 UI IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-AI-Full-Thai-Strength-PR3UI-Unsigned-IPA
+          path: ${{ steps.package.outputs.ipa }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Full-App-Build-Logs
+          path: |
+            build/preview-xcodebuild.log
+            build/xcodebuild.log
+            build/preview-dd/Logs/Build/**/*.xcactivitylog
+            build/dd/Logs/Build/**/*.xcactivitylog
+          if-no-files-found: ignore
+          retention-days: 14

@@ -1,0 +1,176 @@
+name: PR3 Visual Port Milestone 1
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - integration/dx-thai-strength-full
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  capture:
+    name: Build and capture PR3 visual port
+    runs-on: macos-26
+    timeout-minutes: 75
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Bootstrap dependencies and generate project
+        run: |
+          set -euo pipefail
+          Tools/bootstrap-nomic.sh
+          command -v xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+
+      - name: Build simulator application
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          udid="$(xcrun simctl list devices available -j | jq -r \
+            '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          [[ -n "$udid" && "$udid" != null ]] || {
+            echo "::error::No available iPhone simulator" >&2
+            exit 1
+          }
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$udid" \
+            -derivedDataPath build/preview-dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee build/preview-xcodebuild.log
+
+      - name: Install and capture Milestone 1
+        run: |
+          set -euo pipefail
+          apps=()
+          while IFS= read -r -d '' candidate; do
+            apps+=("$candidate")
+          done < <(find build/preview-dd/Build/Products/Debug-iphonesimulator \
+            -maxdepth 1 -type d -name '*.app' -print0)
+          [[ ${#apps[@]} -eq 1 ]] || {
+            echo "::error::Expected exactly one simulator app; found ${#apps[@]}" >&2
+            exit 1
+          }
+          app="${apps[0]}"
+          xcrun simctl install "$UDID" "$app"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")"
+          mkdir -p build/new
+          xcrun simctl ui "$UDID" appearance dark
+          xcrun simctl status_bar "$UDID" override \
+            --time 14:27 --batteryLevel 85 --wifiBars 3 --cellularBars 4
+
+          capture() {
+            local output="$1"
+            shift
+            xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
+            xcrun simctl launch "$UDID" "$bundle_id" \
+              --demo-seed --demo-hour 14 "$@" \
+              -AppleLanguages "(th)" -AppleLocale th_TH
+            sleep 9
+            xcrun simctl io "$UDID" screenshot "build/new/${output}.png"
+          }
+
+          capture root
+          capture today --demo-screen pr3today
+          capture todayscrolled --demo-screen pr3scrolled --pr3-scroll
+          capture charge --demo-screen pr3charge
+          capture rest --demo-screen pr3rest
+          capture effort --demo-screen pr3effort
+
+          for required in root today todayscrolled charge rest effort; do
+            [[ -s "build/new/${required}.png" ]] || {
+              echo "::error::Missing screenshot build/new/${required}.png" >&2
+              exit 1
+            }
+          done
+
+      - name: Download authoritative PR3 screenshot
+        uses: actions/download-artifact@v4
+        with:
+          name: NOOP-Thai-iPhone-UI-Preview
+          path: build/reference/pr3
+          github-token: ${{ github.token }}
+          repository: ijennyRSM/noop
+          run-id: "30116395189"
+
+      - name: Download rejected PR8 screenshots
+        uses: actions/download-artifact@v4
+        with:
+          name: NOOP-Visual-Fidelity-Milestone-1-Previews
+          path: build/reference/pr8
+          github-token: ${{ github.token }}
+          repository: ijennyRSM/noop
+          run-id: "30475037143"
+
+      - name: Assemble three-column comparison
+        run: |
+          set -euo pipefail
+          mkdir -p build/comparison/pr3 build/comparison/pr8 build/comparison/new
+          cp build/reference/pr3/NOOP-Thai-WHOOP-layout.png build/comparison/pr3/today.png
+          cp build/reference/pr8/root.png build/comparison/pr8/root.png
+          cp build/reference/pr8/today.png build/comparison/pr8/today.png
+          cp build/reference/pr8/todayscrolled.png build/comparison/pr8/todayscrolled.png
+          cp build/reference/pr8/charge.png build/comparison/pr8/charge.png
+          cp build/reference/pr8/rest.png build/comparison/pr8/rest.png
+          cp build/reference/pr8/effort.png build/comparison/pr8/effort.png
+          cp build/new/*.png build/comparison/new/
+          cp docs/ui-redesign/PR3_VISUAL_PORT_MILESTONE_1.md build/comparison/MEASUREMENTS.md
+
+          cat > build/comparison/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>NOOP PR3 visual port — Milestone 1</title>
+          <style>
+            body{font:14px system-ui;background:#0b0d0f;color:#fff;margin:24px}
+            h1{font-size:22px}.grid{display:grid;grid-template-columns:repeat(3,minmax(280px,1fr));gap:20px}
+            section{background:#171b1f;border:1px solid #30383f;border-radius:16px;padding:14px}
+            img{width:100%;height:auto;border-radius:12px;background:#000}
+            h2{font-size:15px;margin:0 0 12px}
+          </style>
+          <h1>Today — authoritative donor / rejected PR8 / new port</h1>
+          <div class="grid">
+            <section><h2>PR #3 authoritative donor</h2><img src="pr3/today.png"></section>
+            <section><h2>PR #8 rejected</h2><img src="pr8/root.png"></section>
+            <section><h2>New PR #3 port on DX Full</h2><img src="new/root.png"></section>
+          </div>
+          HTML
+
+      - name: Upload Milestone 1 screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Visual-Port-Milestone-1
+          path: build/new/*.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload side-by-side comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-vs-PR8-vs-New-Comparison
+          path: build/comparison
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-PR3-Visual-Port-Build-Logs
+          path: |
+            build/preview-xcodebuild.log
+            build/preview-dd/Logs/Build/**/*.xcactivitylog
+          if-no-files-found: ignore
+          retention-days: 14

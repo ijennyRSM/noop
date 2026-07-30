@@ -39,7 +39,8 @@ struct JourneyView: View {
         NavigationStack {
             ScrollView {
                 if let goal = goalStore.goal(id: goalId) {
-                    VStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+                        PR3PageHeading("Your journey")
                         closureOrExpiryCard(goal)
                         headerCard(goal)
                         progressCard(goal)
@@ -49,7 +50,8 @@ struct JourneyView: View {
                         planHistoryCard
                         if !goal.history.isEmpty { historyCard(goal) }
                     }
-                    .padding(16)
+                    .screenPadding()
+                    .padding(.vertical, 16)
                 } else {
                     noGoalState.padding(16)
                 }
@@ -162,7 +164,9 @@ struct JourneyView: View {
                     // `goal.kind.label` is a fixed-set English label (#P14); `goal.title` is the user's
                     // own free text, harmlessly passed through unresolved.
                     Text(goal.title.isEmpty ? goal.kind.label.localizedCatalogValue : goal.title)
-                        .font(StrandFont.headline).foregroundStyle(StrandPalette.textPrimary)
+                        .font(StrandFont.title1)
+                        .tracking(-0.35)
+                        .foregroundStyle(StrandPalette.textPrimary)
                 }
                 if let timeLine = timeSummary(goal) {
                     Text(timeLine)
@@ -537,14 +541,16 @@ struct JourneyView: View {
                 .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                Text(p.summary()).font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
+                Text(p.localizedPresentationSummary())
+                    .font(StrandFont.footnote)
+                    .foregroundStyle(StrandPalette.textSecondary)
                 Text(planStatusLine(p)).font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
             }
             Spacer(minLength: 4)
             Text(p.day).font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(p.summary()), \(planStatusLine(p)), \(p.day)")
+        .accessibilityLabel("\(p.localizedPresentationSummary()), \(planStatusLine(p)), \(p.day)")
     }
 
     private func planIcon(_ status: PlanProposal.Status) -> String {
