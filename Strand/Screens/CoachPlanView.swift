@@ -33,7 +33,8 @@ struct CoachPlanView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+                    PR3PageHeading("Your plan")
                     goalContextCard
                     if !store.pending.isEmpty {
                         section("Waiting for your call") {
@@ -56,7 +57,8 @@ struct CoachPlanView: View {
                     }
                     if store.proposals.isEmpty { emptyState }
                 }
-                .padding(16)
+                .screenPadding()
+                .padding(.vertical, 16)
             }
             .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Your plan")
@@ -104,7 +106,9 @@ struct CoachPlanView: View {
                     Image(systemName: "sparkles").foregroundStyle(StrandPalette.accent)
                         .accessibilityHidden(true)
                     Text(p.summary())
-                        .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                        .font(StrandFont.title2)
+                        .tracking(-0.2)
+                        .foregroundStyle(StrandPalette.textPrimary)
                     Spacer(minLength: 4)
                     Text(dayLabel(p.day)).strandOverline()
                 }
@@ -136,7 +140,9 @@ struct CoachPlanView: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 1) {
                         Text(p.summary())
-                            .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
+                            .font(StrandFont.title2)
+                            .tracking(-0.2)
+                            .foregroundStyle(StrandPalette.textPrimary)
                         if let from = p.swappedFrom {
                             Text("swapped from \(from)")
                                 .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
