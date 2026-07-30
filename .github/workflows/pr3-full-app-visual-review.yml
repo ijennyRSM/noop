@@ -194,7 +194,8 @@ jobs:
       - name: Build contact sheets and approved-screen comparison
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pillow
+          python3 -m venv build/visual-review-venv
+          build/visual-review-venv/bin/python -m pip install --quiet pillow
           mkdir -p build/contact-sheets build/regression/approved-pr9 build/regression/current-final
           for pair in \
             "root:01-root" \
@@ -226,7 +227,7 @@ jobs:
           - Review the paired images and generated pixel-difference overlays before approving the PR.
           EOF
 
-          python3 - <<'PY'
+          build/visual-review-venv/bin/python - <<'PY'
           from pathlib import Path
           from PIL import Image, ImageChops, ImageDraw, ImageFont
 
