@@ -541,14 +541,16 @@ struct JourneyView: View {
                 .font(StrandFont.footnote).foregroundStyle(StrandPalette.textTertiary)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                Text(p.summary()).font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
+                Text(p.localizedPresentationSummary())
+                    .font(StrandFont.footnote)
+                    .foregroundStyle(StrandPalette.textSecondary)
                 Text(planStatusLine(p)).font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
             }
             Spacer(minLength: 4)
             Text(p.day).font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(p.summary()), \(planStatusLine(p)), \(p.day)")
+        .accessibilityLabel("\(p.localizedPresentationSummary()), \(planStatusLine(p)), \(p.day)")
     }
 
     private func planIcon(_ status: PlanProposal.Status) -> String {

@@ -404,6 +404,8 @@ enum DemoScreens {
         case "compare":  return AnyView(CompareView())
         case "settings": return AnyView(SettingsView())
         case "strength": return AnyView(StrengthHistoryView())
+        case "strengthhistory":
+            return AnyView(StrengthHistoryView(initialSection: .history))
         case "strengthlogger": return AnyView(StrengthLoggerDemoHost())
         case "strengthpicker": return AnyView(StrengthPickerDemoHost())
         case "strengthtemplates": return AnyView(StrengthTemplatesDemoHost())
@@ -426,6 +428,10 @@ enum DemoScreens {
             return AnyView(CoachSettingsView(initialPage: .privacy))
         case "consent":
             return AnyView(CoachSettingsView(initialPage: .dataAccess))
+        case "strengthconsent":
+            return AnyView(CoachSettingsView(initialPage: .strengthConsent))
+        case "painconsent":
+            return AnyView(CoachSettingsView(initialPage: .painSensitiveConsent))
         case "goalplan": return AnyView(CoachGoalJourneyScreen())
         case "goaleditor": return AnyView(CoachGoalEditorView(isOnboarding: false))
         case "planbook": return AnyView(PlanBookDemoHost())
@@ -528,6 +534,9 @@ private struct StrengthTemplatesDemoHost: View {
             .task {
                 await loadStrengthReview(viewModel, repository: repository)
                 viewModel.templateName = String(localized: "Full body")
+                if viewModel.templates.isEmpty {
+                    await viewModel.saveTemplate()
+                }
             }
     }
 }
@@ -608,24 +617,26 @@ private struct CoachSeededDemoHost: View {
             }
         }
         .task {
-            coach.setKey("noop-visual-review-only")
-            if coach.messages.isEmpty {
-                coach.messages = [
-                    ChatMessage(
-                        role: .user,
-                        text: "วันนี้ควรฝึกแบบไหน เมื่อคืนนี้ฉันนอนน้อยกว่าปกติ"
-                    ),
-                    ChatMessage(
-                        role: .assistant,
-                        text: "วันนี้เน้นการฝึกเบาถึงปานกลางประมาณ 45 นาทีได้ครับ "
-                            + "ค่า Charge และการนอนบอกว่าร่างกายยังต้องการเวลาฟื้นตัว "
-                            + "จึงควรหลีกเลี่ยงเซตหนักจนหมดแรง",
-                        toolsUsed: mode == .tool
-                            ? [CoachTool.readiness.rawValue, CoachTool.sleepDetail.rawValue]
-                            : []
-                    ),
-                ]
-            }
+            // A local Custom provider keeps this DEBUG-only visual route deterministic without
+            // writing a fake cloud key to Keychain or making a network request.
+            coach.provider = .custom
+            coach.customBaseURL = "http://127.0.0.1:11434/v1"
+            coach.customConnected = true
+            coach.messages = [
+                ChatMessage(
+                    role: .user,
+                    text: "วันนี้ควรฝึกแบบไหน เมื่อคืนนี้ฉันนอนน้อยกว่าปกติ"
+                ),
+                ChatMessage(
+                    role: .assistant,
+                    text: "วันนี้เน้นการฝึกเบาถึงปานกลางประมาณ 45 นาทีได้ครับ "
+                        + "ค่า Charge และการนอนบอกว่าร่างกายยังต้องการเวลาฟื้นตัว "
+                        + "จึงควรหลีกเลี่ยงเซตหนักจนหมดแรง",
+                    toolsUsed: mode == .tool
+                        ? [CoachTool.readiness.rawValue, CoachTool.sleepDetail.rawValue]
+                        : []
+                ),
+            ]
             if mode == .proposal {
                 seedPlanProposal()
             }
@@ -699,19 +710,18 @@ private struct UpdatesDemoHost: View {
             .environmentObject(updateStore)
             .environmentObject(router)
             .task {
-                if updateStore.items.isEmpty {
-                    updateStore.post(UpdateItem(
-                        kind: .reading,
-                        title: "ข้อมูลใหม่พร้อมแล้ว",
-                        message: "ซิงค์ข้อมูลการนอนและการฟื้นตัวของวันนี้เรียบร้อยแล้ว",
-                        deepLink: "trends"
-                    ))
-                    updateStore.post(UpdateItem(
-                        kind: .strapAlert,
-                        title: "ซิงค์ประวัติสำเร็จ",
-                        message: "ดึงข้อมูลย้อนหลังจากสายรัดเสร็จแล้ว"
-                    ))
-                }
+                updateStore.clearAll()
+                updateStore.post(UpdateItem(
+                    kind: .reading,
+                    title: "ข้อมูลใหม่พร้อมแล้ว",
+                    message: "ซิงค์ข้อมูลการนอนและการฟื้นตัวของวันนี้เรียบร้อยแล้ว",
+                    deepLink: "trends"
+                ))
+                updateStore.post(UpdateItem(
+                    kind: .strapAlert,
+                    title: "ซิงค์ประวัติสำเร็จ",
+                    message: "ดึงข้อมูลย้อนหลังจากสายรัดเสร็จแล้ว"
+                ))
             }
     }
 }
@@ -829,13 +839,13 @@ private struct PR3ReviewStateDemoHost: View {
         }
     }
 
-    private func row(_ title: LocalizedStringKey, _ value: String) -> some View {
+    private func row(_ title: LocalizedStringKey, _ value: LocalizedStringKey) -> some View {
         HStack {
             Text(title)
                 .font(StrandFont.subhead)
                 .foregroundStyle(StrandPalette.textSecondary)
             Spacer()
-            Text(verbatim: value)
+            Text(value)
                 .font(StrandFont.captionNumber)
                 .foregroundStyle(StrandPalette.textPrimary)
         }

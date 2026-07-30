@@ -384,6 +384,32 @@ struct GoalKindTile: View {
     let selected: Bool
     let onTap: () -> Void
 
+    private var localizedLabel: LocalizedStringKey {
+        switch kind {
+        case .run: "Running"
+        case .consistency: "Consistency"
+        case .sleep: "Sleep"
+        case .strength: "Strength"
+        case .weight: "Weight"
+        case .stress: "Stress"
+        case .recovery: "Recovery"
+        case .custom: "Other"
+        }
+    }
+
+    private var localizedCategory: LocalizedStringKey {
+        switch kind {
+        case .run: "Distance"
+        case .consistency: "Workouts"
+        case .sleep: "Sleep"
+        case .strength: "Strength"
+        case .weight: "Weight"
+        case .stress: "Stress"
+        case .recovery: "Recovery"
+        case .custom: "Custom"
+        }
+    }
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 6) {
@@ -391,9 +417,9 @@ struct GoalKindTile: View {
                     .font(.system(size: 20))
                     .foregroundStyle(selected ? StrandPalette.accent : StrandPalette.textSecondary)
                     .accessibilityHidden(true)
-                Text(LocalizedStringKey(kind.label))
+                Text(localizedLabel)
                     .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
-                Text(LocalizedStringKey(kind.blurb))
+                Text(localizedCategory)
                     .font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -406,7 +432,7 @@ struct GoalKindTile: View {
                               lineWidth: selected ? 1.5 : 1))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text(LocalizedStringKey(kind.label)))
+        .accessibilityLabel(Text(localizedLabel))
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
     }
 }

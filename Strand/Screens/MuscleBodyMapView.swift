@@ -503,7 +503,8 @@ private struct MuscleLoadDetail: View {
 
     private func detailRow(_ title: String, _ value: String) -> some View {
         HStack {
-            Text(title).foregroundStyle(StrandPalette.textSecondary)
+            Text(title.localizedCatalogValue)
+                .foregroundStyle(StrandPalette.textSecondary)
             Spacer()
             Text(value).foregroundStyle(StrandPalette.textPrimary)
         }

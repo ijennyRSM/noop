@@ -74,7 +74,7 @@ struct MorningSuggestionCard: View {
                         .font(StrandFont.subhead).foregroundStyle(StrandPalette.textPrimary)
                     Spacer(minLength: 4)
                 }
-                Text(p.summary())
+                Text(p.localizedPresentationSummary())
                     .font(StrandFont.body).foregroundStyle(StrandPalette.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                 if !p.rationale.isEmpty {

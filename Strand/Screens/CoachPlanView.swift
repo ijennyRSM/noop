@@ -105,7 +105,7 @@ struct CoachPlanView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "sparkles").foregroundStyle(StrandPalette.accent)
                         .accessibilityHidden(true)
-                    Text(p.summary())
+                    Text(p.localizedPresentationSummary())
                         .font(StrandFont.title2)
                         .tracking(-0.2)
                         .foregroundStyle(StrandPalette.textPrimary)
@@ -139,7 +139,7 @@ struct CoachPlanView: View {
                     Image(systemName: "calendar").foregroundStyle(StrandPalette.accent)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 1) {
-                        Text(p.summary())
+                        Text(p.localizedPresentationSummary())
                             .font(StrandFont.title2)
                             .tracking(-0.2)
                             .foregroundStyle(StrandPalette.textPrimary)
@@ -216,7 +216,7 @@ struct CoachPlanView: View {
                     .foregroundStyle(StrandPalette.textTertiary)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(p.summary())
+                    Text(p.localizedPresentationSummary())
                         .font(StrandFont.footnote).foregroundStyle(StrandPalette.textSecondary)
                     Text(statusLine(p))
                         .font(StrandFont.caption).foregroundStyle(StrandPalette.textTertiary)
@@ -401,7 +401,7 @@ private struct PlanEffectFeedbackSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    Text(proposal.summary())
+                    Text(proposal.localizedPresentationSummary())
                         .font(StrandFont.subhead)
                         .foregroundStyle(StrandPalette.textPrimary)
                     Text("Completion and effect are stored separately. Missing feedback stays missing and is never treated as “no effect”.")
@@ -486,7 +486,8 @@ struct PlanSwapSheet: View {
                 VStack(spacing: 16) {
                     NoopCard(padding: 14, tint: StrandPalette.chargeColor) {
                         VStack(alignment: .leading, spacing: 10) {
-                            Text("Instead of \(proposal.sport)").strandOverline()
+                            Text("Instead of \(WorkoutCatalog.localizedDisplayName(proposal.sport))")
+                                .strandOverline()
                             TextField("e.g. CrossFit", text: $sport)
                                 .textFieldStyle(.plain)
                                 .font(StrandFont.body)
@@ -562,7 +563,8 @@ struct PlanTimeSheet: View {
             VStack(spacing: 16) {
                 NoopCard(padding: 14, tint: StrandPalette.chargeColor) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(proposal.sport).strandOverline()
+                        Text(WorkoutCatalog.localizedDisplayName(proposal.sport))
+                            .strandOverline()
                         // `.wheel` is iOS-only; macOS gets the graphical picker. This file is shared, so
                         // it has to compile for both even though the fork ships iOS.
                         DatePicker("Time", selection: $time, displayedComponents: .hourAndMinute)
@@ -638,7 +640,8 @@ struct PlanRescheduleSheet: View {
             VStack(spacing: 16) {
                 NoopCard(padding: 14, tint: StrandPalette.chargeColor) {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(proposal.sport).strandOverline()
+                        Text(WorkoutCatalog.localizedDisplayName(proposal.sport))
+                            .strandOverline()
                         DatePicker("New day", selection: $day, in: Date()..., displayedComponents: .date)
                             .datePickerStyle(.graphical)
                             .labelsHidden()

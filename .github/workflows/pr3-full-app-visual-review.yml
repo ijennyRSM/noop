@@ -10,6 +10,9 @@ permissions:
   contents: read
   actions: read
 
+env:
+  REQUESTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
 concurrency:
   group: pr3-full-app-${{ github.ref }}
   cancel-in-progress: false
@@ -26,6 +29,8 @@ jobs:
     steps:
       - name: Check out requested commit
         uses: actions/checkout@v5
+        with:
+          ref: ${{ env.REQUESTED_SHA }}
 
       - name: Validate source resources
         run: |
@@ -109,6 +114,7 @@ jobs:
           capture() {
             local output="$1"
             local screen="$2"
+            local settle_seconds=7
             shift 2
             xcrun simctl terminate "$UDID" "$bundle_id" >/dev/null 2>&1 || true
             if [[ -n "$screen" ]]; then
@@ -120,7 +126,8 @@ jobs:
                 --demo-seed --demo-hour 14 "$@" \
                 -AppleLanguages "(th)" -AppleLocale th_TH
             fi
-            sleep 7
+            [[ "$output" == "01-root" ]] && settle_seconds=9
+            sleep "$settle_seconds"
             xcrun simctl io "$UDID" screenshot "build/screens/${output}.png"
           }
 
@@ -134,7 +141,7 @@ jobs:
           capture 08-active-logger strengthlogger
           capture 09-exercise-picker strengthpicker
           capture 10-templates strengthtemplates
-          capture 11-strength-history strength
+          capture 11-strength-history strengthhistory
           capture 12-strength-session-detail strengthdetail
           capture 13-body-map-front bodymap
           capture 14-body-map-back bodymapback
@@ -158,8 +165,8 @@ jobs:
           capture 32-detected-strength detectedstrength
           capture 33-privacy-presets privacy
           capture 34-individual-consent consent
-          capture 35-strength-consent consent
-          capture 36-pain-sensitive-consent consent
+          capture 35-strength-consent strengthconsent
+          capture 36-pain-sensitive-consent painconsent
           capture 37-backup-home backup
           capture 38-restore-preview restorepreview
           capture 39-import-validation importvalidation
@@ -220,7 +227,7 @@ jobs:
           # PR #9 approved-screen regression
 
           - Approved baseline SHA: \`51c5df894d164f040233325ba2297f417bffbe91\`
-          - Current SHA: \`${GITHUB_SHA}\`
+          - Current SHA: \`${REQUESTED_SHA}\`
           - Baseline screens: root, Today, Today scrolled, Charge, Rest, Effort
           - Intentional geometry changes: none
           - Shared secondary-screen metrics are isolated from the approved baseline metrics.
@@ -336,7 +343,7 @@ jobs:
           }
 
           rm -rf "$app/Watch" "$app/PlugIns"
-          short_sha="${GITHUB_SHA:0:7}"
+          short_sha="${REQUESTED_SHA:0:7}"
           ipa="NOOP-AI-Full-Thai-Strength-PR3UI-v${version}-${short_sha}-unsigned.ipa"
           rm -rf build/ipa
           mkdir -p build/ipa/Payload
@@ -352,7 +359,7 @@ jobs:
           {
             echo "## PR3 Full App Visual Review"
             echo ""
-            echo "- Commit: \`$GITHUB_SHA\`"
+            echo "- Commit: \`$REQUESTED_SHA\`"
             echo "- Screenshots: 47 seeded Thai SwiftUI screens"
             echo "- IPA: \`$ipa\` ($size)"
             echo "- Bundle: \`$bundle_id\`"

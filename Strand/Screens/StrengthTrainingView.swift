@@ -1133,6 +1133,11 @@ struct CustomExerciseSheet: View {
 }
 
 struct StrengthHistoryView: View {
+    enum InitialSection: Equatable {
+        case overview
+        case history
+    }
+
     @EnvironmentObject private var repository: Repository
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
@@ -1141,11 +1146,17 @@ struct StrengthHistoryView: View {
     @State private var muscleLoads: [String: [DailyMuscleLoadRecord]] = [:]
     @State private var exerciseNames: [String: String] = [:]
     @State private var showLiveWorkout = false
+    private let initialSection: InitialSection
+
+    init(initialSection: InitialSection = .overview) {
+        self.initialSection = initialSection
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) {
                     PR3PageHeading(
                         "Strength Training",
                         overline: "TRAINING",
@@ -1176,6 +1187,7 @@ struct StrengthHistoryView: View {
                     MuscleBodyMapCard()
 
                     PR3SectionLabel("Recent workouts")
+                        .id("strength-history")
                     if sessions.isEmpty {
                         Text("No previous sessions")
                             .font(StrandFont.subhead)
@@ -1211,8 +1223,14 @@ struct StrengthHistoryView: View {
                         )
                     }
                 }
-                .screenPadding()
-                .padding(.vertical, 16)
+                    .screenPadding()
+                    .padding(.vertical, 16)
+                }
+                .task(id: initialSection) {
+                    guard initialSection == .history else { return }
+                    await Task.yield()
+                    proxy.scrollTo("strength-history", anchor: .top)
+                }
             }
             .background(StrandPalette.surfaceBase.ignoresSafeArea())
             .navigationTitle("Strength history")

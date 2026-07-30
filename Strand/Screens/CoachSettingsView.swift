@@ -8,11 +8,13 @@ import StrandDesign
 /// Bindings are the same `AICoachEngine` properties the old inline cards used — only relocated, not
 /// rewired. Design-system tokens only, per `docs/CONTRIBUTING.md`.
 struct CoachSettingsView: View {
-    enum InitialPage {
+    enum InitialPage: Equatable {
         case connection
         case memory
         case privacy
         case dataAccess
+        case strengthConsent
+        case painSensitiveConsent
     }
 
     @EnvironmentObject var coach: AICoachEngine
@@ -21,6 +23,9 @@ struct CoachSettingsView: View {
 
     init(initialPage: InitialPage? = nil) {
         self.initialPage = initialPage
+        if initialPage == .strengthConsent || initialPage == .painSensitiveConsent {
+            _dataAccessExpertMode = State(initialValue: true)
+        }
     }
 
     /// Apple Health-style leading-icon coloring (SettingsView's "App icon colors") — same switch that
@@ -354,11 +359,21 @@ struct CoachSettingsView: View {
     /// Shared scroll/padding/background scaffold for a subpage. Deliberately takes NO title parameter —
     /// each subpage applies its own literal `.navigationTitle("...")` outside this wrapper, for the same
     /// scanner-visibility reason as the hub rows above.
-    private func subpageScaffold<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) { content() }
-                .screenPadding()
-                .padding(.vertical, 16)
+    private func subpageScaffold<Content: View>(
+        scrollTarget: String? = nil,
+        @ViewBuilder _ content: () -> Content
+    ) -> some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: NoopMetrics.sectionGap) { content() }
+                    .screenPadding()
+                    .padding(.vertical, 16)
+            }
+            .task(id: scrollTarget) {
+                guard let scrollTarget else { return }
+                await Task.yield()
+                proxy.scrollTo(scrollTarget, anchor: .top)
+            }
         }
         .background(StrandPalette.surfaceBase.ignoresSafeArea())
         #if !os(macOS)
@@ -958,6 +973,8 @@ struct CoachSettingsView: View {
                 privacySubpage
             case .dataAccess:
                 dataAccessSubpage
+            case .strengthConsent, .painSensitiveConsent:
+                dataAccessSubpage
             }
         } else if coach.isConfigured {
             hub
@@ -1031,7 +1048,7 @@ struct CoachSettingsView: View {
     /// Most people choose one of three understandable modes. Expert settings exposes the underlying
     /// purpose gates without weakening them, including the separate sensitive-journal permission.
     private var dataAccessSubpage: some View {
-        subpageScaffold {
+        subpageScaffold(scrollTarget: dataAccessScrollTarget) {
             dataAccessExplanationBar
             dataAccessModeBar
             if dataAccessExpertMode || CoachDataAccessMode.current(for: coach.toolConsent.enabled) == .expert {
@@ -1049,6 +1066,14 @@ struct CoachSettingsView: View {
             }
         }
         .navigationTitle("Data access")
+    }
+
+    private var dataAccessScrollTarget: String? {
+        switch initialPage {
+        case .strengthConsent: "strength-consent"
+        case .painSensitiveConsent: "pain-sensitive-consent"
+        default: nil
+        }
     }
 
     /// Explains the boundary before showing switches. The provider receives only values returned through
@@ -1248,6 +1273,7 @@ struct CoachSettingsView: View {
                     .accessibilityLabel("Let the coach fetch Strength Training summaries")
             }
         }
+        .id("strength-consent")
     }
 
     private var painSensitiveAccessBar: some View {
@@ -1271,6 +1297,7 @@ struct CoachSettingsView: View {
                     .accessibilityLabel("Let the coach read pain-sensitive check-ins")
             }
         }
+        .id("pain-sensitive-consent")
     }
 
     private var planningAccessBar: some View {
