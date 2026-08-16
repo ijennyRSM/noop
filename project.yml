@@ -197,6 +197,10 @@ targets:
           - "Resources/Info.plist"
           - "Resources/Strand.entitlements"
           - "Resources/Assets.xcassets"
+          # The iPhone target has device-specific permission copy in StrandiOS/Resources.
+          # Exclude the macOS InfoPlist localization to avoid duplicate bundle outputs.
+          - "Resources/en.lproj/InfoPlist.strings"
+          - "Resources/th.lproj/InfoPlist.strings"
           - "App/StrandApp.swift"
           - "App/RootView.swift"
           # ContentView embeds RootView() (the macOS NavigationSplitView sidebar shell), which is
