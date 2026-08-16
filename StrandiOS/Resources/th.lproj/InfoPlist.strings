@@ -1,0 +1,6 @@
+"CFBundleDisplayName" = "NOOP ไทย";
+"NSBluetoothAlwaysUsageDescription" = "NOOP เชื่อมต่อกับสายรัด WHOOP โดยตรงผ่าน Bluetooth เพื่ออ่านอัตราการเต้นหัวใจ ช่วง R-R ระดับแบตเตอรี่ และข้อมูลเซนเซอร์ภายใน iPhone ของคุณ";
+"NSLocationWhenInUseUsageDescription" = "NOOP บันทึกเส้นทางระหว่างการออกกำลังกายกลางแจ้งเพื่อแสดงระยะทาง เพซ และแผนที่ รวมถึงบันทึกต่อเมื่อหน้าจอดับ โดยเส้นทางจะเก็บไว้ในอุปกรณ์ของคุณ";
+"NSHealthShareUsageDescription" = "NOOP อ่านข้อมูล Apple Health ของคุณภายในอุปกรณ์เพื่อคำนวณการฟื้นตัว ภาระร่างกาย และการนอน";
+"NSHealthUpdateUsageDescription" = "NOOP บันทึกค่าที่คำนวณจากสายรัดกลับไปยัง Apple Health ภายในอุปกรณ์ และทำเมื่อคุณอนุญาตเท่านั้น";
+"NSMotionUsageDescription" = "NOOP อ่านจำนวนก้าวจาก iPhone ระหว่างการเดินหรือวิ่งเพื่อแสดงในสรุปกิจกรรม โดยข้อมูลนี้จะเก็บไว้ในอุปกรณ์ของคุณ";

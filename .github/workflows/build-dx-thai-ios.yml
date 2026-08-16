@@ -1,0 +1,150 @@
+name: Build DX Thai iOS Unsigned IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-dx-thai-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate Thai and build unsigned IPA
+    runs-on: macos-26
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out requested revision
+        uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: |
+          set -euo pipefail
+          for xcode_path in \
+            "/Applications/Xcode_26.5.app/Contents/Developer" \
+            "/Applications/Xcode_26.4.1.app/Contents/Developer" \
+            "/Applications/Xcode_26.4.app/Contents/Developer" \
+            "/Applications/Xcode.app/Contents/Developer"
+          do
+            if [[ -d "$xcode_path" ]]; then
+              sudo xcode-select -s "$xcode_path"
+              break
+            fi
+          done
+          xcodebuild -version
+
+      - name: Validate Thai localization
+        run: |
+          set -euo pipefail
+          python3 Tools/apply-thai-translations.py --check
+          python3 Tools/validate-thai-localization.py
+
+      - name: Bootstrap pinned on-device model
+        run: |
+          set -euo pipefail
+          Tools/bootstrap-nomic.sh
+
+      - name: Install XcodeGen and generate project
+        run: |
+          set -euo pipefail
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Build unsigned iPhone Release app
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          xcodebuild \
+            -project Strand.xcodeproj \
+            -scheme NOOPiOS \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            build 2>&1 | tee build/xcodebuild.log
+
+      - name: Package and verify unsigned IPA
+        id: package
+        run: |
+          set -euo pipefail
+          PRODUCT_DIR="build/dd/Build/Products/Release-iphoneos"
+          APP_COUNT=$(find "$PRODUCT_DIR" -maxdepth 1 -type d -name '*.app' | wc -l | tr -d ' ')
+          [[ "$APP_COUNT" == "1" ]] || {
+            echo "Expected exactly one iPhone .app in $PRODUCT_DIR; found $APP_COUNT" >&2
+            find "$PRODUCT_DIR" -maxdepth 1 -type d -name '*.app' -print >&2 || true
+            exit 1
+          }
+          APP=$(find "$PRODUCT_DIR" -maxdepth 1 -type d -name '*.app' | head -1)
+          [[ -f "$APP/Info.plist" ]] || { echo "Invalid app bundle: $APP" >&2; exit 1; }
+          [[ ! -e "$APP/embedded.mobileprovision" ]] || {
+            echo "Refusing to package an app with an embedded provisioning profile" >&2
+            exit 1
+          }
+          find "$APP" -path '*/th.lproj/*' -print -quit | grep -q . || {
+            echo "Thai resources are missing from the Release app" >&2
+            exit 1
+          }
+
+          VERSION=$(grep -m1 'MARKETING_VERSION:' project.yml | sed -E 's/.*"([^"]+)".*/\1/')
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+          IPA="NOOP-DX-Thai-ios-unsigned-v${VERSION}-${SHORT_SHA}.ipa"
+          PACKAGE_DIR="build/package"
+          mkdir -p "$PACKAGE_DIR/Payload"
+          ditto "$APP" "$PACKAGE_DIR/Payload/NOOP.app"
+
+          # Keep the core iPhone app and remove embedded extensions commonly
+          # rejected by free-account sideload signing.
+          rm -rf "$PACKAGE_DIR/Payload/NOOP.app/Watch"
+          rm -rf "$PACKAGE_DIR/Payload/NOOP.app/PlugIns"
+
+          (
+            cd "$PACKAGE_DIR"
+            /usr/bin/zip -qry "../../$IPA" Payload
+          )
+          unzip -t "$IPA" >/dev/null
+          zipinfo -1 "$IPA" | grep -q '^Payload/' || {
+            echo "IPA does not contain Payload/" >&2; exit 1;
+          }
+          MAIN_APP_COUNT=$(zipinfo -1 "$IPA" | grep -Ec '^Payload/[^/]+\.app/$')
+          [[ "$MAIN_APP_COUNT" == "1" ]] || {
+            echo "IPA must contain exactly one main .app; found $MAIN_APP_COUNT" >&2
+            exit 1
+          }
+          if zipinfo -1 "$IPA" | grep -q 'embedded.mobileprovision$'; then
+            echo "IPA unexpectedly contains a provisioning profile" >&2
+            exit 1
+          fi
+
+          BYTES=$(stat -f%z "$IPA")
+          HUMAN=$(du -h "$IPA" | cut -f1)
+          echo "ipa=$IPA" >> "$GITHUB_OUTPUT"
+          echo "### DX Thai unsigned IPA" >> "$GITHUB_STEP_SUMMARY"
+          echo "- File: \`$IPA\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Size: $HUMAN ($BYTES bytes)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Source SHA: \`$(git rev-parse HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Signing: disabled; Watch and PlugIns removed from the sideload copy" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-DX-Thai-Unsigned-IPA
+          path: ${{ steps.package.outputs.ipa }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOOP-DX-Thai-Build-Logs-${{ github.run_id }}
+          path: |
+            build/xcodebuild.log
+            build/dd/Logs/Build
+          if-no-files-found: warn
+          retention-days: 7

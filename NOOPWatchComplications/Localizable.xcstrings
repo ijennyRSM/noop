@@ -44,6 +44,12 @@
             "state": "translated",
             "value": "%@ %lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %lld"
+          }
         }
       }
     },
@@ -89,6 +95,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kalibracja %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังปรับเทียบ %@"
           }
         }
       }
@@ -136,6 +148,12 @@
             "state": "translated",
             "value": "%@ niedostępny"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ไม่พร้อมใช้งาน"
+          }
         }
       }
     },
@@ -182,6 +200,12 @@
             "state": "translated",
             "value": "jakiś czas temu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สักพักแล้ว"
+          }
         }
       }
     },
@@ -227,6 +251,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "kal"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปรับเทียบ"
           }
         }
       }
@@ -292,6 +322,12 @@
             "state": "translated",
             "value": "Energia"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว"
+          }
         }
       }
     },
@@ -337,6 +373,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Energia –"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว –"
           }
         }
       }
@@ -384,6 +426,12 @@
             "state": "translated",
             "value": "Energia · %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว · %@"
+          }
         }
       }
     },
@@ -429,6 +477,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Energia · kal"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว · ปรับเทียบ"
           }
         }
       }
@@ -476,6 +530,12 @@
             "state": "translated",
             "value": "Energia %lld · %lld bpm%@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld · %lld bpm%@"
+          }
         }
       }
     },
@@ -521,6 +581,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Energia %lld na 100"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld จาก 100"
           }
         }
       }
@@ -568,6 +634,12 @@
             "state": "translated",
             "value": "Energia %lld%@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว %lld%@"
+          }
         }
       }
     },
@@ -613,6 +685,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kalibracja Energia"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การปรับเทียบพลังฟื้นตัว"
           }
         }
       }
@@ -660,6 +738,12 @@
             "state": "translated",
             "value": "Kalibracja Energia, wymaga więcej danych"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การปรับเทียบพลังฟื้นตัว ต้องการข้อมูลเพิ่มเติม"
+          }
         }
       }
     },
@@ -705,6 +789,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Energia nieaktualny, ostatnia synchronizacja %@. Otwórz NOOP na iPhonie."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลพลังฟื้นตัวเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone"
           }
         }
       }
@@ -752,6 +842,12 @@
             "state": "translated",
             "value": "Energia nieaktualne · %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัวข้อมูลเก่า · %@"
+          }
         }
       }
     },
@@ -797,6 +893,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Energia niedostępny"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลพลังฟื้นตัว"
           }
         }
       }
@@ -862,6 +964,12 @@
             "state": "translated",
             "value": "Wysiłek"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
+          }
         }
       }
     },
@@ -907,6 +1015,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Brak danych, otwórz NOOP na iPhonie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูล เปิด NOOP บน iPhone"
           }
         }
       }
@@ -956,6 +1070,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP · otwórz na iPhonie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP · เปิดบน iPhone"
           }
         }
       }
@@ -1021,6 +1141,12 @@
             "state": "translated",
             "value": "NOOP Energia"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว NOOP"
+          }
         }
       }
     },
@@ -1066,6 +1192,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP. %@, %@, %@."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: %@, %@, %@."
           }
         }
       }
@@ -1113,6 +1245,12 @@
             "state": "translated",
             "value": "NOOP. Nie ma jeszcze danych. Otwórz NOOP na swoim iPhonie, aby przeprowadzić synchronizację."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: ยังไม่มีข้อมูล โปรดเปิด NOOP บน iPhone เพื่อซิงค์"
+          }
         }
       }
     },
@@ -1158,6 +1296,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOOP. Wyniki nieaktualne, ostatnia synchronizacja %@. Otwórz NOOP na iPhonie, aby odświeżyć."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP: คะแนนเป็นข้อมูลเก่า ซิงค์ล่าสุด %@ โปรดเปิด NOOP บน iPhone เพื่อรีเฟรช"
           }
         }
       }
@@ -1205,6 +1349,12 @@
             "state": "translated",
             "value": "stary"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เก่า"
+          }
         }
       }
     },
@@ -1251,6 +1401,12 @@
             "state": "translated",
             "value": "otwórz iPhone'a"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิดบน iPhone"
+          }
         }
       }
     },
@@ -1296,6 +1452,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otwórz NOOP"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิด NOOP"
           }
         }
       }
@@ -1361,6 +1523,12 @@
             "state": "translated",
             "value": "Odpoczynek"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พัก"
+          }
         }
       }
     },
@@ -1406,6 +1574,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "nieświeży"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลเก่า"
           }
         }
       }
@@ -1470,6 +1644,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Twoje Energia (odzyskiwanie) na tarczy zegarka, z Wysiłek i Odpoczynek na prostokątnej karcie."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัวของคุณ (การฟื้นตัว) บนหน้าปัดนาฬิกา พร้อมภาระร่างกายและการพักผ่อนในการ์ดสี่เหลี่ยม"
           }
         }
       }

@@ -59,6 +59,12 @@
             "state": "translated",
             "value": "%@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@"
+          }
         }
       }
     },
@@ -123,6 +129,12 @@
             "state": "translated",
             "value": "%@ · regeneracja %lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · การฟื้นตัว %lld"
+          }
         }
       }
     },
@@ -153,6 +165,12 @@
           }
         },
         "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld"
@@ -202,6 +220,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld kilka dni temu"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld วันที่ผ่านมา"
           }
         }
       }
@@ -267,6 +291,12 @@
             "state": "translated",
             "value": "%lld godz"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ชม"
+          }
         }
       }
     },
@@ -312,6 +342,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld minut"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld นาที"
           }
         }
       }
@@ -359,6 +395,12 @@
             "state": "translated",
             "value": "%lld punkty, średnia %@, zakres %@ do %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จุด %lld หมายถึง %@ ช่วง %@ ถึง %@"
+          }
         }
       }
     },
@@ -404,6 +446,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Odczyty %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค่าที่วัดได้ %lld ค่า"
           }
         }
       }
@@ -451,6 +499,12 @@
             "state": "translated",
             "value": "Treningi %lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การออกกำลังกาย %lld"
+          }
         }
       }
     },
@@ -496,6 +550,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lldd temu"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldd ที่แล้ว"
           }
         }
       }
@@ -561,6 +621,12 @@
             "state": "translated",
             "value": "%lldh temu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldh มาแล้ว"
+          }
         }
       }
     },
@@ -607,6 +673,12 @@
             "state": "translated",
             "value": "%lldm temu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lldm มาแล้ว"
+          }
         }
       }
     },
@@ -641,6 +713,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "0xAA 41 00 1c crc32=f3a1 mono 13"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0xAA 41 00 1c crc32=f3a1 โมโน 13"
           }
         }
       }
@@ -706,6 +784,12 @@
             "state": "translated",
             "value": "1 godzina"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 ชั่วโมง"
+          }
         }
       }
     },
@@ -751,6 +835,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 minuta"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 นาที"
           }
         }
       }
@@ -798,6 +888,12 @@
             "state": "translated",
             "value": "1 trening"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออกกำลังกาย 1 ครั้ง"
+          }
         }
       }
     },
@@ -832,6 +928,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "7h 42m śpi · 92% ewydajność"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นอนหลับ 7 ชม. 42 นาที · 92% efficiency"
           }
         }
       }
@@ -868,6 +970,12 @@
             "state": "translated",
             "value": "51 bpm"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "51 ครั้งต่อนาที"
+          }
         }
       }
     },
@@ -902,6 +1010,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "87% · streaming"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "87% · สตรีมมิ่ง"
           }
         }
       }
@@ -944,6 +1058,12 @@
             "state": "translated",
             "value": "Dodać"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพิ่ม"
+          }
         }
       }
     },
@@ -978,6 +1098,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przyjęte przez NoopButtonStyle"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "นำมาใช้ผ่าน NoopButtonStyle"
           }
         }
       }
@@ -1024,6 +1150,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "CAŁOŚĆ"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออกทั้งหมด"
           }
         }
       }
@@ -1083,6 +1215,12 @@
             "state": "translated",
             "value": "Apple Health"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
         }
       }
     },
@@ -1128,6 +1266,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "śpi %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับ %@"
           }
         }
       }
@@ -1187,6 +1331,12 @@
             "state": "translated",
             "value": "Zorza"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออโรร่า"
+          }
         }
       }
     },
@@ -1232,6 +1382,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "średnia %@ bpm"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เฉลี่ย %@ ครั้งต่อนาที"
           }
         }
       }
@@ -1297,6 +1453,12 @@
             "state": "translated",
             "value": "Obudzony"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตื่น"
+          }
         }
       }
     },
@@ -1332,6 +1494,12 @@
             "state": "translated",
             "value": "Tylko bar"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บาร์เท่านั้น"
+          }
         }
       }
     },
@@ -1366,6 +1534,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Body / Regular 15 — wątek o Tobie, przeczytaj w całości."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body / Regular 15 — กระทู้ของคุณ อ่านเต็มๆ"
           }
         }
       }
@@ -1425,6 +1599,12 @@
             "state": "translated",
             "value": "BPM"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บีพีเอ็ม"
+          }
         }
       }
     },
@@ -1482,6 +1662,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Budowanie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังสะสมข้อมูล"
           }
         }
       }
@@ -1541,6 +1727,12 @@
             "state": "translated",
             "value": "Kalibracja"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังปรับเทียบ"
+          }
         }
       }
     },
@@ -1575,6 +1767,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spokojna noc"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คืนที่เงียบสงบ"
           }
         }
       }
@@ -1611,6 +1809,12 @@
             "state": "translated",
             "value": "Podpis 12"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คำบรรยายภาพ 12"
+          }
         }
       }
     },
@@ -1645,6 +1849,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Karta %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การ์ด %lld"
           }
         }
       }
@@ -1691,6 +1901,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klasyczny"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คลาสสิค"
           }
         }
       }
@@ -1756,6 +1972,12 @@
             "state": "translated",
             "value": "Wyczyść wyszukiwanie"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ล้างการค้นหา"
+          }
         }
       }
     },
@@ -1790,6 +2012,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "PODLICZANIE WYNIKÓW"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คะแนนนับขึ้น"
           }
         }
       }
@@ -1849,6 +2077,12 @@
             "state": "translated",
             "value": "Własne"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำหนดเอง"
+          }
         }
       }
     },
@@ -1900,6 +2134,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ciemny"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "มืด"
           }
         }
       }
@@ -1958,6 +2198,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Data"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันที่"
           }
         }
       }
@@ -2022,6 +2268,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Głęboko"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับลึก"
           }
         }
       }
@@ -2088,6 +2340,12 @@
             "state": "translated",
             "value": "Domyślny"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค่าเริ่มต้น"
+          }
         }
       }
     },
@@ -2134,6 +2392,12 @@
             "state": "translated",
             "value": "WYKOŃCZONY"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หมดลงแล้ว"
+          }
         }
       }
     },
@@ -2173,6 +2437,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gotowe"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จสิ้น"
           }
         }
       }
@@ -2231,6 +2501,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wysiłek"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
           }
         }
       }
@@ -2295,6 +2571,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wypełnić"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เติม"
           }
         }
       }
@@ -2361,6 +2643,12 @@
             "state": "translated",
             "value": "Wypełnione"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อิ่มแล้ว"
+          }
         }
       }
     },
@@ -2419,6 +2707,12 @@
             "state": "translated",
             "value": "Dopasuj"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พอดี"
+          }
         }
       }
     },
@@ -2453,6 +2747,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przypis 11"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เชิงอรรถ 11"
           }
         }
       }
@@ -2512,6 +2812,12 @@
             "state": "translated",
             "value": "Las"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ป่า"
+          }
         }
       }
     },
@@ -2569,6 +2875,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Matowe"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฝ้า"
           }
         }
       }
@@ -2634,6 +2946,12 @@
             "state": "translated",
             "value": "Wypełnienie Garmin"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การ์มิน ฟิล"
+          }
         }
       }
     },
@@ -2669,6 +2987,12 @@
             "state": "translated",
             "value": "Nagłówek / Półpogrubiony 17"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พาดหัว / กึ่งหนา 17"
+          }
         }
       }
     },
@@ -2702,6 +3026,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tętno, 24 godziny"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจ 24 ชั่วโมง"
           }
         }
       }
@@ -2767,6 +3097,12 @@
             "state": "translated",
             "value": "WYSOKI"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สูง"
+          }
         }
       }
     },
@@ -2801,6 +3137,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "godzina %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ชั่วโมง %lld"
           }
         }
       }
@@ -2837,6 +3179,12 @@
             "state": "translated",
             "value": "Najedź kursorem na zespół: nazwa sceny, początek i koniec zegara oraz czas trwania."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนดูแถบเพื่อดูชื่อระยะ เวลาเริ่ม–สิ้นสุด และระยะเวลา"
+          }
         }
       }
     },
@@ -2871,6 +3219,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Najedź kursorem na komórkę: pierścień + data, wynik i podpowiedź dotycząca stanu odzyskiwania."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนเซลล์: แหวน + วันที่ คะแนน และคำแนะนำเครื่องมือสถานะการฟื้นตัว"
           }
         }
       }
@@ -2907,6 +3261,12 @@
             "state": "translated",
             "value": "Najedź kursorem na wskaźnik obciążenia i podpowiedzi dotyczącego słowa ładowania."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนมาตรวัดสำหรับโหลดเนื้อหา + คำแนะนำเครื่องมือโหลด"
+          }
         }
       }
     },
@@ -2941,6 +3301,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Najedź kursorem na pierścień, aby odzyskać + podpowiedź ze słowem stanu."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนวงแหวนสำหรับการฟื้นตัว + คำแนะนำเครื่องมือสถานะ"
           }
         }
       }
@@ -2977,6 +3343,12 @@
             "state": "translated",
             "value": "Najedź kursorem na dowolną linię przebiegu, aby odczytać dokładną próbkę pod kursorem."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วางเมาส์เหนือเส้นประกายไฟเพื่ออ่านตัวอย่างที่ต้องการใต้เคอร์เซอร์"
+          }
         }
       }
     },
@@ -3011,6 +3383,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Najedź kursorem na karty, aby zobaczyć windę."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนการ์ดเพื่อดูลิฟต์"
           }
         }
       }
@@ -3047,6 +3425,12 @@
             "state": "translated",
             "value": "Najedź kursorem na linię: celownik + kropka + podpowiedź z datą/wartością."
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลื่อนเส้น: เป้าเล็ง + จุด + เคล็ดลับเครื่องมือวันที่/ค่า"
+          }
         }
       }
     },
@@ -3081,6 +3465,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Najedź kursorem, aby przeczytać HRV każdego dnia w ms."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วางเมาส์เหนือเพื่ออ่าน HRV ในแต่ละวันในหน่วยมิลลิวินาที"
           }
         }
       }
@@ -3117,6 +3507,12 @@
             "state": "translated",
             "value": "HRV (ms) — 30 dni"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HRV (มิลลิวินาที) — 30 วัน"
+          }
         }
       }
     },
@@ -3151,6 +3547,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "W karcie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ในการ์ด"
           }
         }
       }
@@ -3216,6 +3618,12 @@
             "state": "translated",
             "value": "właśnie"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แค่ตอนนี้"
+          }
         }
       }
     },
@@ -3250,6 +3658,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ubiegłej nocy"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เมื่อคืน"
           }
         }
       }
@@ -3315,6 +3729,12 @@
             "state": "translated",
             "value": "Światło"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สว่าง"
+          }
         }
       }
     },
@@ -3360,6 +3780,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ŚWIATŁO"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หลับตื้น"
           }
         }
       }
@@ -3418,6 +3844,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Na żywo"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แบบเรียลไทม์"
           }
         }
       }
@@ -3483,6 +3915,12 @@
             "state": "translated",
             "value": "NISKI"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ต่ำ"
+          }
         }
       }
     },
@@ -3540,6 +3978,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Północ"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เที่ยงคืน"
           }
         }
       }
@@ -3599,6 +4043,12 @@
             "state": "translated",
             "value": "Mięta"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "มิ้นต์"
+          }
         }
       }
     },
@@ -3645,6 +4095,12 @@
             "state": "translated",
             "value": "UMIARKOWANY"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปานกลาง"
+          }
         }
       }
     },
@@ -3678,6 +4134,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ruch podczas snu"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การเคลื่อนไหวระหว่างการนอน"
           }
         }
       }
@@ -3736,6 +4198,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Następnego dnia"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันถัดไป"
           }
         }
       }
@@ -3801,6 +4269,12 @@
             "state": "translated",
             "value": "Brak danych"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูล"
+          }
         }
       }
     },
@@ -3846,6 +4320,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Brak danych dotyczących tętna"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
           }
         }
       }
@@ -3901,6 +4381,12 @@
           }
         },
         "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOOP"
+          }
+        },
+        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "NOOP"
@@ -3963,6 +4449,12 @@
             "state": "translated",
             "value": "Ocean"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "มหาสมุทร"
+          }
         }
       }
     },
@@ -3998,6 +4490,12 @@
             "state": "translated",
             "value": "Nadkreśl"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "โอเวอร์ไลน์"
+          }
         }
       }
     },
@@ -4032,6 +4530,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przegląd HR"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาพรวมHR"
           }
         }
       }
@@ -4097,6 +4601,12 @@
             "state": "translated",
             "value": "SZCZYT"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จุดสูงสุด"
+          }
         }
       }
     },
@@ -4154,6 +4664,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz datę"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลือกวันที่"
           }
         }
       }
@@ -4213,6 +4729,12 @@
             "state": "translated",
             "value": "Poprzedni dzień"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันก่อนหน้า"
+          }
         }
       }
     },
@@ -4259,6 +4781,12 @@
             "state": "translated",
             "value": "GRUNTOWANY"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลงสีพื้นแล้ว"
+          }
         }
       }
     },
@@ -4304,6 +4832,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "zakres od %@ do %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ช่วง %@ ถึง %@"
           }
         }
       }
@@ -4363,6 +4897,12 @@
             "state": "translated",
             "value": "Regeneracja"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การฟื้นตัว"
+          }
         }
       }
     },
@@ -4398,6 +4938,12 @@
             "state": "translated",
             "value": "Regeneracja — 30 dni"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พักฟื้น — 30 วัน"
+          }
         }
       }
     },
@@ -4432,6 +4978,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Regeneracja — ubiegły rok"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฟื้นตัว — ปีที่แล้ว"
           }
         }
       }
@@ -4479,6 +5031,12 @@
             "state": "translated",
             "value": "Regeneracja kalendarz, %lld dni, średnia %lld, niska %lld, wysoka %lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปฏิทินการฟื้นตัว, %lld วัน, เฉลี่ย %lld, %lld ต่ำ, %lld สูง"
+          }
         }
       }
     },
@@ -4525,6 +5083,12 @@
             "state": "translated",
             "value": "Kalendarz Regeneracja, brak danych"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปฏิทินการฟื้นตัว ไม่มีข้อมูล"
+          }
         }
       }
     },
@@ -4560,6 +5124,12 @@
             "state": "translated",
             "value": "GRADIDENT ODZYSKU"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไล่ระดับการฟื้นฟู"
+          }
         }
       }
     },
@@ -4594,6 +5164,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zmniejsz ruch renderuje statycznie w ostatniej klatce."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลดการเคลื่อนไหว แสดงผลคงที่ในเฟรมสุดท้าย"
           }
         }
       }
@@ -4636,6 +5212,12 @@
             "state": "translated",
             "value": "Usunąć"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลบ"
+          }
         }
       }
     },
@@ -4670,6 +5252,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Odtwórz ponownie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิดเผยการเล่นซ้ำ"
           }
         }
       }
@@ -4712,6 +5300,12 @@
             "state": "translated",
             "value": "Odpoczynkowe tętno"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจขณะพัก"
+          }
         }
       }
     },
@@ -4746,6 +5340,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Niespokojna noc"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คืนกระสับกระส่าย"
           }
         }
       }
@@ -4811,6 +5411,12 @@
             "state": "translated",
             "value": "Wstążka"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ริบบิ้น"
+          }
         }
       }
     },
@@ -4845,6 +5451,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rzuć numerem"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หมุนหมายเลข"
           }
         }
       }
@@ -4887,6 +5499,12 @@
             "state": "translated",
             "value": "Zapisz"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึก"
+          }
         }
       }
     },
@@ -4921,6 +5539,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Liczba segmentów i wysokości"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จำนวนเซกเมนต์และความสูง"
           }
         }
       }
@@ -4980,6 +5604,12 @@
             "state": "translated",
             "value": "Firmowy"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลายเซ็น"
+          }
         }
       }
     },
@@ -5038,6 +5668,12 @@
             "state": "translated",
             "value": "Koniec snu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สิ้นสุดการนอน"
+          }
         }
       }
     },
@@ -5073,6 +5709,12 @@
             "state": "translated",
             "value": "Wydajność snu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ประสิทธิภาพการนอน"
+          }
         }
       }
     },
@@ -5107,6 +5749,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Etapy snu"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ขั้นตอนการนอน"
           }
         }
       }
@@ -5154,6 +5802,12 @@
             "state": "translated",
             "value": "Etapy snu, %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระยะการนอน %@"
+          }
         }
       }
     },
@@ -5199,6 +5853,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fazy ​​snu, brak danych"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระยะการนอน ไม่มีข้อมูล"
           }
         }
       }
@@ -5258,6 +5918,12 @@
             "state": "translated",
             "value": "Początek snu"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มนอนหลับ"
+          }
         }
       }
     },
@@ -5292,6 +5958,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "MIĘKKIE PRZEJŚCIE KARTY"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การเปลี่ยนซอฟท์การ์ด"
           }
         }
       }
@@ -5351,6 +6023,12 @@
             "state": "translated",
             "value": "Pełne"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "น่าเชื่อถือ"
+          }
         }
       }
     },
@@ -5386,6 +6064,12 @@
             "state": "translated",
             "value": "WYGLĄDAJĄ ZNACZNIE"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ปรากฏขึ้นอย่างเซ"
+          }
         }
       }
     },
@@ -5420,6 +6104,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "RAMPA OBCIĄŻENIA"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAMP ภาระร่างกาย"
           }
         }
       }
@@ -5466,6 +6156,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "INTENSYWNY"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แข็งแกร่ง"
           }
         }
       }
@@ -5525,6 +6221,12 @@
             "state": "translated",
             "value": "Rozciągnij"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยืด"
+          }
         }
       }
     },
@@ -5559,6 +6261,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podtytuł 13"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อย่อย 13"
           }
         }
       }
@@ -5618,6 +6326,12 @@
             "state": "translated",
             "value": "Zachód słońca"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พระอาทิตย์ตก"
+          }
         }
       }
     },
@@ -5663,6 +6377,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Systemowy"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระบบ"
           }
         }
       }
@@ -5722,6 +6442,12 @@
             "state": "translated",
             "value": "Kafelek"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กระเบื้อง"
+          }
         }
       }
     },
@@ -5779,6 +6505,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Godzina"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เวลา"
           }
         }
       }
@@ -5838,6 +6570,12 @@
             "state": "translated",
             "value": "Tytan"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไทเทเนียม"
+          }
         }
       }
     },
@@ -5873,6 +6611,12 @@
             "state": "translated",
             "value": "Tytuł 1 / Pogrubienie 28"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อ 1 / ตัวหนา 28"
+          }
         }
       }
     },
@@ -5907,6 +6651,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tytuł 2 / Półgruby 22"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หัวข้อ 2 / เซมิโบลด์ 22"
           }
         }
       }
@@ -5972,6 +6722,12 @@
             "state": "translated",
             "value": "Dzisiaj"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วันนี้"
+          }
         }
       }
     },
@@ -6006,6 +6762,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przełącz delikatną wiosnę"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สลับสปริงอ่อนโยน"
           }
         }
       }
@@ -6071,6 +6833,12 @@
             "state": "translated",
             "value": "Tendencja"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แนวโน้ม"
+          }
         }
       }
     },
@@ -6116,6 +6884,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trend, punkty %lld, najnowsze %@, niskie %@, wysokie %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เทรนด์ จุด %lld %@ ล่าสุด %@ ต่ำ %@ สูง"
           }
         }
       }
@@ -6175,6 +6949,12 @@
             "state": "translated",
             "value": "Wartość"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค่า"
+          }
         }
       }
     },
@@ -6209,6 +6989,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wartości"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ค่านิยม"
           }
         }
       }
@@ -6268,6 +7054,12 @@
             "state": "translated",
             "value": "Pobudka"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตื่น"
+          }
         }
       }
     },
@@ -6302,6 +7094,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Whoop 4.0"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHOOP 4.0"
           }
         }
       }
@@ -6360,6 +7158,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "WHOOP Blue"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WHOOP สีน้ำเงิน"
           }
         }
       }
@@ -6425,6 +7229,12 @@
             "state": "translated",
             "value": "Wczoraj"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เมื่อวาน"
+          }
         }
       }
     },
@@ -6488,6 +7298,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Miniwykres"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เส้นประกาย"
           }
         }
       }
@@ -6553,6 +7369,12 @@
             "state": "translated",
             "value": "Próbka"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตัวอย่าง"
+          }
         }
       }
     },
@@ -6616,6 +7438,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Faza snu"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ระยะการนอนหลับ"
           }
         }
       }
@@ -6681,6 +7509,12 @@
             "state": "translated",
             "value": "próbka %lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตัวอย่าง %lld"
+          }
         }
       }
     },
@@ -6745,8 +7579,17 @@
             "state": "translated",
             "value": "Synchronizowanie"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังซิงค์"
+          }
         }
       }
+    },
+    "\\(value), \\(label!)": {
+      "shouldTranslate": false
     }
   },
   "version": "1.0"

@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "NOOP ไทย";
+"NSBluetoothAlwaysUsageDescription" = "NOOP เชื่อมต่อกับสายรัด WHOOP โดยตรงผ่าน Bluetooth เพื่ออ่านอัตราการเต้นหัวใจ ช่วง R-R ระดับแบตเตอรี่ และข้อมูลเซนเซอร์ภายใน Mac ของคุณ";
+"NSLocationWhenInUseUsageDescription" = "NOOP บันทึกเส้นทางระหว่างการออกกำลังกายกลางแจ้งเพื่อแสดงระยะทาง เพซ และแผนที่ โดยเส้นทางจะเก็บไว้ในอุปกรณ์ของคุณ";

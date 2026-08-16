@@ -35,6 +35,12 @@
             "state": "translated",
             "value": "/%lld"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/ %lld"
+          }
         }
       }
     },
@@ -99,6 +105,12 @@
             "state": "translated",
             "value": "%@ · %@ wejścia / %@ wyjścia"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · เข้า %@ วินาที / ออก %@ วินาที"
+          }
         }
       }
     },
@@ -159,6 +171,12 @@
           }
         },
         "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lld kcal"
+          }
+        },
+        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ · %lld kcal"
@@ -227,6 +245,12 @@
             "state": "translated",
             "value": "%@ odd./min"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ครั้ง/นาที"
+          }
         }
       }
     },
@@ -291,6 +315,12 @@
             "state": "translated",
             "value": "Tempo %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เพซ %@"
+          }
         }
       }
     },
@@ -321,6 +351,12 @@
           }
         },
         "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld"
@@ -389,6 +425,12 @@
             "state": "translated",
             "value": "%lld oddechy · %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ลมหายใจ · %@"
+          }
         }
       }
     },
@@ -452,6 +494,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld pozostałe sekundy w %2$@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เหลือ %lld วินาทีในช่วง %@"
           }
         }
       }
@@ -520,6 +568,12 @@
             "state": "translated",
             "value": "Zezwól na dostęp"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อนุญาตให้เข้าถึง"
+          }
         }
       }
     },
@@ -583,6 +637,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "od %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูล ณ %@"
           }
         }
       }
@@ -648,6 +708,12 @@
             "state": "translated",
             "value": "Skrzynka"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แบบสี่เหลี่ยม"
+          }
         }
       }
     },
@@ -708,6 +774,12 @@
           }
         },
         "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bpm"
+          }
+        },
+        "th": {
           "stringUnit": {
             "state": "translated",
             "value": "bpm"
@@ -776,6 +848,12 @@
             "state": "translated",
             "value": "Oddychać"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ฝึกหายใจ"
+          }
         }
       }
     },
@@ -839,6 +917,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wdychać"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจเข้า"
           }
         }
       }
@@ -904,6 +988,12 @@
             "state": "translated",
             "value": "Wdychaj przez %lld sekundy"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจเข้า %lld วินาที"
+          }
         }
       }
     },
@@ -967,6 +1057,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wydychać"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจออก"
           }
         }
       }
@@ -1032,6 +1128,12 @@
             "state": "translated",
             "value": "Oddychaj przez %lld sekundy"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หายใจออกเป็นเวลา %lld วินาที"
+          }
         }
       }
     },
@@ -1077,6 +1179,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "kal"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แคลอรี"
           }
         }
       }
@@ -1142,6 +1250,12 @@
             "state": "translated",
             "value": "Energia"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พลังฟื้นตัว"
+          }
         }
       }
     },
@@ -1205,6 +1319,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Konsekwencja"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แบบสอดคล้อง"
           }
         }
       }
@@ -1270,6 +1390,12 @@
             "state": "translated",
             "value": "Gotowe"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จสิ้น"
+          }
         }
       }
     },
@@ -1333,6 +1459,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "ZROBIONE"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เสร็จแล้ว"
           }
         }
       }
@@ -1398,6 +1530,12 @@
             "state": "translated",
             "value": "Wysiłek"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ภาระร่างกาย"
+          }
         }
       }
     },
@@ -1461,6 +1599,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Koniec"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "จบ"
           }
         }
       }
@@ -1526,6 +1670,12 @@
             "state": "translated",
             "value": "Zakończ trening"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สิ้นสุดการออกกำลังกาย"
+          }
         }
       }
     },
@@ -1589,6 +1739,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siła funkcjonalna"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ความแข็งแกร่งในการใช้งาน"
           }
         }
       }
@@ -1654,6 +1810,12 @@
             "state": "translated",
             "value": "Przyznaj dostęp do Zdrowie"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ให้สิทธิ์การเข้าถึงด้านสุขภาพ"
+          }
         }
       }
     },
@@ -1717,6 +1879,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "TĘTNO"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อัตราการเต้นหัวใจ"
           }
         }
       }
@@ -1782,6 +1950,12 @@
             "state": "translated",
             "value": "HR niedostępny"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่มีข้อมูลอัตราการเต้นหัวใจ"
+          }
         }
       }
     },
@@ -1845,6 +2019,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tętno i energia na żywo rejestrowane na nadgarstku. Pozostaje na urządzeniu."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกอัตราการเต้นหัวใจและพลังงานแบบเรียลไทม์จากข้อมือ โดยข้อมูลอยู่ในอุปกรณ์เท่านั้น"
           }
         }
       }
@@ -1910,6 +2090,12 @@
             "state": "translated",
             "value": "Otwórz NOOP na swoim iPhonie, aby zsynchronizować"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เปิด NOOP บน iPhone ของคุณเพื่อซิงค์"
+          }
         }
       }
     },
@@ -1973,6 +2159,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pauza"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดชั่วคราว"
           }
         }
       }
@@ -2038,6 +2230,12 @@
             "state": "translated",
             "value": "WSTRZYMANO"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดชั่วคราว"
+          }
         }
       }
     },
@@ -2101,6 +2299,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gotowy do oddychania"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พร้อมจะหายใจ"
           }
         }
       }
@@ -2166,6 +2370,12 @@
             "state": "translated",
             "value": "NAGRANIE"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กำลังบันทึก"
+          }
         }
       }
     },
@@ -2229,6 +2439,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zrelaksować się"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ผ่อนคลาย"
           }
         }
       }
@@ -2294,6 +2510,12 @@
             "state": "translated",
             "value": "Nastawić"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รีเซ็ต"
+          }
         }
       }
     },
@@ -2357,6 +2579,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Odpoczynek"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พัก"
           }
         }
       }
@@ -2422,6 +2650,12 @@
             "state": "translated",
             "value": "ODPOCZYNEK"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "พัก"
+          }
         }
       }
     },
@@ -2485,6 +2719,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uruchom ponownie"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มใหม่"
           }
         }
       }
@@ -2550,6 +2790,12 @@
             "state": "translated",
             "value": "Wznawiać"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ทำต่อ"
+          }
         }
       }
     },
@@ -2613,6 +2859,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Okrągłe %lld z %lld"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รอบ %lld ของ %lld"
           }
         }
       }
@@ -2678,6 +2930,12 @@
             "state": "translated",
             "value": "SEK"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วินาที"
+          }
         }
       }
     },
@@ -2741,6 +2999,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sesja skończona"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เซสชันเสร็จสิ้น"
           }
         }
       }
@@ -2806,6 +3070,12 @@
             "state": "translated",
             "value": "nieaktualne · %@"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ข้อมูลเก่า · %@"
+          }
         }
       }
     },
@@ -2869,6 +3139,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่ม"
           }
         }
       }
@@ -2934,6 +3210,12 @@
             "state": "translated",
             "value": "Rozpocznij sesję"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เริ่มเซสชัน"
+          }
         }
       }
     },
@@ -2997,6 +3279,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zatrzymywać się"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุด"
           }
         }
       }
@@ -3062,6 +3350,12 @@
             "state": "translated",
             "value": "Zatrzymaj sesję"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "หยุดเซสชัน"
+          }
         }
       }
     },
@@ -3125,6 +3419,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "PRACA"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออกแรง"
           }
         }
       }
@@ -3190,6 +3490,12 @@
             "state": "translated",
             "value": "Trening"
           }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การออกกำลังกาย"
+          }
         }
       }
     },
@@ -3253,6 +3559,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trening zapisany"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บันทึกการออกกำลังกายแล้ว"
           }
         }
       }

@@ -35,9 +35,11 @@ TRANSLATIONS = ROOT / "Tools/translations"
 CATALOGS = [
     (ROOT / "Strand/Resources/Localizable.xcstrings", ""),
     (ROOT / "Packages/StrandDesign/Sources/StrandDesign/Resources/Localizable.xcstrings", "design-"),
+    (ROOT / "NOOPWatch/Localizable.xcstrings", "watch-"),
+    (ROOT / "NOOPWatchComplications/Localizable.xcstrings", "watch-complications-"),
 ]
 
-LANGS = ["de", "es", "fr", "pt-PT", "pl", "it", "ru", "zh-Hans", "zh-Hant"]
+LANGS = ["de", "es", "fr", "pt-PT", "pl", "it", "ru", "zh-Hans", "zh-Hant", "th"]
 
 # Same pattern the audit uses, so "passes this tool" and "passes the gate" cannot drift apart.
 FORMAT = re.compile(r"%(?:(?:\d+)\$)?(@|(?:hh|h|ll|l|q|z|t|j)?[diuoxXfFeEgGaAcCsSp])")
